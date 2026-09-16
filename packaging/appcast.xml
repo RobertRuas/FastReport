@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>FastReport</title>
+    <link>https://github.com/RobertRuas/FastReport/releases</link>
+    <description>Atualizações do FastReport via GitHub Releases.</description>
+    <language>pt</language>
+    <item>
+      <title>FastReport 0.1.0</title>
+      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
+      <sparkle:version>1</sparkle:version>
+      <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+      <description><![CDATA[Primeira versão com atualizações automáticas via Sparkle e GitHub Releases.]]></description>
+    </item>
+  </channel>
+</rss>

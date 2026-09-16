@@ -1,0 +1,85 @@
+name: FastReport
+options:
+  bundleIdPrefix: dev.robert
+  deploymentTarget:
+    macOS: "14.00"
+  developmentLanguage: pt
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: 2.10.0
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY: "YES"
+configs:
+  Debug: debug
+  Release: release
+targets:
+  FastReport:
+    type: application
+    platform: macOS
+    sources:
+      - path: FastReport
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - package: Sparkle
+        product: Sparkle
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.robert.FastReport
+        PRODUCT_NAME: FastReport
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: "YES"
+        INFOPLIST_FILE: FastReport/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: FastReport
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.photography
+        INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 FastReport"
+        INFOPLIST_KEY_LSMinimumSystemVersion: "14.0"
+        COMBINE_HIDPI_IMAGES: "YES"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        DEVELOPMENT_LANGUAGE: pt
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+        ENABLE_PREVIEWS: "YES"
+      configs:
+        Debug:
+          ENABLE_TESTABILITY: "YES"
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGN_ENTITLEMENTS: FastReport/FastReportDebug.entitlements
+          ENABLE_APP_SANDBOX: "NO"
+          ENABLE_HARDENED_RUNTIME: "NO"
+        Release:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGN_ENTITLEMENTS: FastReport/FastReport.entitlements
+          ENABLE_APP_SANDBOX: "YES"
+          ENABLE_HARDENED_RUNTIME: "YES"
+    scheme:
+      testTargets:
+        - FastReportTests
+  FastReportTests:
+    type: bundle.unit-test
+    platform: macOS
+    hostApplication: FastReport
+    sources:
+      - FastReportTests
+    resources:
+      - path: FastReport/Resources/Maps
+      - path: FastReport/Resources/Localizable.xcstrings
+    dependencies:
+      - target: FastReport
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.robert.FastReportTests
+        GENERATE_INFOPLIST_FILE: "YES"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_STRICT_CONCURRENCY: complete
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/FastReport.app/Contents/MacOS/FastReport"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        CODE_SIGN_STYLE: Automatic
+        ENABLE_APP_SANDBOX: "NO"

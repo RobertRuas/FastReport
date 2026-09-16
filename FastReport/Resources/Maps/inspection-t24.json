@@ -1,0 +1,308 @@
+{
+  "id": "inspection-t24",
+  "version": 1,
+  "name": {
+    "pt": "Inspeção T1–T24",
+    "en": "Inspection T1–T24"
+  },
+  "fileNamePattern": "{project}_{slot}_{index}.jpeg",
+  "inboxFolder": "Inbox",
+  "slots": [
+    {
+      "id": "inbox",
+      "folder": "Inbox",
+      "hotkeys": [],
+      "expectedCount": null,
+      "unlimited": true,
+      "isTrash": false,
+      "isInbox": true
+    },
+    {
+      "id": "general",
+      "folder": "General",
+      "hotkeys": [
+        "0",
+        "g"
+      ],
+      "expectedCount": null,
+      "unlimited": true,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "trash",
+      "folder": "Trash",
+      "hotkeys": [
+        "cmd+backspace"
+      ],
+      "expectedCount": null,
+      "unlimited": true,
+      "isTrash": true,
+      "isInbox": false
+    },
+    {
+      "id": "t1",
+      "folder": "T1",
+      "hotkeys": [
+        "1"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t2",
+      "folder": "T2",
+      "hotkeys": [
+        "2"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t3",
+      "folder": "T3",
+      "hotkeys": [
+        "3"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t4",
+      "folder": "T4",
+      "hotkeys": [
+        "4"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t5",
+      "folder": "T5",
+      "hotkeys": [
+        "5"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t6",
+      "folder": "T6",
+      "hotkeys": [
+        "6"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t7",
+      "folder": "T7",
+      "hotkeys": [
+        "7"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t8",
+      "folder": "T8",
+      "hotkeys": [
+        "8"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t9",
+      "folder": "T9",
+      "hotkeys": [
+        "9"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t10",
+      "folder": "T10",
+      "hotkeys": [
+        "10"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t11",
+      "folder": "T11",
+      "hotkeys": [
+        "11"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t12",
+      "folder": "T12",
+      "hotkeys": [
+        "12"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t13",
+      "folder": "T13",
+      "hotkeys": [
+        "13"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t14",
+      "folder": "T14",
+      "hotkeys": [
+        "14"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t15",
+      "folder": "T15",
+      "hotkeys": [
+        "15"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t16",
+      "folder": "T16",
+      "hotkeys": [
+        "16"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t17",
+      "folder": "T17",
+      "hotkeys": [
+        "17"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t18",
+      "folder": "T18",
+      "hotkeys": [
+        "18"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t19",
+      "folder": "T19",
+      "hotkeys": [
+        "19"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t20",
+      "folder": "T20",
+      "hotkeys": [
+        "20"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t21",
+      "folder": "T21",
+      "hotkeys": [
+        "21"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t22",
+      "folder": "T22",
+      "hotkeys": [
+        "22"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t23",
+      "folder": "T23",
+      "hotkeys": [
+        "23"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    },
+    {
+      "id": "t24",
+      "folder": "T24",
+      "hotkeys": [
+        "24"
+      ],
+      "expectedCount": 7,
+      "unlimited": false,
+      "isTrash": false,
+      "isInbox": false
+    }
+  ]
+}

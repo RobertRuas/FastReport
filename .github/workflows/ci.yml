@@ -1,0 +1,17 @@
+# FastReport CI
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate Xcode project
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Test
+        run: |
+          xcodebuild -project FastReport.xcodeproj -scheme FastReport -destination 'platform=macOS' -onlyActiveArchitecture=YES CODE_SIGNING_ALLOWED=NO test

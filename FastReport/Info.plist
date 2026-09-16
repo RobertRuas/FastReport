@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SUFeedURL</key>
+	<string>https://github.com/RobertRuas/FastReport/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>+f2ued0yDVVZMq75XB1aKzhFK+EN1kHNGDzBo5FaFXY=</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUAutomaticallyUpdate</key>
+	<false/>
+	<key>SUAllowsAutomaticUpdates</key>
+	<true/>
+	<key>SUScheduledCheckInterval</key>
+	<integer>14400</integer>
+	<key>FRUpdatesURL</key>
+	<string>https://github.com/RobertRuas/FastReport/releases/latest/download/appcast.xml</string>
+</dict>
+</plist>
