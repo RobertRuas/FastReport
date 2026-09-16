@@ -18,6 +18,12 @@ jobs:
         env:
           SPARKLE_PRIVATE_KEY: ${{ secrets.SPARKLE_PRIVATE_KEY }}
         run: |
+          if [ -z "$SPARKLE_PRIVATE_KEY" ]; then
+            echo "Skipping Sparkle archive because SPARKLE_PRIVATE_KEY is not set."
+            echo "Export the key from this Mac with generate_keys --account FastReport -x sparkle.key"
+            echo "then: gh secret set SPARKLE_PRIVATE_KEY < sparkle.key"
+            exit 0
+          fi
           chmod +x packaging/make_release.sh
           packaging/make_release.sh "${GITHUB_REF_NAME}"
       - name: Publish GitHub Release
@@ -25,8 +31,17 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          gh release create "${GITHUB_REF_NAME}" \
-            --title "FastReport ${VERSION}" \
-            --generate-notes \
-            "packaging/archives/FastReport-${VERSION}.zip" \
-            "packaging/archives/appcast.xml"
+          ARCHIVE="packaging/archives/FastReport-${VERSION}.zip"
+          if [ ! -f "$ARCHIVE" ]; then
+            echo "No archive to publish."
+            exit 0
+          fi
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" "$ARCHIVE" packaging/archives/appcast.xml --clobber
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              --title "FastReport ${VERSION}" \
+              --generate-notes \
+              "$ARCHIVE" \
+              packaging/archives/appcast.xml
+          fi

@@ -1,16 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
-  <channel>
-    <title>FastReport</title>
-    <link>https://github.com/RobertRuas/FastReport/releases</link>
-    <description>Atualizações do FastReport via GitHub Releases.</description>
-    <language>pt</language>
-    <item>
-      <title>FastReport 0.1.0</title>
-      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <sparkle:version>1</sparkle:version>
-      <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
-      <description><![CDATA[Primeira versão com atualizações automáticas via Sparkle e GitHub Releases.]]></description>
-    </item>
-  </channel>
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>FastReport</title>
+        <item>
+            <title>0.1.0</title>
+            <pubDate>Wed, 16 Sep 2026 21:44:08 +0200</pubDate>
+            <link>https://github.com/RobertRuas/FastReport/releases/v0.1.0</link>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[<h2>FastReport 0.1.0</h2>
+<p>Atualização v0.1.0 publicada em 2026-09-16 19:44 UTC.</p>
+]]></description>
+            <enclosure url="https://github.com/RobertRuas/FastReport/releases/download/v0.1.0/FastReport-0.1.0.zip" length="1974729" type="application/octet-stream" sparkle:edSignature="LOXMTUlbARxHTr4bNkTCAwyAdWi+UKHWCOyR9FPgn1MNBAo+Fmka675DW0Qtbpy3C/WwvGDlnBgrfEu9Yj/EDA=="/>
+        </item>
+    </channel>
 </rss>
