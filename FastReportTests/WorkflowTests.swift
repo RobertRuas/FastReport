@@ -79,6 +79,16 @@ final class UpdateCheckerTests: XCTestCase {
         XCTAssertNotNil(UpdateChecker.configuredURL(from: ["FRUpdatesURL": "https://api.github.com/repos/a/b/releases/latest"]))
         XCTAssertNotNil(UpdateChecker.configuredURL(from: ["SUFeedURL": "https://github.com/RobertRuas/FastReport/releases/latest/download/appcast.xml"]))
     }
+
+    func testTreatsSparkleRelaunchErrorsAsInstalled() {
+        let relaunch = NSError(domain: "SUSparkleErrorDomain", code: 4000)
+        XCTAssertTrue(SparkleInstallError.happenedAfterInstallStarted(.installing))
+        XCTAssertTrue(SparkleInstallError.happenedAfterInstallStarted(.extracting))
+        XCTAssertFalse(SparkleInstallError.happenedAfterInstallStarted(.checking))
+        XCTAssertFalse(SparkleInstallError.isCancellation(relaunch))
+        XCTAssertTrue(SparkleInstallError.isCancellation(NSError(domain: "SUSparkleErrorDomain", code: 4002)))
+        XCTAssertFalse(SparkleInstallError.isCancellation(NSError(domain: "NSURLErrorDomain", code: -1009)))
+    }
 }
 
 final class FileOrganizerFlowTests: XCTestCase {

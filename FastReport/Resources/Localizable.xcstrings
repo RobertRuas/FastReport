@@ -2959,6 +2959,40 @@
           }
         }
       }
+    },
+    "settings.updates.installed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualização instalada"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update installed"
+          }
+        }
+      }
+    },
+    "settings.updates.installed.reopen": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A atualização foi instalada. Fecha esta janela e abre novamente o FastReport."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The update was installed. Close this window and open FastReport again."
+          }
+        }
+      }
     }
   }
 }

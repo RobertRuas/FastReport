@@ -139,6 +139,8 @@ enum StringCatalog {
         "settings.updates.progress.extract",
         "settings.updates.progress.install",
         "settings.updates.progress.ready",
+        "settings.updates.installed.title",
+        "settings.updates.installed.reopen",
         "settings.updates.bytes %@ %@",
         "settings.updates.released %@",
         "settings.updates.repo",

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FastReport — organização de fotos no Mac</title>
+  <meta name="description" content="App nativa para macOS que organiza fotos de inspeção e de trabalho no Finder. Sem biblioteca própria. Teclado primeiro.">
+  <meta property="og:title" content="FastReport">
+  <meta property="og:description" content="Organiza fotos no Finder para relatórios futuros. Nativo no Mac.">
+  <meta property="og:url" content="https://robertruas.github.io/FastReport/">
+  <link rel="canonical" href="https://robertruas.github.io/FastReport/">
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --ink: #1c1916;
+      --muted: #5c564e;
+      --line: #d8d2c6;
+      --card: #fffdf8;
+      --accent: #8b3d12;
+      --accent-hover: #6e2f0d;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      font-family: "SF Pro Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 48px 24px 80px; }
+    header { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 56px; }
+    .brand { font-weight: 650; letter-spacing: -0.03em; font-size: 15px; }
+    nav a { color: var(--muted); text-decoration: none; margin-left: 18px; font-size: 14px; }
+    nav a:hover { color: var(--ink); }
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4.1rem);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+      font-weight: 650;
+      margin: 0 0 18px;
+      max-width: 14ch;
+    }
+    .lede { font-size: 1.15rem; color: var(--muted); max-width: 42rem; margin: 0 0 28px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn-ghost:hover { background: #fff; }
+    .note { font-size: 13px; color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 64px 0 48px;
+    }
+    article {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 18px 18px;
+    }
+    article h2 { font-size: 15px; margin: 0 0 8px; letter-spacing: -0.02em; }
+    article p { margin: 0; color: var(--muted); font-size: 14px; }
+    .split { border-top: 1px solid var(--line); padding-top: 36px; }
+    .split h2 { font-size: 1.35rem; letter-spacing: -0.03em; margin: 0 0 12px; }
+    footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">FastReport</div>
+      <nav>
+        <a href="https://github.com/RobertRuas/FastReport">Código</a>
+        <a href="https://github.com/RobertRuas/FastReport/releases/latest">Versões</a>
+      </nav>
+    </header>
+
+    <h1>Fotos no sítio certo. Relatório depois.</h1>
+    <p class="lede">
+      FastReport é uma aplicação nativa para Mac que organiza fotos de inspeção e de trabalho
+      diretamente no Finder. Não guarda uma biblioteca. Não escreve o relatório.
+      Prepara pastas, nomes e ordem para o relatório futuro ser rápido.
+    </p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/RobertRuas/FastReport/releases/latest/download/FastReport.zip">Descarregar para Mac</a>
+      <a class="btn btn-ghost" href="https://github.com/RobertRuas/FastReport/releases/latest">Ver última versão</a>
+      <span class="note">macOS 14 ou posterior · Apple Silicon e Intel</span>
+    </div>
+
+    <div class="grid">
+      <article>
+        <h2>O disco é a verdade</h2>
+        <p>As fotos ficam nas pastas do projeto. A app move, converte para JPEG 1024 e renomeia. Nada de nuvem nem coleção escondida.</p>
+      </article>
+      <article>
+        <h2>Teclado primeiro</h2>
+        <p>Triagem uma a uma: T1 a T24 com o buffer numérico, General com 0, lixo com ⌘⌫, desfazer com ⌘Z.</p>
+      </article>
+      <article>
+        <h2>Mapas, não código rígido</h2>
+        <p>O mapa de inspeção T24 define pastas e atalhos. Outros tipos de trabalho entram como dados, sem reescrever a app.</p>
+      </article>
+      <article>
+        <h2>Português e inglês</h2>
+        <p>A interface muda de idioma nas Definições. Os nomes das pastas no Finder mantêm-se estáveis.</p>
+      </article>
+      <article>
+        <h2>Atualizações na app</h2>
+        <p>Definições avisa quando há versão nova. A instalação só começa quando confirmas. Progresso real da descarga.</p>
+      </article>
+      <article>
+        <h2>Feito para o dia de campo</h2>
+        <p>Importação em lote, revisão por pasta e sincronização se alguém mexer no Finder enquanto trabalhas.</p>
+      </article>
+    </div>
+
+    <section class="split">
+      <h2>Como se usa</h2>
+      <p class="lede">Crias um projeto no sítio que escolheres. Importas as fotos do cartão. Classificas. Abres o Finder: T10 já tem <code>Projeto_T10_1.jpeg</code>. O relatório, noutro momento, lê essa estrutura.</p>
+      <p class="note">Na primeira abertura, o macOS pode pedir para abrir uma app de programador não identificado. Botão direito → Abrir. É esperado enquanto a distribuição for pelo GitHub, sem App Store.</p>
+    </section>
+
+    <footer>
+      <p>FastReport · código aberto · <a href="https://github.com/RobertRuas/FastReport">github.com/RobertRuas/FastReport</a></p>
+    </footer>
+  </div>
+</body>
+</html>

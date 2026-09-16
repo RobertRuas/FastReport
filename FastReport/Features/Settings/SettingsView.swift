@@ -45,7 +45,7 @@ struct SettingsView: View {
                 }
                 if updates.phase == .checking {
                     ProgressView("settings.updates.checking")
-                } else if updates.phase == .downloading || updates.phase == .extracting || updates.phase == .installing {
+                } else if updates.phase == .downloading || updates.phase == .extracting || updates.phase == .installing || updates.phase == .installed {
                     UpdateProgressCard()
                 } else if !updates.statusMessage.isEmpty {
                     Text(updates.statusMessage)

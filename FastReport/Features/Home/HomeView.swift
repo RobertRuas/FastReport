@@ -75,6 +75,9 @@ struct HomeView: View {
                 .font(.largeTitle.weight(.semibold))
             Text("home.subtitle")
                 .foregroundStyle(.secondary)
+            Text("status.version \(AppVersion.display())")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
         }
         .accessibilityElement(children: .combine)
     }

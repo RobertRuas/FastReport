@@ -10,6 +10,7 @@ enum UpdatePhase: Equatable {
     case extracting
     case readyToInstall
     case installing
+    case installed
     case upToDate
     case failed
 }
@@ -48,12 +49,12 @@ final class AppUpdateCenter {
     var automaticallyChecksForUpdates: Bool
 
     var hasUpdateBadge: Bool {
-        available != nil && phase != .installing
+        available != nil && phase != .installing && phase != .installed
     }
 
     var showsProgressOverlay: Bool {
         switch phase {
-        case .checking, .downloading, .extracting, .readyToInstall, .installing:
+        case .checking, .downloading, .extracting, .readyToInstall, .installing, .installed:
             return true
         default:
             return false
@@ -73,6 +74,8 @@ final class AppUpdateCenter {
             return 0.92
         case .installing:
             return 0.97
+        case .installed:
+            return 1
         case .upToDate:
             return 1
         default:
@@ -248,14 +251,37 @@ final class AppUpdateCenter {
         statusMessage = String(localized: "settings.updates.progress.install")
     }
 
+    fileprivate func noteInstalledNeedsReopen() {
+        phase = .installed
+        showsBanner = false
+        available = nil
+        statusMessage = String(localized: "settings.updates.installed.reopen")
+    }
+
+    func dismissInstalledNotice() {
+        phase = .idle
+        statusMessage = ""
+        showsBanner = false
+        available = nil
+    }
+
     fileprivate func noteDismissed() {
         cancelDownload = nil
         cancelCheck = nil
         pendingUpdateChoice = nil
         pendingInstallChoice = nil
-        if available != nil {
-            phase = .available
-        } else if phase != .upToDate && phase != .failed {
+        switch phase {
+        case .installing:
+            noteInstalledNeedsReopen()
+        case .installed:
+            break
+        case .available, .readyToInstall:
+            if available != nil {
+                phase = .available
+            }
+        case .upToDate, .failed:
+            break
+        default:
             phase = .idle
         }
     }
@@ -367,8 +393,18 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
 
     func showUpdaterError(_ error: any Error, acknowledgement: @escaping () -> Void) {
         Task { @MainActor in
-            center?.noteError(AppFailure(error, locale: Locale.current).message)
-            acknowledgement()
+            defer { acknowledgement() }
+            guard let center else { return }
+            if SparkleInstallError.isCancellation(error) {
+                center.phase = center.available == nil ? .idle : .available
+                center.statusMessage = ""
+                return
+            }
+            if SparkleInstallError.happenedAfterInstallStarted(center.phase) {
+                center.noteInstalledNeedsReopen()
+                return
+            }
+            center.noteError(AppFailure(error, locale: Locale.current).message)
         }
     }
 
@@ -417,15 +453,20 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
     func showInstallingUpdate(withApplicationTerminated applicationTerminated: Bool, retryTerminatingApplication: @escaping () -> Void) {
         Task { @MainActor in
             center?.noteInstalling()
-            if !applicationTerminated {
-                retryTerminatingApplication()
-            }
         }
+        _ = applicationTerminated
+        _ = retryTerminatingApplication
     }
 
     func showUpdateInstalledAndRelaunched(_ relaunched: Bool, acknowledgement: @escaping () -> Void) {
-        acknowledgement()
-        _ = relaunched
+        Task { @MainActor in
+            if relaunched {
+                center?.dismissInstalledNotice()
+            } else {
+                center?.noteInstalledNeedsReopen()
+            }
+            acknowledgement()
+        }
     }
 
     func showUpdateInFocus() {
@@ -439,6 +480,25 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
     func dismissUpdateInstallation() {
         Task { @MainActor in
             center?.noteDismissed()
+        }
+    }
+}
+
+enum SparkleInstallError {
+    static let sparkleDomain = "SUSparkleErrorDomain"
+    static let canceledCodes: Set<Int> = [4002, 4005]
+
+    static func isCancellation(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        return nsError.domain == sparkleDomain && canceledCodes.contains(nsError.code)
+    }
+
+    static func happenedAfterInstallStarted(_ phase: UpdatePhase) -> Bool {
+        switch phase {
+        case .extracting, .readyToInstall, .installing, .installed:
+            return true
+        default:
+            return false
         }
     }
 }

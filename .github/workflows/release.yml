@@ -32,16 +32,21 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           ARCHIVE="packaging/archives/FastReport-${VERSION}.zip"
+          STABLE="packaging/archives/FastReport.zip"
           if [ ! -f "$ARCHIVE" ]; then
             echo "No archive to publish."
             exit 0
           fi
+          if [ ! -f "$STABLE" ]; then
+            cp "$ARCHIVE" "$STABLE"
+          fi
           if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
-            gh release upload "${GITHUB_REF_NAME}" "$ARCHIVE" packaging/archives/appcast.xml --clobber
+            gh release upload "${GITHUB_REF_NAME}" "$ARCHIVE" "$STABLE" packaging/archives/appcast.xml --clobber
           else
             gh release create "${GITHUB_REF_NAME}" \
               --title "FastReport ${VERSION}" \
               --generate-notes \
               "$ARCHIVE" \
+              "$STABLE" \
               packaging/archives/appcast.xml
           fi

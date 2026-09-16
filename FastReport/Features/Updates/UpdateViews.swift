@@ -81,7 +81,16 @@ struct UpdateProgressCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(progressTitle)
                 .font(.headline)
-            if let info = updates.available {
+            if updates.phase == .installed {
+                Text(updates.statusMessage)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Spacer()
+                    Button("common.ok", action: updates.dismissInstalledNotice)
+                        .buttonStyle(.borderedProminent)
+                }
+            } else if let info = updates.available {
                 Text("settings.updates.available \(info.version)")
                 if let date = info.publishedAt {
                     Text(publishedText(date))
@@ -89,25 +98,27 @@ struct UpdateProgressCard: View {
                         .font(.caption)
                 }
             }
-            if updates.isProgressDeterminate {
-                ProgressView(value: updates.overallProgress)
-            } else {
-                ProgressView(value: updates.overallProgress)
-                    .progressViewStyle(.linear)
-                if updates.phase == .checking || updates.phase == .installing {
-                    ProgressView()
-                        .controlSize(.small)
+            if updates.phase != .installed {
+                if updates.isProgressDeterminate {
+                    ProgressView(value: updates.overallProgress)
+                } else {
+                    ProgressView(value: updates.overallProgress)
+                        .progressViewStyle(.linear)
+                    if updates.phase == .checking || updates.phase == .installing {
+                        ProgressView()
+                            .controlSize(.small)
+                    }
                 }
-            }
-            if updates.phase == .downloading {
-                Text(byteText)
-                    .font(.caption)
+                if updates.phase == .downloading {
+                    Text(byteText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                Text("\(Int((updates.overallProgress * 100).rounded()))%")
+                    .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
-                    .monospacedDigit()
             }
-            Text("\(Int((updates.overallProgress * 100).rounded()))%")
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
             HStack {
                 if updates.phase == .checking || updates.phase == .downloading {
                     Button("settings.updates.cancel", action: updates.cancelCurrent)
@@ -132,6 +143,7 @@ struct UpdateProgressCard: View {
         case .extracting: "settings.updates.progress.extract"
         case .readyToInstall: "settings.updates.progress.ready"
         case .installing: "settings.updates.progress.install"
+        case .installed: "settings.updates.installed.title"
         default: "settings.updates.check"
         }
     }

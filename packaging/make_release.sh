@@ -78,4 +78,5 @@ else
 fi
 
 cp "$ARCHIVES/appcast.xml" "$ROOT/packaging/appcast.xml"
+cp "$ARCHIVES/FastReport-${VERSION}.zip" "$ARCHIVES/FastReport.zip"
 echo "created $ARCHIVES/FastReport-${VERSION}.zip and appcast.xml"
