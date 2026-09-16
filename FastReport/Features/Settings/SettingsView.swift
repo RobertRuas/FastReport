@@ -34,10 +34,14 @@ struct SettingsView: View {
                     .textSelection(.enabled)
                 Toggle("settings.updates.autoCheck", isOn: autoCheckBinding)
                     .help(Text("settings.updates.autoCheck.help"))
-                Toggle("settings.updates.autoInstall", isOn: autoInstallBinding)
-                    .help(Text("settings.updates.autoInstall.help"))
                 Button("settings.updates.check") {
                     updates.checkForUpdatesUserInitiated()
+                }
+                if updates.available != nil, updates.phase == .available || updates.phase == .readyToInstall {
+                    Button(updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install") {
+                        updates.beginInstall()
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
                 if updates.phase == .checking {
                     ProgressView("settings.updates.checking")
@@ -107,13 +111,6 @@ struct SettingsView: View {
         Binding(
             get: { updates.automaticallyChecksForUpdates },
             set: { updates.setAutomaticallyChecks($0) }
-        )
-    }
-
-    private var autoInstallBinding: Binding<Bool> {
-        Binding(
-            get: { updates.automaticallyInstallsUpdates },
-            set: { updates.setAutomaticallyInstalls($0) }
         )
     }
 

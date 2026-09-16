@@ -5,17 +5,23 @@ struct HomeView: View {
     @Environment(MapLibrary.self) private var mapLibrary
     @Environment(RecentProjectsStore.self) private var recents
     @Environment(ImageSettingsStore.self) private var imageSettings
+    @Environment(AppUpdateCenter.self) private var updates
     @State private var isWizardPresented = false
     @State private var revealFailure: AppFailure?
     @State private var session: ProjectSession?
 
     var body: some View {
-        Group {
-            if let session {
-                ProjectWorkspaceView(onClose: closeProject)
-                    .environment(session)
-            } else {
-                homeContent
+        VStack(spacing: 0) {
+            Group {
+                if let session {
+                    ProjectWorkspaceView(onClose: closeProject)
+                        .environment(session)
+                } else {
+                    homeContent
+                }
+            }
+            if session == nil {
+                AppStatusBar(items: homeStatusItems)
             }
         }
         .sheet(isPresented: $isWizardPresented) {
@@ -217,5 +223,42 @@ struct HomeView: View {
 
     private func loadIfNeeded() {
         mapLibrary.loadBundled(locale: languageStore.locale)
+    }
+
+    private var homeStatusItems: [AppStatusItem] {
+        var items: [AppStatusItem] = [
+            AppStatusItem(icon: "house", text: String(localized: "status.home", locale: languageStore.locale))
+        ]
+        switch mapLibrary.state {
+        case let .loaded(maps, _):
+            items.append(AppStatusItem(
+                icon: "map",
+                text: String(localized: "status.maps \(maps.count)", locale: languageStore.locale)
+            ))
+        case .failed:
+            items.append(AppStatusItem(
+                icon: "exclamationmark.triangle",
+                text: String(localized: "error.maps.unreadable", locale: languageStore.locale),
+                tint: .orange
+            ))
+        default:
+            break
+        }
+        items.append(AppStatusItem(
+            icon: "clock",
+            text: String(localized: "status.recents \(recents.items.count)", locale: languageStore.locale)
+        ))
+        items.append(AppStatusItem(
+            icon: "number",
+            text: String(localized: "status.version \(AppVersion.display())", locale: languageStore.locale)
+        ))
+        if updates.hasUpdateBadge, let version = updates.available?.version {
+            items.append(AppStatusItem(
+                icon: "arrow.down.app",
+                text: String(localized: "status.update \(version)", locale: languageStore.locale),
+                tint: .orange
+            ))
+        }
+        return items
     }
 }

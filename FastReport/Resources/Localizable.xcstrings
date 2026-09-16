@@ -2065,13 +2065,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "As atualizações vêm das GitHub Releases. A verificação em segundo plano avisa quando houver uma versão nova. A instalação automática descarrega e instala quando estiver disponível."
+            "value": "As atualizações vêm das GitHub Releases. A verificação em segundo plano avisa quando houver uma versão nova. A instalação só começa quando clicar em Atualizar."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Updates come from GitHub Releases. Background checking notifies you when a new version is available. Automatic installation downloads and installs it when you want that."
+            "value": "Updates come from GitHub Releases. Background checking notifies you when a new version is available. Installation starts only when you click Update."
           }
         }
       }
@@ -2518,40 +2518,6 @@
         }
       }
     },
-    "settings.updates.autoInstall": {
-      "extractionState": "manual",
-      "localizations": {
-        "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Instalar atualizações automaticamente"
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Install updates automatically"
-          }
-        }
-      }
-    },
-    "settings.updates.autoInstall.help": {
-      "extractionState": "manual",
-      "localizations": {
-        "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Descarrega e instala a versão nova quando existir. Ainda vê o progresso e pode ser pedida uma autorização do sistema."
-          }
-        },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Downloads and installs a new version when one exists. You still see progress, and macOS may ask for authorization."
-          }
-        }
-      }
-    },
     "settings.updates.install": {
       "extractionState": "manual",
       "localizations": {
@@ -2786,6 +2752,210 @@
           "stringUnit": {
             "state": "translated",
             "value": "Version %@ has been available since %@."
+          }
+        }
+      }
+    },
+    "status.home": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Início"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        }
+      }
+    },
+    "status.maps %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld mapas"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld maps"
+          }
+        }
+      }
+    },
+    "status.recents %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld recentes"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld recents"
+          }
+        }
+      }
+    },
+    "status.version %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "v%@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "v%@"
+          }
+        }
+      }
+    },
+    "status.update %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualização %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update %@"
+          }
+        }
+      }
+    },
+    "status.inbox %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox %lld"
+          }
+        }
+      }
+    },
+    "status.classified %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Classificadas %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorted %lld"
+          }
+        }
+      }
+    },
+    "status.review": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisão"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review"
+          }
+        }
+      }
+    },
+    "status.triage": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Triagem"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Triage"
+          }
+        }
+      }
+    },
+    "status.importing %lld %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A importar %lld/%lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importing %lld/%lld"
+          }
+        }
+      }
+    },
+    "status.undo %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desfazer %lld"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Undo %lld"
+          }
+        }
+      }
+    },
+    "status.slot %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@"
           }
         }
       }

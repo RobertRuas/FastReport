@@ -3,6 +3,7 @@ import SwiftUI
 struct ProjectWorkspaceView: View {
     @Environment(ProjectSession.self) private var session
     @Environment(AppLanguageStore.self) private var languageStore
+    @Environment(AppUpdateCenter.self) private var updates
     var onClose: () -> Void
     @State private var showShortcuts = false
 
@@ -19,6 +20,7 @@ struct ProjectWorkspaceView: View {
             } else {
                 InboxGridView()
             }
+            AppStatusBar(items: workspaceStatusItems)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
@@ -39,7 +41,7 @@ struct ProjectWorkspaceView: View {
                     .padding(8)
                     .background(.red.opacity(0.85), in: Capsule())
                     .foregroundStyle(.white)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, 40)
             }
         }
         .sheet(isPresented: $showShortcuts) {
@@ -78,6 +80,67 @@ struct ProjectWorkspaceView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
+    }
+
+    private var workspaceStatusItems: [AppStatusItem] {
+        let locale = languageStore.locale
+        var items: [AppStatusItem] = [
+            AppStatusItem(icon: "folder", text: session.project.metadata.displayName, tint: .primary)
+        ]
+        if session.mode == .triage {
+            items.append(AppStatusItem(icon: "keyboard", text: String(localized: "status.triage", locale: locale)))
+            items.append(AppStatusItem(
+                text: String(localized: "triage.position \(session.triageIndex + 1) \(session.triagePhotos.count)", locale: locale)
+            ))
+            if !session.currentSlotLabel.isEmpty {
+                items.append(AppStatusItem(
+                    icon: "tag",
+                    text: String(localized: "status.slot \(session.currentSlotLabel)", locale: locale)
+                ))
+            }
+            if !session.buffer.preview.isEmpty {
+                items.append(AppStatusItem(text: session.buffer.preview, tint: .orange))
+            }
+        } else if session.showsFolderReview {
+            items.append(AppStatusItem(icon: "square.grid.2x2", text: String(localized: "status.review", locale: locale)))
+            items.append(AppStatusItem(
+                icon: "checkmark.circle",
+                text: String(localized: "status.classified \(session.classifiedCount)", locale: locale)
+            ))
+            items.append(AppStatusItem(
+                icon: "tray",
+                text: String(localized: "status.inbox \(session.pendingCount)", locale: locale)
+            ))
+        } else {
+            items.append(AppStatusItem(
+                icon: "tray",
+                text: String(localized: "status.inbox \(session.pendingCount)", locale: locale)
+            ))
+            items.append(AppStatusItem(
+                icon: "checkmark.circle",
+                text: String(localized: "status.classified \(session.classifiedCount)", locale: locale)
+            ))
+        }
+        if session.isImporting, let progress = session.importProgress {
+            items.append(AppStatusItem(
+                icon: "square.and.arrow.down",
+                text: String(localized: "status.importing \(progress.done) \(progress.total)", locale: locale)
+            ))
+        }
+        if !session.undoStack.isEmpty {
+            items.append(AppStatusItem(
+                icon: "arrow.uturn.backward",
+                text: String(localized: "status.undo \(session.undoStack.count)", locale: locale)
+            ))
+        }
+        if updates.hasUpdateBadge, let version = updates.available?.version {
+            items.append(AppStatusItem(
+                icon: "arrow.down.app",
+                text: String(localized: "status.update \(version)", locale: locale),
+                tint: .orange
+            ))
+        }
+        return items
     }
 }
 

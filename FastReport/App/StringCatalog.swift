@@ -130,8 +130,6 @@ enum StringCatalog {
         "settings.updates.available %@",
         "settings.updates.autoCheck",
         "settings.updates.autoCheck.help",
-        "settings.updates.autoInstall",
-        "settings.updates.autoInstall.help",
         "settings.updates.install",
         "settings.updates.relaunch",
         "settings.updates.later",
@@ -165,6 +163,18 @@ enum StringCatalog {
         "error.updates.network",
         "workspace.add_photos",
         "workspace.triage.start %lld",
-        "triage.position %lld %lld"
+        "triage.position %lld %lld",
+        "status.home",
+        "status.maps %lld",
+        "status.recents %lld",
+        "status.version %@",
+        "status.update %@",
+        "status.inbox %lld",
+        "status.classified %lld",
+        "status.review",
+        "status.triage",
+        "status.importing %lld %lld",
+        "status.undo %lld",
+        "status.slot %@"
     ]
 }

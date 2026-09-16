@@ -14,6 +14,7 @@
 		1595BDB74D33F7B8CA8E6867 /* ProjectSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F291926AEEC38AF6D77DD39 /* ProjectSession.swift */; };
 		1F899E1EC52F429CF8F52603 /* PhotoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9BA41A48C7520DA7055C4A /* PhotoItem.swift */; };
 		2185CDB813F3ECBADD47275F /* ProjectCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05203B5987FA320A4112CD03 /* ProjectCreatorTests.swift */; };
+		23095925C2419D9271C1615C /* AppStatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF31EF41C8BBD5706D1BE6B0 /* AppStatusBar.swift */; };
 		2478DD70C600EEAB78D37612 /* TriageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732ADDAF0E32E07386F4D916 /* TriageView.swift */; };
 		266ED0EB2A5DE3A32B8FA678 /* inspection-t24.json in Resources */ = {isa = PBXBuildFile; fileRef = C11219605A50E08575B2DD76 /* inspection-t24.json */; };
 		280CA23C412B6EA8D61E2CC8 /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD7678F25620322719D68B08 /* AppLanguage.swift */; };
@@ -113,6 +114,7 @@
 		9F4E8DCD564BCCC9DA5AAFCE /* ThumbnailStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailStore.swift; sourceTree = "<group>"; };
 		A7FB06D1BFD5294FA15FFB80 /* UpdateViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateViews.swift; sourceTree = "<group>"; };
 		AB31DD096C197496C038F0AC /* OrganizationMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationMapTests.swift; sourceTree = "<group>"; };
+		AF31EF41C8BBD5706D1BE6B0 /* AppStatusBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStatusBar.swift; sourceTree = "<group>"; };
 		B1E9E2606F38EB419C250617 /* ImageSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSettingsStore.swift; sourceTree = "<group>"; };
 		B7B6FEF7B61D723F2594A813 /* FileNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNameFormatter.swift; sourceTree = "<group>"; };
 		BAA27B572088E3B203DD32C3 /* ProjectFolderName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFolderName.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 		597F120568104E9C14732DB7 /* Workspace */ = {
 			isa = PBXGroup;
 			children = (
+				AF31EF41C8BBD5706D1BE6B0 /* AppStatusBar.swift */,
 				BE712AD9AACDE67731652B9E /* ProjectWorkspaceView.swift */,
 				7EB8F76404FA5E0C01465C0A /* ThumbnailView.swift */,
 			);
@@ -458,6 +461,7 @@
 				F00A61A8C6BE87B5E63E3AAF /* AppFailure.swift in Sources */,
 				280CA23C412B6EA8D61E2CC8 /* AppLanguage.swift in Sources */,
 				2D3CB05E82BD98E1635CF9F9 /* AppLanguageStore.swift in Sources */,
+				23095925C2419D9271C1615C /* AppStatusBar.swift in Sources */,
 				5F5E238CB0F206558897FB21 /* AppUpdateCenter.swift in Sources */,
 				8394A598E1C00D77BE4062FC /* AppVersion.swift in Sources */,
 				114842BA1D83EEA42E369788 /* BookmarkStore.swift in Sources */,
@@ -601,7 +605,7 @@
 				CODE_SIGN_ENTITLEMENTS = FastReport/FastReportDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_LANGUAGE = pt;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -617,7 +621,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.robert.FastReport;
 				PRODUCT_NAME = FastReport;
 				SDKROOT = macosx;
@@ -711,7 +715,7 @@
 				CODE_SIGN_ENTITLEMENTS = FastReport/FastReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_LANGUAGE = pt;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -726,7 +730,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.robert.FastReport;
 				PRODUCT_NAME = FastReport;
 				SDKROOT = macosx;

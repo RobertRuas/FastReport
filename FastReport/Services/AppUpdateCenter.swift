@@ -27,7 +27,6 @@ struct AvailableUpdateInfo: Equatable {
 @Observable
 final class AppUpdateCenter {
     static let autoCheckKey = "fastreport.updates.autoCheck"
-    static let autoInstallKey = "fastreport.updates.autoInstall"
     static let checkInterval: TimeInterval = 4 * 60 * 60
 
     private let defaults: UserDefaults
@@ -47,7 +46,6 @@ final class AppUpdateCenter {
     var downloadExpected: UInt64 = 0
     var extractionProgress: Double = 0
     var automaticallyChecksForUpdates: Bool
-    var automaticallyInstallsUpdates: Bool
 
     var hasUpdateBadge: Bool {
         available != nil && phase != .installing
@@ -99,7 +97,8 @@ final class AppUpdateCenter {
             defaults.set(true, forKey: Self.autoCheckKey)
         }
         automaticallyChecksForUpdates = defaults.object(forKey: Self.autoCheckKey) as? Bool ?? true
-        automaticallyInstallsUpdates = defaults.bool(forKey: Self.autoInstallKey)
+        defaults.set(false, forKey: "fastreport.updates.autoInstall")
+        defaults.set(false, forKey: "SUAutomaticallyUpdate")
         driver = SparkleUserDriver()
         driver.center = self
         startSparkleIfNeeded()
@@ -111,15 +110,6 @@ final class AppUpdateCenter {
         updater?.automaticallyChecksForUpdates = enabled
         if enabled {
             checkInBackground(force: true)
-        }
-    }
-
-    func setAutomaticallyInstalls(_ enabled: Bool) {
-        automaticallyInstallsUpdates = enabled
-        defaults.set(enabled, forKey: Self.autoInstallKey)
-        updater?.automaticallyDownloadsUpdates = enabled
-        if enabled, pendingUpdateChoice != nil {
-            beginInstall()
         }
     }
 
@@ -247,13 +237,10 @@ final class AppUpdateCenter {
         statusMessage = String(localized: "settings.updates.progress.extract")
     }
 
-    fileprivate func noteReadyToInstall(autoInstall: Bool) {
+    fileprivate func noteReadyToInstall() {
         phase = .readyToInstall
         statusMessage = String(localized: "settings.updates.progress.ready")
         showsBanner = true
-        if autoInstall {
-            beginInstall()
-        }
     }
 
     fileprivate func noteInstalling() {
@@ -282,10 +269,11 @@ final class AppUpdateCenter {
             delegate: driver
         )
         updater.automaticallyChecksForUpdates = automaticallyChecksForUpdates
-        updater.automaticallyDownloadsUpdates = automaticallyInstallsUpdates
+        updater.automaticallyDownloadsUpdates = false
         updater.updateCheckInterval = Self.checkInterval
         do {
             try updater.start()
+            updater.automaticallyDownloadsUpdates = false
             self.updater = updater
             if automaticallyChecksForUpdates {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
@@ -347,13 +335,9 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
                 reply(.dismiss)
                 return
             }
-            if center.automaticallyInstallsUpdates || alreadyDownloaded && center.automaticallyInstallsUpdates {
-                reply(.install)
-                return
-            }
             if alreadyDownloaded {
                 center.pendingInstallChoice = reply
-                center.noteReadyToInstall(autoInstall: false)
+                center.noteReadyToInstall()
                 return
             }
             center.pendingUpdateChoice = reply
@@ -426,7 +410,7 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
                 return
             }
             center.pendingInstallChoice = reply
-            center.noteReadyToInstall(autoInstall: center.automaticallyInstallsUpdates)
+            center.noteReadyToInstall()
         }
     }
 
