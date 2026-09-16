@@ -25,7 +25,7 @@ final class ProjectSession {
 
     var settings: ImageExportSettings
     private let organizer = FileOrganizer()
-    nonisolated(unsafe) private var watcher = FolderWatcher()
+    private let watcher = FolderWatcher()
     private var ignoringWatcher = false
     private var reloadTask: Task<Void, Never>?
 
@@ -34,10 +34,6 @@ final class ProjectSession {
         self.settings = settings
         reload()
         startWatcher()
-    }
-
-    nonisolated deinit {
-        watcher.stop()
     }
 
     var inbox: [DiskPhoto] { photos.filter { $0.slotId == project.map.inbox?.id } }
