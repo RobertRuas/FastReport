@@ -7,19 +7,24 @@ struct IconActionButton: View {
     var filled: Bool = false
     var badge: Int? = nil
     var isDisabled: Bool = false
+    var compact: Bool = false
     var action: () -> Void
 
     @State private var hovering = false
+
+    private var side: CGFloat { compact ? 22 : 30 }
+    private var iconSize: CGFloat { compact ? 11 : 14 }
+    private var corner: CGFloat { compact ? 6 : 8 }
 
     var body: some View {
         Button(action: action) {
             ZStack(alignment: .topTrailing) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.system(size: iconSize, weight: .semibold))
                     .foregroundStyle(filled ? Color.white : (isDisabled ? Color.secondary : tint))
-                    .frame(width: 30, height: 30)
+                    .frame(width: side, height: side)
                     .background {
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        RoundedRectangle(cornerRadius: corner, style: .continuous)
                             .fill(fillColor)
                     }
                 if let badge, badge > 0 {

@@ -34,8 +34,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.robert.FastReport
         PRODUCT_NAME: FastReport
-        MARKETING_VERSION: "0.3.6"
-        CURRENT_PROJECT_VERSION: "9"
+        MARKETING_VERSION: "0.3.7"
+        CURRENT_PROJECT_VERSION: "10"
         GENERATE_INFOPLIST_FILE: "YES"
         INFOPLIST_FILE: FastReport/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: FastReport

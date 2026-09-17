@@ -84,7 +84,6 @@ struct HomeView: View {
                 header
                 organizeCard
                 mapsStatus
-                recentsSection
                 Spacer(minLength: 0)
             }
             .padding(28)
@@ -114,26 +113,35 @@ struct HomeView: View {
 
     private var organizeCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("home.organize.title", systemImage: "square.grid.2x2")
-                .font(.title3.weight(.semibold))
-            Text("home.organize.subtitle")
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 8) {
-                IconActionButton(
-                    systemImage: "plus",
-                    help: mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action",
-                    filled: true,
-                    isDisabled: mapLibrary.maps.isEmpty
-                ) {
-                    isWizardPresented = true
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Label("home.organize.title", systemImage: "square.grid.2x2")
+                        .font(.title3.weight(.semibold))
+                    Text("home.organize.subtitle")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                IconActionButton(
-                    systemImage: "folder",
-                    help: "home.organize.open.help"
-                ) {
-                    openPickedProject()
+                Spacer(minLength: 8)
+                HStack(spacing: 8) {
+                    IconActionButton(
+                        systemImage: "plus",
+                        help: mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action",
+                        filled: true,
+                        isDisabled: mapLibrary.maps.isEmpty
+                    ) {
+                        isWizardPresented = true
+                    }
+                    IconActionButton(
+                        systemImage: "folder",
+                        help: "home.organize.open.help"
+                    ) {
+                        openPickedProject()
+                    }
                 }
+            }
+            if !recents.items.isEmpty {
+                recentsTable
             }
         }
         .padding(20)
@@ -143,6 +151,64 @@ struct HomeView: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(.separator.opacity(0.6), lineWidth: 1)
         }
+    }
+
+    private var recentsTable: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("home.recents.title")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.tertiary)
+            VStack(spacing: 0) {
+                ForEach(Array(recents.items.enumerated()), id: \.element.id) { index, project in
+                    if index > 0 {
+                        Divider().opacity(0.6)
+                    }
+                    recentsRow(project)
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.primary.opacity(0.03))
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(.separator.opacity(0.4), lineWidth: 1)
+            }
+        }
+        .padding(.top, 4)
+    }
+
+    private func recentsRow(_ project: RecentProject) -> some View {
+        HStack(spacing: 8) {
+            Button {
+                openRecent(project)
+            } label: {
+                HStack(spacing: 10) {
+                    Text(project.displayName)
+                        .font(.caption)
+                        .lineLimit(1)
+                        .frame(width: 132, alignment: .leading)
+                    Text(abbreviatedPath(project.path))
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help(Text("home.recents.open"))
+            .accessibilityLabel(Text("home.recents.open"))
+            IconActionButton(systemImage: "arrow.up.right.square", help: "home.recents.reveal", compact: true) {
+                reveal(project)
+            }
+            IconActionButton(systemImage: "trash", help: "home.recents.remove", tint: .red, compact: true) {
+                projectPendingRemoval = project
+            }
+        }
+        .padding(.leading, 10)
+        .padding(.trailing, 6)
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder
@@ -185,48 +251,6 @@ struct HomeView: View {
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-        }
-    }
-
-    @ViewBuilder
-    private var recentsSection: some View {
-        if !recents.items.isEmpty {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("home.recents.title")
-                    .font(.headline)
-                ForEach(recents.items) { project in
-                    HStack(spacing: 10) {
-                        Button {
-                            openRecent(project)
-                        } label: {
-                            HStack(spacing: 10) {
-                                Image(systemName: "folder.fill")
-                                    .foregroundStyle(Color.accentColor)
-                                    .frame(width: 22)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(project.displayName)
-                                    Text(abbreviatedPath(project.path))
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(1)
-                                }
-                                Spacer(minLength: 8)
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .help(Text("home.recents.open"))
-                        .accessibilityLabel(Text("home.recents.open"))
-                        IconActionButton(systemImage: "arrow.up.right.square", help: "home.recents.reveal") {
-                            reveal(project)
-                        }
-                        IconActionButton(systemImage: "trash", help: "home.recents.remove", tint: .red) {
-                            projectPendingRemoval = project
-                        }
-                    }
-                    .padding(.vertical, 2)
-                }
-            }
         }
     }
 
