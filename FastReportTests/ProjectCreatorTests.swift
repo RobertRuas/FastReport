@@ -172,6 +172,82 @@ final class RecentProjectsStoreTests: XCTestCase {
         XCTAssertTrue(store.items.isEmpty)
         XCTAssertEqual(store.lastFailure?.code, "project.bookmark")
     }
+
+    func testRemoveFromListingLeavesDirectory() throws {
+        try TestFixtures.withTempDirectory { parent in
+            let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+            let created = try ProjectCreator(bookmarkStore: FakeBookmarkStore()).create(
+                map: map,
+                parent: parent,
+                displayName: "Manter"
+            )
+            let suite = "dev.robert.FastReport.recents.\(UUID().uuidString)"
+            guard let defaults = UserDefaults(suiteName: suite) else {
+                return XCTFail("defaults")
+            }
+            defaults.removePersistentDomain(forName: suite)
+            defer { defaults.removePersistentDomain(forName: suite) }
+
+            var bookmarks = FakeBookmarkStore()
+            bookmarks.resolvedURL = created.url
+            bookmarks.data = created.bookmarkData ?? Data("b".utf8)
+            let store = RecentProjectsStore(defaults: defaults, bookmarkStore: bookmarks)
+            store.remember(created)
+            XCTAssertEqual(store.items.count, 1)
+            store.removeFromListing(store.items[0])
+            XCTAssertTrue(store.items.isEmpty)
+            XCTAssertTrue(FileManager.default.fileExists(atPath: created.url.path))
+        }
+    }
+
+    func testDeleteProjectDirectoryRemovesFolder() throws {
+        try TestFixtures.withTempDirectory { parent in
+            let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+            let created = try ProjectCreator(bookmarkStore: FakeBookmarkStore()).create(
+                map: map,
+                parent: parent,
+                displayName: "Apagar"
+            )
+            let suite = "dev.robert.FastReport.recents.\(UUID().uuidString)"
+            guard let defaults = UserDefaults(suiteName: suite) else {
+                return XCTFail("defaults")
+            }
+            defaults.removePersistentDomain(forName: suite)
+            defer { defaults.removePersistentDomain(forName: suite) }
+
+            var bookmarks = FakeBookmarkStore()
+            bookmarks.resolvedURL = created.url
+            bookmarks.data = created.bookmarkData ?? Data("b".utf8)
+            let store = RecentProjectsStore(defaults: defaults, bookmarkStore: bookmarks)
+            store.remember(created)
+            store.deleteProjectDirectory(store.items[0], locale: Locale(identifier: "pt"))
+            XCTAssertNil(store.lastFailure)
+            XCTAssertTrue(store.items.isEmpty)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: created.url.path))
+        }
+    }
+
+    func testDeleteRefusesFolderWithoutIndex() throws {
+        try TestFixtures.withTempDirectory { directory in
+            let suite = "dev.robert.FastReport.recents.\(UUID().uuidString)"
+            guard let defaults = UserDefaults(suiteName: suite) else {
+                return XCTFail("defaults")
+            }
+            defaults.removePersistentDomain(forName: suite)
+            defer { defaults.removePersistentDomain(forName: suite) }
+
+            var bookmarks = FakeBookmarkStore()
+            bookmarks.resolvedURL = directory
+            bookmarks.data = Data("b".utf8)
+            let store = RecentProjectsStore(defaults: defaults, bookmarkStore: bookmarks)
+            let metadata = try ProjectMetadata(mapId: "inspection-t24", displayName: "X", createdAt: .now).validated()
+            store.remember(CreatedProject(url: directory, metadata: metadata, bookmarkData: Data("b".utf8), bookmarkWarning: nil))
+            store.deleteProjectDirectory(store.items[0], locale: Locale(identifier: "pt"))
+            XCTAssertEqual(store.lastFailure?.code, "project.delete.not_project")
+            XCTAssertEqual(store.items.count, 1)
+            XCTAssertTrue(FileManager.default.fileExists(atPath: directory.path))
+        }
+    }
 }
 
 @MainActor

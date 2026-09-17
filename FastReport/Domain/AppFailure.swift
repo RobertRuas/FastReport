@@ -91,6 +91,10 @@ struct AppFailure: LocalizedError, Equatable, Sendable {
             self.init(code: open.code, message: open.localized(locale: locale), debugDescription: String(describing: open))
             return
         }
+        if let delete = error as? ProjectDeleteError {
+            self.init(code: delete.code, message: delete.localized(locale: locale), debugDescription: String(describing: delete))
+            return
+        }
         let nsError = error as NSError
         self.init(
             code: "\(nsError.domain).\(nsError.code)",

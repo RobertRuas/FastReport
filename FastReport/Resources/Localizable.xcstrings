@@ -3214,6 +3214,125 @@
           }
         }
       }
+    },
+    "home.recents.remove": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remover"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        }
+      }
+    },
+    "home.recents.remove.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remover projeto"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove project"
+          }
+        }
+      }
+    },
+    "home.recents.remove.listing": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só da listagem"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from list"
+          }
+        }
+      }
+    },
+    "home.recents.remove.files": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apagar pasta e ficheiros"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete folder and files"
+          }
+        }
+      }
+    },
+    "home.recents.remove.body %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queres remover “%@”? Podes tirá-lo só da listagem ou apagar a pasta do projeto no disco."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove “%@”? You can take it off the list only, or delete the project folder on disk."
+          }
+        }
+      }
+    },
+    "error.project.delete.not_project": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta pasta não é um projeto FastReport. Nada foi apagado."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is not a FastReport project. Nothing was deleted."
+          }
+        }
+      }
+    },
+    "error.project.delete.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível apagar a pasta do projeto."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The project folder could not be deleted."
+          }
+        }
+      }
     }
   }
 }

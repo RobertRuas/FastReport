@@ -100,3 +100,24 @@ enum ProjectOpenError: Error, Equatable {
         }
     }
 }
+
+enum ProjectDeleteError: Error, Equatable {
+    case notAProject
+    case failed
+
+    var code: String {
+        switch self {
+        case .notAProject: "project.delete.not_project"
+        case .failed: "project.delete.failed"
+        }
+    }
+
+    func localized(locale: Locale) -> String {
+        switch self {
+        case .notAProject:
+            String(localized: "error.project.delete.not_project", locale: locale)
+        case .failed:
+            String(localized: "error.project.delete.failed", locale: locale)
+        }
+    }
+}

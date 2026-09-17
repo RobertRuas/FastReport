@@ -34,14 +34,15 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.robert.FastReport
         PRODUCT_NAME: FastReport
-        MARKETING_VERSION: "0.3.4"
-        CURRENT_PROJECT_VERSION: "7"
+        MARKETING_VERSION: "0.3.5"
+        CURRENT_PROJECT_VERSION: "8"
         GENERATE_INFOPLIST_FILE: "YES"
         INFOPLIST_FILE: FastReport/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: FastReport
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.photography
         INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 FastReport"
         INFOPLIST_KEY_LSMinimumSystemVersion: "14.0"
+        INFOPLIST_KEY_CFBundleIconName: AppIcon
         COMBINE_HIDPI_IMAGES: "YES"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         DEVELOPMENT_LANGUAGE: pt

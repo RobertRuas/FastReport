@@ -8,6 +8,7 @@ struct HomeView: View {
     @State private var isWizardPresented = false
     @State private var revealFailure: AppFailure?
     @State private var session: ProjectSession?
+    @State private var projectPendingRemoval: RecentProject?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,6 +46,35 @@ struct HomeView: View {
             Button("common.ok", role: .cancel) { revealFailure = nil }
         } message: {
             Text(revealFailure?.message ?? "")
+        }
+        .confirmationDialog(
+            Text("home.recents.remove.title"),
+            isPresented: Binding(
+                get: { projectPendingRemoval != nil },
+                set: { if !$0 { projectPendingRemoval = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("home.recents.remove.listing") {
+                if let project = projectPendingRemoval {
+                    recents.removeFromListing(project)
+                }
+                projectPendingRemoval = nil
+            }
+            Button("home.recents.remove.files", role: .destructive) {
+                if let project = projectPendingRemoval {
+                    recents.deleteProjectDirectory(project, locale: languageStore.locale)
+                    if let failure = recents.lastFailure {
+                        revealFailure = failure
+                    }
+                }
+                projectPendingRemoval = nil
+            }
+            Button("common.cancel", role: .cancel) {
+                projectPendingRemoval = nil
+            }
+        } message: {
+            Text("home.recents.remove.body \(projectPendingRemoval?.displayName ?? "")")
         }
     }
 
@@ -176,6 +206,9 @@ struct HomeView: View {
                         .buttonStyle(.borderedProminent)
                         Button("home.recents.reveal") {
                             reveal(project)
+                        }
+                        Button("home.recents.remove") {
+                            projectPendingRemoval = project
                         }
                     }
                     .padding(.vertical, 4)

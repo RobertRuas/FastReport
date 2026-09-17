@@ -97,6 +97,45 @@ final class RecentProjectsStore {
         persist()
     }
 
+    func removeFromListing(_ project: RecentProject) {
+        lastFailure = nil
+        remove(id: project.id)
+    }
+
+    func deleteProjectDirectory(_ project: RecentProject, locale: Locale) {
+        lastFailure = nil
+        let url = resolvedURL(for: project, locale: locale) ?? project.url
+        var isDirectory: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory)
+        if !exists {
+            remove(id: project.id)
+            return
+        }
+        guard isDirectory.boolValue, ProjectMetadata.fileURL(in: url) != nil else {
+            lastFailure = AppFailure(
+                code: ProjectDeleteError.notAProject.code,
+                message: ProjectDeleteError.notAProject.localized(locale: locale)
+            )
+            return
+        }
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessed {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        do {
+            try FileManager.default.removeItem(at: url)
+            remove(id: project.id)
+        } catch {
+            lastFailure = AppFailure(
+                code: ProjectDeleteError.failed.code,
+                message: ProjectDeleteError.failed.localized(locale: locale),
+                debugDescription: error.localizedDescription
+            )
+        }
+    }
+
     private func updateBookmark(id: String, data: Data, path: String) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
         items[index].bookmarkData = data
