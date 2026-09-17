@@ -25,14 +25,19 @@ cd "$ROOT"
 command -v xcodegen >/dev/null || brew install xcodegen
 xcodegen generate
 
+SIGN_IDENTITY="${CODE_SIGN_IDENTITY:--}"
+
 xcodebuild \
   -project FastReport.xcodeproj \
   -scheme FastReport \
   -configuration Release \
   -derivedDataPath "$ROOT/build/release" \
   -destination 'platform=macOS' \
-  CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY:--}" \
+  ARCHS='arm64 x86_64' \
+  ONLY_ACTIVE_ARCH=NO \
+  CODE_SIGN_IDENTITY="$SIGN_IDENTITY" \
   CODE_SIGNING_ALLOWED="${CODE_SIGNING_ALLOWED:-YES}" \
+  CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
   build
 
 APP="$ROOT/build/release/Build/Products/Release/FastReport.app"
@@ -40,6 +45,9 @@ if [[ ! -d "$APP" ]]; then
   echo "missing app at $APP" >&2
   exit 1
 fi
+
+chmod +x "$ROOT/packaging/resign_embedded_sparkle.sh"
+"$ROOT/packaging/resign_embedded_sparkle.sh" "$APP" "$SIGN_IDENTITY" "$ROOT/FastReport/FastReport.entitlements"
 
 rm -rf "$ARCHIVES"
 mkdir -p "$ARCHIVES"

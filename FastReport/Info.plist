@@ -6,6 +6,8 @@
 	<string>https://github.com/RobertRuas/FastReport/releases/latest/download/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>+f2ued0yDVVZMq75XB1aKzhFK+EN1kHNGDzBo5FaFXY=</string>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUAutomaticallyUpdate</key>

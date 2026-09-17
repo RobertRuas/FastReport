@@ -24,7 +24,7 @@ jobs:
             echo "then: gh secret set SPARKLE_PRIVATE_KEY < sparkle.key"
             exit 0
           fi
-          chmod +x packaging/make_release.sh
+          chmod +x packaging/make_release.sh packaging/resign_embedded_sparkle.sh
           packaging/make_release.sh "${GITHUB_REF_NAME}"
       - name: Publish GitHub Release
         env:

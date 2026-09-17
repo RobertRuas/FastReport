@@ -34,8 +34,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.robert.FastReport
         PRODUCT_NAME: FastReport
-        MARKETING_VERSION: "0.3.0"
-        CURRENT_PROJECT_VERSION: "3"
+        MARKETING_VERSION: "0.3.1"
+        CURRENT_PROJECT_VERSION: "4"
         GENERATE_INFOPLIST_FILE: "YES"
         INFOPLIST_FILE: FastReport/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: FastReport
@@ -59,6 +59,11 @@ targets:
           CODE_SIGN_ENTITLEMENTS: FastReport/FastReport.entitlements
           ENABLE_APP_SANDBOX: "YES"
           ENABLE_HARDENED_RUNTIME: "YES"
+    postBuildScripts:
+      - name: Re-sign Sparkle
+        basedOnDependencyAnalysis: false
+        script: |
+          "${SRCROOT}/packaging/resign_embedded_sparkle.sh" "${TARGET_BUILD_DIR}/${WRAPPER_NAME}"
     scheme:
       testTargets:
         - FastReportTests
