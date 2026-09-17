@@ -2065,13 +2065,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "As atualizações vêm das GitHub Releases. A verificação em segundo plano avisa quando houver uma versão nova. A instalação só começa quando clicar em Atualizar."
+            "value": "As atualizações vêm das GitHub Releases. Copia a app para a pasta Aplicações e abre-a de lá. A instalação só começa quando clicar em Atualizar."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Updates come from GitHub Releases. Background checking notifies you when a new version is available. Installation starts only when you click Update."
+            "value": "Updates come from GitHub Releases. Copy the app to the Applications folder and open it from there. Installation starts only when you click Update."
           }
         }
       }
@@ -2429,6 +2429,108 @@
           "stringUnit": {
             "state": "translated",
             "value": "Updates could not be checked."
+          }
+        }
+      }
+    },
+    "error.updates.location": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O FastReport está a correr a partir do zip ou de um disco temporário. Copia a app para a pasta Aplicações, abre-a de lá e volta a procurar atualizações."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FastReport is running from the zip or a temporary disk. Copy the app to the Applications folder, open it from there, then check for updates again."
+          }
+        }
+      }
+    },
+    "error.updates.signature": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A atualização descarregada não pôde ser verificada."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The downloaded update could not be verified."
+          }
+        }
+      }
+    },
+    "error.updates.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível concluir a atualização. Tenta novamente."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The update could not be completed. Please try again."
+          }
+        }
+      }
+    },
+    "settings.updates.move.action": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover para Aplicações"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to Applications"
+          }
+        }
+      }
+    },
+    "settings.updates.move.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copia o FastReport para /Applications e reabre-o de lá para as atualizações funcionarem."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies FastReport to /Applications and reopens it from there so updates can work."
+          }
+        }
+      }
+    },
+    "settings.updates.move.failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível copiar o FastReport para a pasta Aplicações."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FastReport could not be copied to the Applications folder."
           }
         }
       }

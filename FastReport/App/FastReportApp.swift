@@ -32,6 +32,7 @@ struct FastReportApp: App {
                     updates.checkForUpdatesUserInitiated()
                 }
                 .keyboardShortcut("u", modifiers: [.command])
+                .disabled(updates.requiresApplicationsFolder)
             }
         }
 

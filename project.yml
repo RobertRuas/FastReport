@@ -34,8 +34,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.robert.FastReport
         PRODUCT_NAME: FastReport
-        MARKETING_VERSION: "0.3.2"
-        CURRENT_PROJECT_VERSION: "5"
+        MARKETING_VERSION: "0.3.3"
+        CURRENT_PROJECT_VERSION: "6"
         GENERATE_INFOPLIST_FILE: "YES"
         INFOPLIST_FILE: FastReport/Info.plist
         INFOPLIST_KEY_CFBundleDisplayName: FastReport
@@ -57,7 +57,7 @@ targets:
         Release:
           CODE_SIGN_STYLE: Automatic
           CODE_SIGN_ENTITLEMENTS: FastReport/FastReport.entitlements
-          ENABLE_APP_SANDBOX: "YES"
+          ENABLE_APP_SANDBOX: "NO"
           ENABLE_HARDENED_RUNTIME: "YES"
     postBuildScripts:
       - name: Re-sign Sparkle

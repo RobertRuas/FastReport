@@ -34,9 +34,19 @@ struct SettingsView: View {
                     .textSelection(.enabled)
                 Toggle("settings.updates.autoCheck", isOn: autoCheckBinding)
                     .help(Text("settings.updates.autoCheck.help"))
+                if updates.requiresApplicationsFolder {
+                    Text("error.updates.location")
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button("settings.updates.move.action") {
+                        updates.moveToApplicationsFolder()
+                    }
+                    .help(Text("settings.updates.move.help"))
+                }
                 Button("settings.updates.check") {
                     updates.checkForUpdatesUserInitiated()
                 }
+                .disabled(updates.requiresApplicationsFolder)
                 if updates.available != nil, updates.phase == .available || updates.phase == .readyToInstall {
                     Button(updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install") {
                         updates.beginInstall()

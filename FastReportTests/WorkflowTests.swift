@@ -88,6 +88,41 @@ final class UpdateCheckerTests: XCTestCase {
         XCTAssertFalse(SparkleInstallError.isCancellation(relaunch))
         XCTAssertTrue(SparkleInstallError.isCancellation(NSError(domain: "SUSparkleErrorDomain", code: 4002)))
         XCTAssertFalse(SparkleInstallError.isCancellation(NSError(domain: "NSURLErrorDomain", code: -1009)))
+        XCTAssertTrue(SparkleInstallError.isUnupdatableLocation(NSError(domain: "SUSparkleErrorDomain", code: 1003)))
+        XCTAssertTrue(SparkleInstallError.isUnupdatableLocation(NSError(domain: "SUSparkleErrorDomain", code: 1005)))
+        XCTAssertTrue(SparkleInstallError.isNoUpdate(NSError(domain: "SUSparkleErrorDomain", code: 1001)))
+        let pt = Locale(identifier: "pt")
+        XCTAssertEqual(
+            SparkleInstallError.message(for: NSError(domain: "SUSparkleErrorDomain", code: 1005), locale: pt),
+            String(localized: "error.updates.location", locale: pt)
+        )
+        XCTAssertEqual(
+            SparkleInstallError.message(for: NSError(domain: "NSURLErrorDomain", code: -1009), locale: pt),
+            String(localized: "error.updates.network", locale: pt)
+        )
+        XCTAssertEqual(
+            SparkleInstallError.message(for: NSError(domain: "SUSparkleErrorDomain", code: 3001), locale: pt),
+            String(localized: "error.updates.signature", locale: pt)
+        )
+    }
+
+    func testDetectsTranslocatedAndCopiesAppBundle() throws {
+        let translocated = URL(fileURLWithPath: "/private/var/folders/xx/T/AppTranslocation/ABCD/d/FastReport.app")
+        XCTAssertEqual(AppInstallLocation.diagnose(bundleURL: translocated), .translocated)
+        XCTAssertTrue(AppInstallLocation.diagnose(bundleURL: translocated).blocksUpdates)
+
+        try TestFixtures.withTempDirectory { directory in
+            let source = directory.appendingPathComponent("FastReport.app")
+            let destination = directory.appendingPathComponent("Applications/FastReport.app")
+            try FileManager.default.createDirectory(at: source.appendingPathComponent("Contents"), withIntermediateDirectories: true)
+            try "ok".write(to: source.appendingPathComponent("Contents/Info.plist"), atomically: true, encoding: .utf8)
+            try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try ApplicationMover.copyToApplications(from: source, destination: destination)
+            XCTAssertTrue(FileManager.default.fileExists(atPath: destination.appendingPathComponent("Contents/Info.plist").path))
+            try "v2".write(to: source.appendingPathComponent("Contents/Info.plist"), atomically: true, encoding: .utf8)
+            try ApplicationMover.copyToApplications(from: source, destination: destination)
+            XCTAssertEqual(try String(contentsOf: destination.appendingPathComponent("Contents/Info.plist")), "v2")
+        }
     }
 }
 

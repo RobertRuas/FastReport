@@ -34,7 +34,7 @@ Idiomas: **português** (padrão) e **inglês**, nas Definições, sem mudar nom
 - Apple Silicon ou Intel
 - Distribuição fora da App Store (GitHub Releases + atualizações Sparkle)
 
-Na primeira abertura noutro Mac, o sistema pode avisar que o programador não está identificado. Clica com o botão direito na app → **Abrir**. Depois usa-se normalmente. As atualizações seguintes aparecem em **Definições → Procurar atualizações…** e só instalam quando confirmas.
+Na primeira abertura noutro Mac, o sistema pode avisar que o programador não está identificado. Clica com o botão direito na app → **Abrir**. Depois **copia o FastReport para a pasta Aplicações** e abre-o de lá — as atualizações só funcionam nessa localização. As versões seguintes aparecem em **Definições → Procurar atualizações…** e só instalam quando confirmas.
 
 ## Desenvolvimento
 

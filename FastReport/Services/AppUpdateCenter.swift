@@ -1,4 +1,5 @@
 import Foundation
+import AppKit
 import Observation
 @preconcurrency import Sparkle
 
@@ -47,6 +48,10 @@ final class AppUpdateCenter {
     var downloadExpected: UInt64 = 0
     var extractionProgress: Double = 0
     var automaticallyChecksForUpdates: Bool
+
+    var requiresApplicationsFolder: Bool {
+        AppInstallLocation.diagnose(bundleURL: Bundle.main.bundleURL).blocksUpdates
+    }
 
     var hasUpdateBadge: Bool {
         available != nil && phase != .installing && phase != .installed
@@ -122,6 +127,10 @@ final class AppUpdateCenter {
             phase = .failed
             return
         }
+        if requiresApplicationsFolder {
+            noteError(String(localized: "error.updates.location"))
+            return
+        }
         showsBanner = false
         phase = .checking
         statusMessage = String(localized: "settings.updates.checking")
@@ -130,11 +139,31 @@ final class AppUpdateCenter {
 
     func checkInBackground(force: Bool = false) {
         guard automaticallyChecksForUpdates, let updater else { return }
+        guard !requiresApplicationsFolder else { return }
         if !force, let lastBackgroundCheck, Date().timeIntervalSince(lastBackgroundCheck) < 30 * 60 {
             return
         }
         lastBackgroundCheck = Date()
         updater.checkForUpdatesInBackground()
+    }
+
+    func moveToApplicationsFolder() {
+        do {
+            let destination = ApplicationMover.destinationURL()
+            try ApplicationMover.copyToApplications(from: Bundle.main.bundleURL, destination: destination)
+            let configuration = NSWorkspace.OpenConfiguration()
+            NSWorkspace.shared.openApplication(at: destination, configuration: configuration) { [weak self] _, error in
+                DispatchQueue.main.async {
+                    if let error {
+                        self?.noteError(SparkleInstallError.message(for: error, locale: .current))
+                        return
+                    }
+                    NSApp.terminate(nil)
+                }
+            }
+        } catch {
+            noteError(String(localized: "settings.updates.move.failed"))
+        }
     }
 
     func beginInstall() {
@@ -307,7 +336,7 @@ final class AppUpdateCenter {
                 }
             }
         } catch {
-            statusMessage = AppFailure(error, locale: Locale.current).message
+            statusMessage = SparkleInstallError.message(for: error, locale: Locale.current)
             phase = .failed
         }
     }
@@ -385,10 +414,13 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
 
     func showUpdateNotFoundWithError(_ error: any Error, acknowledgement: @escaping () -> Void) {
         Task { @MainActor in
-            center?.noteNotFound()
+            if SparkleInstallError.isUnupdatableLocation(error) {
+                center?.noteError(SparkleInstallError.message(for: error, locale: .current))
+            } else {
+                center?.noteNotFound()
+            }
             acknowledgement()
         }
-        _ = error
     }
 
     func showUpdaterError(_ error: any Error, acknowledgement: @escaping () -> Void) {
@@ -404,7 +436,7 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
                 center.noteInstalledNeedsReopen()
                 return
             }
-            center.noteError(AppFailure(error, locale: Locale.current).message)
+            center.noteError(SparkleInstallError.message(for: error, locale: .current))
         }
     }
 
@@ -480,25 +512,6 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
     func dismissUpdateInstallation() {
         Task { @MainActor in
             center?.noteDismissed()
-        }
-    }
-}
-
-enum SparkleInstallError {
-    static let sparkleDomain = "SUSparkleErrorDomain"
-    static let canceledCodes: Set<Int> = [4002, 4005]
-
-    static func isCancellation(_ error: Error) -> Bool {
-        let nsError = error as NSError
-        return nsError.domain == sparkleDomain && canceledCodes.contains(nsError.code)
-    }
-
-    static func happenedAfterInstallStarted(_ phase: UpdatePhase) -> Bool {
-        switch phase {
-        case .extracting, .readyToInstall, .installing, .installed:
-            return true
-        default:
-            return false
         }
     }
 }
