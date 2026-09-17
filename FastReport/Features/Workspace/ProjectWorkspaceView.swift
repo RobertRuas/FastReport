@@ -3,7 +3,6 @@ import SwiftUI
 struct ProjectWorkspaceView: View {
     @Environment(ProjectSession.self) private var session
     @Environment(AppLanguageStore.self) private var languageStore
-    @Environment(AppUpdateCenter.self) private var updates
     var onClose: () -> Void
     @State private var showShortcuts = false
 
@@ -76,6 +75,7 @@ struct ProjectWorkspaceView: View {
                 Image(systemName: "keyboard")
             }
             .help(Text("shortcuts.title"))
+            UpdateToolbarButton()
             SettingsGearButton()
         }
         .padding(.horizontal, 16)
@@ -131,13 +131,6 @@ struct ProjectWorkspaceView: View {
             items.append(AppStatusItem(
                 icon: "arrow.uturn.backward",
                 text: String(localized: "status.undo \(session.undoStack.count)", locale: locale)
-            ))
-        }
-        if updates.hasUpdateBadge, let version = updates.available?.version {
-            items.append(AppStatusItem(
-                icon: "arrow.down.app",
-                text: String(localized: "status.update \(version)", locale: locale),
-                tint: .orange
             ))
         }
         return items

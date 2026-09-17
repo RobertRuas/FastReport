@@ -31,14 +31,40 @@ final class RecentProjectsStore {
     }
 
     func remember(_ created: CreatedProject) {
-        lastFailure = created.bookmarkWarning
-        guard let bookmarkData = created.bookmarkData, !bookmarkData.isEmpty else { return }
-        let record = RecentProject(
-            id: created.url.standardizedFileURL.path,
+        remember(
+            url: created.url,
             displayName: created.metadata.displayName,
-            path: created.url.standardizedFileURL.path,
+            createdAt: created.metadata.createdAt,
+            bookmarkData: created.bookmarkData,
+            warning: created.bookmarkWarning
+        )
+    }
+
+    func remember(_ opened: OpenedProject) {
+        remember(
+            url: opened.url,
+            displayName: opened.metadata.displayName,
+            createdAt: opened.metadata.createdAt,
+            bookmarkData: opened.bookmarkData,
+            warning: nil
+        )
+    }
+
+    func remember(
+        url: URL,
+        displayName: String,
+        createdAt: Date,
+        bookmarkData: Data?,
+        warning: AppFailure?
+    ) {
+        lastFailure = warning
+        guard let bookmarkData, !bookmarkData.isEmpty else { return }
+        let record = RecentProject(
+            id: url.standardizedFileURL.path,
+            displayName: displayName,
+            path: url.standardizedFileURL.path,
             bookmarkData: bookmarkData,
-            createdAt: created.metadata.createdAt
+            createdAt: createdAt
         )
         items.removeAll { $0.id == record.id || $0.path == record.path }
         items.insert(record, at: 0)

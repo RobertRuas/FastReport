@@ -20,11 +20,12 @@ Não há nuvem, contas nem IA. O valor está no teclado, no Finder e em 300+ fot
 
 ## Fluxo
 
-1. **Novo projeto** — escolhes o mapa, a pasta-mãe e o nome do dia.
-2. **Importar** — arrastar fotos ou escolher ficheiros. Originais fora do projeto não são apagados.
-3. **Triagem** — uma foto de cada vez. `1`–`24` + Enter para T1–T24, `0` para General, `⌘⌫` para lixo, `⌘Z` para desfazer, `R` para rodar.
-4. **Revisão** — grelha por pasta, reordenar e recategorizar.
-5. **Finder** — o relatório futuro lê estas pastas. A app já fez a parte chata.
+1. **Novo projeto** — escolhes o mapa, a pasta-mãe e o nome do dia. A pasta fica com `fastreport.json`.
+2. **Abrir projeto** — escolhes uma pasta que já tenha `fastreport.json`.
+3. **Importar** — arrastar fotos ou escolher ficheiros. Originais fora do projeto não são apagados.
+4. **Triagem** — uma foto de cada vez. `1`–`24` + Enter para T1–T24, `0` para General, `⌘⌫` para lixo, `⌘Z` para desfazer, `R` para rodar.
+5. **Revisão** — grelha por pasta, reordenar e recategorizar.
+6. **Finder** — o relatório futuro lê estas pastas. A app já fez a parte chata.
 
 Idiomas: **português** (padrão) e **inglês**, nas Definições, sem mudar nomes de pastas no disco.
 

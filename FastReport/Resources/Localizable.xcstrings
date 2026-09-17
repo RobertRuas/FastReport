@@ -59,13 +59,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Crie um projeto a partir de um mapa, importe as fotos do dia e classifique-as com o teclado."
+            "value": "Crie um projeto a partir de um mapa ou abra uma pasta com fastreport.json, importe as fotos do dia e classifique-as com o teclado."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Create a project from a map, import the day’s photos, and sort them with the keyboard."
+            "value": "Create a project from a map or open a folder with fastreport.json, import the day’s photos, and sort them with the keyboard."
           }
         }
       }
@@ -2320,13 +2320,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta pasta não é um projeto FastReport."
+            "value": "Esta pasta não é um projeto FastReport. Falta o ficheiro fastreport.json."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This folder is not a FastReport project."
+            "value": "This folder is not a FastReport project. The fastreport.json file is missing."
           }
         }
       }
@@ -3092,6 +3092,125 @@
           "stringUnit": {
             "state": "translated",
             "value": "The update was installed. Close this window and open FastReport again."
+          }
+        }
+      }
+    },
+    "home.organize.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir projeto"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open project"
+          }
+        }
+      }
+    },
+    "home.organize.open.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha a pasta do projeto que contém o ficheiro fastreport.json."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the project folder that contains the fastreport.json file."
+          }
+        }
+      }
+    },
+    "home.organize.open.panel": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecione a pasta do projeto FastReport."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select the FastReport project folder."
+          }
+        }
+      }
+    },
+    "home.organize.open.prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        }
+      }
+    },
+    "updates.toolbar.available": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualização disponível"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update available"
+          }
+        }
+      }
+    },
+    "updates.toolbar.progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A atualizar…"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updating…"
+          }
+        }
+      }
+    },
+    "updates.sheet.close": {
+      "extractionState": "manual",
+      "localizations": {
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
           }
         }
       }

@@ -43,7 +43,7 @@ final class AppUpdateCenter {
     var phase: UpdatePhase = .idle
     var available: AvailableUpdateInfo?
     var statusMessage: String = ""
-    var showsBanner: Bool = false
+    var showsUpdateSheet: Bool = false
     var downloadReceived: UInt64 = 0
     var downloadExpected: UInt64 = 0
     var extractionProgress: Double = 0
@@ -53,13 +53,28 @@ final class AppUpdateCenter {
         AppInstallLocation.diagnose(bundleURL: Bundle.main.bundleURL).blocksUpdates
     }
 
-    var hasUpdateBadge: Bool {
-        available != nil && phase != .installing && phase != .installed
+    var showsToolbarUpdateIcon: Bool {
+        if requiresApplicationsFolder { return false }
+        switch phase {
+        case .available, .downloading, .extracting, .readyToInstall, .installing, .installed:
+            return true
+        default:
+            return available != nil
+        }
     }
 
-    var showsProgressOverlay: Bool {
+    var isUpdateInProgress: Bool {
         switch phase {
-        case .checking, .downloading, .extracting, .readyToInstall, .installing, .installed:
+        case .downloading, .extracting, .installing:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var showsProgressDetails: Bool {
+        switch phase {
+        case .checking, .downloading, .extracting, .readyToInstall, .installing:
             return true
         default:
             return false
@@ -121,20 +136,35 @@ final class AppUpdateCenter {
         }
     }
 
-    func checkForUpdatesUserInitiated() {
+    func checkForUpdatesUserInitiated(presentSheet: Bool = true) {
         guard let updater else {
             statusMessage = String(localized: "settings.updates.unconfigured")
             phase = .failed
+            if presentSheet { showsUpdateSheet = true }
             return
         }
         if requiresApplicationsFolder {
             noteError(String(localized: "error.updates.location"))
+            if presentSheet { showsUpdateSheet = true }
             return
         }
-        showsBanner = false
+        if presentSheet {
+            showsUpdateSheet = true
+        }
         phase = .checking
         statusMessage = String(localized: "settings.updates.checking")
         updater.checkForUpdates()
+    }
+
+    func presentUpdateSheet() {
+        showsUpdateSheet = true
+        if available == nil, phase != .checking, !isUpdateInProgress {
+            checkForUpdatesUserInitiated(presentSheet: true)
+        }
+    }
+
+    func dismissUpdateSheet() {
+        showsUpdateSheet = false
     }
 
     func checkInBackground(force: Bool = false) {
@@ -180,12 +210,6 @@ final class AppUpdateCenter {
         updater?.checkForUpdates()
     }
 
-    func dismissBanner() {
-        showsBanner = false
-        pendingUpdateChoice?(.dismiss)
-        pendingUpdateChoice = nil
-    }
-
     func cancelCurrent() {
         cancelCheck?()
         cancelDownload?()
@@ -197,7 +221,6 @@ final class AppUpdateCenter {
         pendingInstallChoice = nil
         if available != nil {
             phase = .available
-            showsBanner = true
         } else {
             phase = .idle
         }
@@ -212,12 +235,10 @@ final class AppUpdateCenter {
             releaseNotes: Self.plainNotes(from: item.itemDescription),
             isInformational: item.isInformationOnlyUpdate
         )
+        _ = userInitiated
         available = info
         phase = alreadyDownloaded ? .readyToInstall : .available
         statusMessage = String(localized: "settings.updates.available \(info.version)")
-        if !userInitiated || !showsProgressOverlay {
-            showsBanner = true
-        }
     }
 
     fileprivate func noteChecking() {
@@ -227,7 +248,6 @@ final class AppUpdateCenter {
 
     fileprivate func noteNotFound() {
         available = nil
-        showsBanner = false
         phase = .upToDate
         statusMessage = String(localized: "settings.updates.current")
     }
@@ -241,7 +261,6 @@ final class AppUpdateCenter {
         phase = .downloading
         downloadReceived = 0
         downloadExpected = 0
-        showsBanner = true
         statusMessage = String(localized: "settings.updates.progress.download")
     }
 
@@ -272,7 +291,6 @@ final class AppUpdateCenter {
     fileprivate func noteReadyToInstall() {
         phase = .readyToInstall
         statusMessage = String(localized: "settings.updates.progress.ready")
-        showsBanner = true
     }
 
     fileprivate func noteInstalling() {
@@ -282,7 +300,6 @@ final class AppUpdateCenter {
 
     fileprivate func noteInstalledNeedsReopen() {
         phase = .installed
-        showsBanner = false
         available = nil
         statusMessage = String(localized: "settings.updates.installed.reopen")
     }
@@ -290,7 +307,7 @@ final class AppUpdateCenter {
     func dismissInstalledNotice() {
         phase = .idle
         statusMessage = ""
-        showsBanner = false
+        showsUpdateSheet = false
         available = nil
     }
 
@@ -504,7 +521,7 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
     func showUpdateInFocus() {
         Task { @MainActor in
             if center?.available != nil {
-                center?.showsBanner = true
+                center?.showsUpdateSheet = true
             }
         }
     }

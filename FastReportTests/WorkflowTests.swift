@@ -219,3 +219,35 @@ final class ProjectSessionTests: XCTestCase {
         session.close()
     }
 }
+
+final class ProjectOpenerTests: XCTestCase {
+    func testOpensVisibleIndexAndMigratesLegacyHiddenFile() throws {
+        try TestFixtures.withTempDirectory { parent in
+            let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+            let created = try ProjectCreator(bookmarkStore: FakeBookmarkStore()).create(
+                map: map,
+                parent: parent,
+                displayName: "Aberto"
+            )
+            let visible = created.url.appendingPathComponent(ProjectMetadata.fileName)
+            XCTAssertTrue(FileManager.default.fileExists(atPath: visible.path))
+            let opened = try ProjectOpener.open(url: created.url, maps: [map])
+            XCTAssertEqual(opened.metadata.displayName, "Aberto")
+
+            let legacy = created.url.appendingPathComponent(ProjectMetadata.legacyFileName)
+            try FileManager.default.moveItem(at: visible, to: legacy)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: visible.path))
+            let migrated = try ProjectOpener.open(url: created.url, maps: [map])
+            XCTAssertEqual(migrated.metadata.displayName, "Aberto")
+            XCTAssertTrue(FileManager.default.fileExists(atPath: visible.path))
+        }
+    }
+
+    func testRejectsFolderWithoutIndex() throws {
+        try TestFixtures.withTempDirectory { directory in
+            XCTAssertThrowsError(try ProjectOpener.open(url: directory, maps: [])) { error in
+                XCTAssertEqual(error as? ProjectOpenError, .missingMetadata)
+            }
+        }
+    }
+}

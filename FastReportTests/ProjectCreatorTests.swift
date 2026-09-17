@@ -35,6 +35,7 @@ final class ProjectCreatorTests: XCTestCase {
             let project = parent.appendingPathComponent("Inspeção X", isDirectory: true)
             XCTAssertEqual(created.url.standardizedFileURL, project.standardizedFileURL)
             XCTAssertTrue(FileManager.default.fileExists(atPath: project.appendingPathComponent(ProjectMetadata.fileName).path))
+            XCTAssertEqual(ProjectMetadata.fileName, "fastreport.json")
 
             for slot in map.slots {
                 var isDirectory: ObjCBool = false

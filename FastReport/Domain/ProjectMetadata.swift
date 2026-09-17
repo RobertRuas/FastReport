@@ -2,7 +2,20 @@ import Foundation
 
 struct ProjectMetadata: Codable, Equatable, Sendable {
     static let currentSchemaVersion = 1
-    static let fileName = ".fastreport.json"
+    static let fileName = "fastreport.json"
+    static let legacyFileName = ".fastreport.json"
+
+    static func fileURL(in projectURL: URL, fileManager: FileManager = .default) -> URL? {
+        let current = projectURL.appendingPathComponent(fileName)
+        if fileManager.fileExists(atPath: current.path) {
+            return current
+        }
+        let legacy = projectURL.appendingPathComponent(legacyFileName)
+        if fileManager.fileExists(atPath: legacy.path) {
+            return legacy
+        }
+        return nil
+    }
 
     var schemaVersion: Int
     var mapId: String

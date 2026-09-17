@@ -30,16 +30,23 @@ enum ProjectOpener {
             throw ProjectOpenError.inaccessible
         }
 
-        let metadataURL = url.appendingPathComponent(ProjectMetadata.fileName)
-        guard FileManager.default.fileExists(atPath: metadataURL.path) else {
+        guard let metadataURL = ProjectMetadata.fileURL(in: url) else {
             throw ProjectOpenError.missingMetadata
         }
 
+        let metadataData: Data
         let metadata: ProjectMetadata
         do {
-            metadata = try ProjectMetadata.decode(from: Data(contentsOf: metadataURL))
+            metadataData = try Data(contentsOf: metadataURL)
+            metadata = try ProjectMetadata.decode(from: metadataData)
         } catch {
             throw ProjectOpenError.missingMetadata
+        }
+
+        let visibleURL = url.appendingPathComponent(ProjectMetadata.fileName)
+        if metadataURL.lastPathComponent == ProjectMetadata.legacyFileName,
+           !FileManager.default.fileExists(atPath: visibleURL.path) {
+            try? metadataData.write(to: visibleURL, options: [.atomic])
         }
 
         guard let map = maps.first(where: { $0.id == metadata.mapId }) else {

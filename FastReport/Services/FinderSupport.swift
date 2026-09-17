@@ -30,6 +30,20 @@ enum DirectoryPicker {
     }
 
     @MainActor
+    static func pickProjectDirectory(locale: Locale) -> URL? {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.canCreateDirectories = false
+        panel.treatsFilePackagesAsDirectories = true
+        panel.message = String(localized: "home.organize.open.panel", locale: locale)
+        panel.prompt = String(localized: "home.organize.open.prompt", locale: locale)
+        guard panel.runModal() == .OK else { return nil }
+        return panel.url
+    }
+
+    @MainActor
     static func pickImageFiles(locale: Locale) -> [URL] {
         let panel = NSOpenPanel()
         panel.canChooseFiles = true

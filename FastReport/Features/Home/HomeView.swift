@@ -5,7 +5,6 @@ struct HomeView: View {
     @Environment(MapLibrary.self) private var mapLibrary
     @Environment(RecentProjectsStore.self) private var recents
     @Environment(ImageSettingsStore.self) private var imageSettings
-    @Environment(AppUpdateCenter.self) private var updates
     @State private var isWizardPresented = false
     @State private var revealFailure: AppFailure?
     @State private var session: ProjectSession?
@@ -62,7 +61,8 @@ struct HomeView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             .navigationTitle(Text("home.title"))
             .toolbar {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItemGroup(placement: .automatic) {
+                    UpdateToolbarButton()
                     SettingsGearButton()
                 }
             }
@@ -89,12 +89,18 @@ struct HomeView: View {
             Text("home.organize.subtitle")
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            Button("home.organize.action") {
-                isWizardPresented = true
+            HStack(spacing: 10) {
+                Button("home.organize.action") {
+                    isWizardPresented = true
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(mapLibrary.maps.isEmpty)
+                .help(mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action")
+                Button("home.organize.open") {
+                    openPickedProject()
+                }
+                .help(Text("home.organize.open.help"))
             }
-            .buttonStyle(.borderedProminent)
-            .disabled(mapLibrary.maps.isEmpty)
-            .help(mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action")
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -205,6 +211,12 @@ struct HomeView: View {
         openURL(url, bookmark: project.bookmarkData)
     }
 
+    private func openPickedProject() {
+        guard let url = DirectoryPicker.pickProjectDirectory(locale: languageStore.locale) else { return }
+        let bookmark = try? SecurityScopedBookmarkStore().save(projectURL: url)
+        openURL(url, bookmark: bookmark)
+    }
+
     private func openCreated(_ created: CreatedProject) {
         openURL(created.url, bookmark: created.bookmarkData)
     }
@@ -212,7 +224,8 @@ struct HomeView: View {
     private func openURL(_ url: URL, bookmark: Data?) {
         do {
             var opened = try ProjectOpener.open(url: url, maps: mapLibrary.maps)
-            opened.bookmarkData = bookmark
+            opened.bookmarkData = bookmark ?? (try? SecurityScopedBookmarkStore().save(projectURL: url))
+            recents.remember(opened)
             session = ProjectSession(project: opened, settings: imageSettings.settings)
         } catch {
             revealFailure = AppFailure(error, locale: languageStore.locale)
@@ -255,13 +268,6 @@ struct HomeView: View {
             icon: "number",
             text: String(localized: "status.version \(AppVersion.display())", locale: languageStore.locale)
         ))
-        if updates.hasUpdateBadge, let version = updates.available?.version {
-            items.append(AppStatusItem(
-                icon: "arrow.down.app",
-                text: String(localized: "status.update \(version)", locale: languageStore.locale),
-                tint: .orange
-            ))
-        }
         return items
     }
 }
