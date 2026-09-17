@@ -25,6 +25,7 @@ struct TriageView: View {
                 session.exitTriage()
             } label: {
                 Image(systemName: "xmark")
+                    .frame(width: 28, height: 28)
             }
             .help(Text("triage.close"))
 

@@ -51,30 +51,34 @@ struct ProjectWorkspaceView: View {
     }
 
     private var workspaceHeader: some View {
-        HStack(spacing: 12) {
-            Button("workspace.home", action: onClose)
+        HStack(spacing: 8) {
+            IconActionButton(systemImage: "house", help: "workspace.home", action: onClose)
             Text(session.project.metadata.displayName)
                 .font(.headline)
             Spacer()
-            Button("workspace.add_photos") {
+            IconActionButton(
+                systemImage: "photo.badge.plus",
+                help: "workspace.add_photos",
+                isDisabled: session.isImporting
+            ) {
                 Task { await session.pickAndImport(locale: languageStore.locale) }
             }
-            .disabled(session.isImporting)
-            Button("home.recents.reveal") {
+            IconActionButton(systemImage: "arrow.up.right.square", help: "home.recents.reveal") {
                 FinderReveal.reveal(session.project.url)
             }
             if session.pendingCount > 0 {
-                Button("workspace.triage.start \(session.pendingCount)") {
+                IconActionButton(
+                    systemImage: "play.fill",
+                    help: "workspace.triage.start \(session.pendingCount)",
+                    filled: true,
+                    badge: session.pendingCount
+                ) {
                     session.startTriage()
                 }
-                .buttonStyle(.borderedProminent)
             }
-            Button {
+            IconActionButton(systemImage: "keyboard", help: "shortcuts.title") {
                 showShortcuts = true
-            } label: {
-                Image(systemName: "keyboard")
             }
-            .help(Text("shortcuts.title"))
             UpdateToolbarButton()
             SettingsGearButton()
         }

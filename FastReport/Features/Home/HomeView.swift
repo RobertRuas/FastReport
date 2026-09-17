@@ -119,17 +119,21 @@ struct HomeView: View {
             Text("home.organize.subtitle")
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 10) {
-                Button("home.organize.action") {
+            HStack(spacing: 8) {
+                IconActionButton(
+                    systemImage: "plus",
+                    help: mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action",
+                    filled: true,
+                    isDisabled: mapLibrary.maps.isEmpty
+                ) {
                     isWizardPresented = true
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(mapLibrary.maps.isEmpty)
-                .help(mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action")
-                Button("home.organize.open") {
+                IconActionButton(
+                    systemImage: "folder",
+                    help: "home.organize.open.help"
+                ) {
                     openPickedProject()
                 }
-                .help(Text("home.organize.open.help"))
             }
         }
         .padding(20)
@@ -176,7 +180,7 @@ struct HomeView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
-                Button("common.retry", action: loadIfNeeded)
+                IconActionButton(systemImage: "arrow.clockwise", help: "common.retry", action: loadIfNeeded)
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -191,27 +195,36 @@ struct HomeView: View {
                 Text("home.recents.title")
                     .font(.headline)
                 ForEach(recents.items) { project in
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(project.displayName)
-                            Text(abbreviatedPath(project.path))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
-                        }
-                        Spacer()
-                        Button("home.recents.open") {
+                    HStack(spacing: 10) {
+                        Button {
                             openRecent(project)
+                        } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: "folder.fill")
+                                    .foregroundStyle(Color.accentColor)
+                                    .frame(width: 22)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(project.displayName)
+                                    Text(abbreviatedPath(project.path))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                }
+                                Spacer(minLength: 8)
+                            }
+                            .contentShape(Rectangle())
                         }
-                        .buttonStyle(.borderedProminent)
-                        Button("home.recents.reveal") {
+                        .buttonStyle(.plain)
+                        .help(Text("home.recents.open"))
+                        .accessibilityLabel(Text("home.recents.open"))
+                        IconActionButton(systemImage: "arrow.up.right.square", help: "home.recents.reveal") {
                             reveal(project)
                         }
-                        Button("home.recents.remove") {
+                        IconActionButton(systemImage: "trash", help: "home.recents.remove", tint: .red) {
                             projectPendingRemoval = project
                         }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 2)
                 }
             }
         }

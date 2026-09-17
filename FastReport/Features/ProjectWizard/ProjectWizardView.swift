@@ -136,7 +136,16 @@ struct ProjectWizardView: View {
                     .foregroundStyle(model.parentPath.isEmpty ? .secondary : .primary)
                     .lineLimit(2)
                     .textSelection(.enabled)
-                Button("wizard.location.choose", action: { model.chooseParent(locale: languageStore.locale) })
+                Button {
+                    model.chooseParent(locale: languageStore.locale)
+                } label: {
+                    Image(systemName: "folder.badge.plus")
+                        .font(.system(size: 14, weight: .semibold))
+                        .frame(width: 30, height: 30)
+                }
+                .buttonStyle(.plain)
+                .help(Text("wizard.location.choose"))
+                .accessibilityLabel(Text("wizard.location.choose"))
                 if let locationError = model.locationError {
                     Text(locationError.message)
                         .font(.callout)
@@ -183,9 +192,16 @@ struct ProjectWizardView: View {
                 Text("wizard.success.body")
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
-                Button("wizard.success.reveal") {
+                Button {
                     FinderReveal.reveal(created.url)
+                } label: {
+                    Image(systemName: "arrow.up.right.square")
+                        .font(.system(size: 14, weight: .semibold))
+                        .frame(width: 30, height: 30)
                 }
+                .buttonStyle(.plain)
+                .help(Text("wizard.success.reveal"))
+                .accessibilityLabel(Text("wizard.success.reveal"))
             }
             if let failure = model.failure {
                 errorBanner(failure)
@@ -209,41 +225,55 @@ struct ProjectWizardView: View {
     }
 
     private var footer: some View {
-        HStack {
+        HStack(spacing: 8) {
             if model.step != .success {
-                Button("common.cancel") { dismiss() }
-                    .keyboardShortcut(.cancelAction)
+                IconActionButton(systemImage: "xmark", help: "common.cancel") {
+                    dismiss()
+                }
+                .keyboardShortcut(.cancelAction)
             }
             Spacer()
             switch model.step {
             case .map:
-                Button("common.continue") { model.goToDetails(locale: languageStore.locale) }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(!model.canContinueFromMap)
-            case .details:
-                Button("common.back", action: model.goBack)
-                    .disabled(model.isCreating)
-                Button {
-                    model.createProject(creator: creator, recents: recents, locale: languageStore.locale)
-                } label: {
-                    if model.isCreating {
-                        ProgressView()
-                            .controlSize(.small)
-                            .padding(.horizontal, 8)
-                    } else {
-                        Text("wizard.create")
-                    }
+                IconActionButton(
+                    systemImage: "chevron.right",
+                    help: "common.continue",
+                    filled: true,
+                    isDisabled: !model.canContinueFromMap
+                ) {
+                    model.goToDetails(locale: languageStore.locale)
                 }
                 .keyboardShortcut(.defaultAction)
-                .disabled(!model.canCreate)
+            case .details:
+                IconActionButton(
+                    systemImage: "chevron.left",
+                    help: "common.back",
+                    isDisabled: model.isCreating,
+                    action: model.goBack
+                )
+                if model.isCreating {
+                    ProgressView()
+                        .controlSize(.small)
+                        .frame(width: 30, height: 30)
+                } else {
+                    IconActionButton(
+                        systemImage: "plus",
+                        help: "wizard.create",
+                        filled: true,
+                        isDisabled: !model.canCreate
+                    ) {
+                        model.createProject(creator: creator, recents: recents, locale: languageStore.locale)
+                    }
+                    .keyboardShortcut(.defaultAction)
+                }
             case .success:
-                Button("common.done") {
+                IconActionButton(systemImage: "checkmark", help: "common.done", filled: true) {
                     if let created = model.created {
                         onFinished?(created)
                     }
                     dismiss()
                 }
-                    .keyboardShortcut(.defaultAction)
+                .keyboardShortcut(.defaultAction)
             }
         }
     }

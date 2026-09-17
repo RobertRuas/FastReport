@@ -10,6 +10,7 @@
 		03577E0DD298C070A7426849 /* ProjectCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BAB1DF64ABFF841212B740 /* ProjectCreator.swift */; };
 		0B5AC1D62FEBCB8E61165239 /* RecentProjectsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 192E582850A483623410A097 /* RecentProjectsStore.swift */; };
 		0B7FFC34DC29161FE27A58D8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C0CB7A93F06F1DE263E1B2 /* SettingsView.swift */; };
+		10F69D2B593AECCFECE66828 /* IconActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA82C9CAC5581C1777FCDFD /* IconActionButton.swift */; };
 		114842BA1D83EEA42E369788 /* BookmarkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A413F7E0262330DBE2146C /* BookmarkStore.swift */; };
 		1595BDB74D33F7B8CA8E6867 /* ProjectSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F291926AEEC38AF6D77DD39 /* ProjectSession.swift */; };
 		1F899E1EC52F429CF8F52603 /* PhotoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9BA41A48C7520DA7055C4A /* PhotoItem.swift */; };
@@ -138,6 +139,7 @@
 		E905EDF758AA171E28074EE3 /* AppUpdateCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateCenter.swift; sourceTree = "<group>"; };
 		EA22A2397A9CEDE803ED5CA1 /* ImagePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePipeline.swift; sourceTree = "<group>"; };
 		EBDEC1C44C58975C6AC3D17D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		ECA82C9CAC5581C1777FCDFD /* IconActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IconActionButton.swift; sourceTree = "<group>"; };
 		ECB759403F492D8C1631C5FC /* MapValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapValidator.swift; sourceTree = "<group>"; };
 		F05E56B6EF3C941396267D90 /* ProjectWizardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectWizardModel.swift; sourceTree = "<group>"; };
 		F5770452817AE87B38598B37 /* ProjectWizardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectWizardView.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				AF31EF41C8BBD5706D1BE6B0 /* AppStatusBar.swift */,
+				ECA82C9CAC5581C1777FCDFD /* IconActionButton.swift */,
 				BE712AD9AACDE67731652B9E /* ProjectWorkspaceView.swift */,
 				7EB8F76404FA5E0C01465C0A /* ThumbnailView.swift */,
 			);
@@ -503,6 +506,7 @@
 				46F672326392197411BB636A /* FinderSupport.swift in Sources */,
 				61722FF6B51F176749D7B7F2 /* FolderWatcher.swift in Sources */,
 				898C4D062D5C87BA457F283C /* HomeView.swift in Sources */,
+				10F69D2B593AECCFECE66828 /* IconActionButton.swift in Sources */,
 				D51BD453D4C1DE73D45EDC8A /* ImagePipeline.swift in Sources */,
 				BD852DE215C352650AA8E01B /* ImageSettingsStore.swift in Sources */,
 				3EC11FB890AE5B07342BE175 /* InboxGridView.swift in Sources */,
@@ -636,7 +640,7 @@
 				CODE_SIGN_ENTITLEMENTS = FastReport/FastReportDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_LANGUAGE = pt;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -653,7 +657,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.5;
+				MARKETING_VERSION = 0.3.6;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.robert.FastReport;
 				PRODUCT_NAME = FastReport;
 				SDKROOT = macosx;
@@ -747,7 +751,7 @@
 				CODE_SIGN_ENTITLEMENTS = FastReport/FastReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_LANGUAGE = pt;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -763,7 +767,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.5;
+				MARKETING_VERSION = 0.3.6;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.robert.FastReport;
 				PRODUCT_NAME = FastReport;
 				SDKROOT = macosx;

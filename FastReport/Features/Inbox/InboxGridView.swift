@@ -38,10 +38,17 @@ struct InboxGridView: View {
 
     private var importBar: some View {
         HStack {
+            Image(systemName: "square.and.arrow.down")
+                .foregroundStyle(.secondary)
             Text("import.drop")
                 .foregroundStyle(.secondary)
             Spacer()
-            Button("import.choose") {
+            IconActionButton(
+                systemImage: "photo.badge.plus",
+                help: "import.choose",
+                filled: true,
+                isDisabled: session.isImporting
+            ) {
                 Task { await session.pickAndImport(locale: languageStore.locale) }
             }
         }

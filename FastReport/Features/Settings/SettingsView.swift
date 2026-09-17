@@ -38,20 +38,31 @@ struct SettingsView: View {
                     Text("error.updates.location")
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    Button("settings.updates.move.action") {
+                    IconActionButton(
+                        systemImage: "folder.badge.plus",
+                        help: "settings.updates.move.action",
+                        filled: true
+                    ) {
                         updates.moveToApplicationsFolder()
                     }
-                    .help(Text("settings.updates.move.help"))
                 }
-                Button("settings.updates.check") {
-                    updates.checkForUpdatesUserInitiated(presentSheet: false)
-                }
-                .disabled(updates.requiresApplicationsFolder)
-                if updates.available != nil, updates.phase == .available || updates.phase == .readyToInstall {
-                    Button(updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install") {
-                        updates.beginInstall()
+                HStack(spacing: 8) {
+                    IconActionButton(
+                        systemImage: "arrow.clockwise",
+                        help: "settings.updates.check",
+                        isDisabled: updates.requiresApplicationsFolder
+                    ) {
+                        updates.checkForUpdatesUserInitiated(presentSheet: false)
                     }
-                    .buttonStyle(.borderedProminent)
+                    if updates.available != nil, updates.phase == .available || updates.phase == .readyToInstall {
+                        IconActionButton(
+                            systemImage: updates.phase == .readyToInstall ? "arrow.clockwise.circle.fill" : "arrow.down.app.fill",
+                            help: updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install",
+                            filled: true
+                        ) {
+                            updates.beginInstall()
+                        }
+                    }
                 }
                 if updates.phase == .checking {
                     ProgressView("settings.updates.checking")

@@ -1,15 +1,24 @@
 import SwiftUI
 
 struct SettingsGearButton: View {
+    @State private var hovering = false
+
     var body: some View {
         SettingsLink {
-            Label {
-                Text("settings.title")
-            } icon: {
-                Image(systemName: "gearshape")
-            }
+            Image(systemName: "gearshape")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.primary)
+                .frame(width: 30, height: 30)
+                .background {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color.primary.opacity(hovering ? 0.10 : 0.05))
+                }
         }
+        .buttonStyle(.plain)
+        .labelStyle(.iconOnly)
+        .onHover { hovering = $0 }
         .help(Text("settings.title"))
+        .accessibilityLabel(Text("settings.title"))
     }
 }
 
@@ -23,10 +32,16 @@ struct UpdateToolbarButton: View {
         if updates.showsToolbarUpdateIcon {
             Button(action: updates.presentUpdateSheet) {
                 Image(systemName: updates.isUpdateInProgress ? "arrow.triangle.2.circlepath" : "arrow.down.app.fill")
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(green)
+                    .frame(width: 30, height: 30)
+                    .background {
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(green.opacity(0.12))
+                    }
                     .rotationEffect(.degrees(updates.isUpdateInProgress && animating ? 360 : 0))
-                    .scaleEffect(!updates.isUpdateInProgress && animating ? 1.14 : 1)
-                    .shadow(color: green.opacity(animating ? 0.75 : 0.25), radius: animating ? 6 : 1)
+                    .scaleEffect(!updates.isUpdateInProgress && animating ? 1.08 : 1)
+                    .shadow(color: green.opacity(animating ? 0.55 : 0.18), radius: animating ? 5 : 1)
             }
             .buttonStyle(.plain)
             .help(Text(updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available"))
@@ -81,8 +96,7 @@ struct UpdateProgressCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                 HStack {
                     Spacer()
-                    Button("common.ok", action: updates.dismissInstalledNotice)
-                        .buttonStyle(.borderedProminent)
+                    IconActionButton(systemImage: "checkmark", help: "common.ok", filled: true, action: updates.dismissInstalledNotice)
                 }
             } else if let info = updates.available {
                 Text("settings.updates.available \(info.version)")
@@ -127,17 +141,15 @@ struct UpdateProgressCard: View {
             }
             HStack {
                 if updates.phase == .checking || updates.phase == .downloading {
-                    Button("settings.updates.cancel", action: updates.cancelCurrent)
+                    IconActionButton(systemImage: "xmark", help: "settings.updates.cancel", action: updates.cancelCurrent)
                 }
                 Spacer()
                 if updates.phase == .available {
-                    Button("settings.updates.install") {
+                    IconActionButton(systemImage: "arrow.down.app.fill", help: "settings.updates.install", filled: true) {
                         updates.beginInstall()
                     }
-                    .buttonStyle(.borderedProminent)
                 } else if updates.phase == .readyToInstall {
-                    Button("settings.updates.relaunch", action: updates.beginInstall)
-                        .buttonStyle(.borderedProminent)
+                    IconActionButton(systemImage: "arrow.clockwise.circle.fill", help: "settings.updates.relaunch", filled: true, action: updates.beginInstall)
                 }
             }
         }
