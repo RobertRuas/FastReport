@@ -223,10 +223,18 @@ final class LiveReorderLayoutTests: XCTestCase {
         )
     }
 
-    func testResidualKeepsTheDraggedItemUnderTheCursor() {
+    func testNeighborsSlideAsideWithoutReorderingTheSourceArray() {
         XCTAssertEqual(
-            LiveReorderLayout.residualOffset(translationX: 90, from: 0, to: 1, cellWidth: 80),
-            10
+            LiveReorderLayout.neighborOffset(index: 1, dragIndex: 0, targetIndex: 2, cellWidth: 80),
+            -80
+        )
+        XCTAssertEqual(
+            LiveReorderLayout.neighborOffset(index: 0, dragIndex: 2, targetIndex: 0, cellWidth: 80),
+            80
+        )
+        XCTAssertEqual(
+            LiveReorderLayout.neighborOffset(index: 3, dragIndex: 0, targetIndex: 2, cellWidth: 80),
+            0
         )
     }
 }

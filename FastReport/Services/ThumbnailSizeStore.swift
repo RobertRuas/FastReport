@@ -21,6 +21,9 @@ final class ThumbnailSizeStore {
     var mode: ThumbnailSizeMode
     var stepIndex: Int
 
+    var layoutWidth: CGFloat = 800
+    var layoutPhotoCount: Int = 0
+
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         if defaults.string(forKey: Self.modeKey) == ThumbnailSizeMode.manual.rawValue {
@@ -30,6 +33,19 @@ final class ThumbnailSizeStore {
         }
         let stored = defaults.object(forKey: Self.stepKey) as? Int ?? 2
         stepIndex = min(max(stored, 0), Self.steps.count - 1)
+    }
+
+    var resolvedSize: CGFloat {
+        size(containerWidth: layoutWidth, photoCount: layoutPhotoCount)
+    }
+
+    func updateLayout(width: CGFloat, photoCount: Int) {
+        if abs(layoutWidth - width) > 0.5 {
+            layoutWidth = width
+        }
+        if layoutPhotoCount != photoCount {
+            layoutPhotoCount = photoCount
+        }
     }
 
     func size(containerWidth: CGFloat, photoCount: Int = 0) -> CGFloat {

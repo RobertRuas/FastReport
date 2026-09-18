@@ -6,8 +6,14 @@ struct AppStatusItem {
     var tint: Color = .secondary
 }
 
-struct AppStatusBar: View {
+struct AppStatusBar<Trailing: View>: View {
     var items: [AppStatusItem]
+    var trailing: Trailing
+
+    init(items: [AppStatusItem], @ViewBuilder trailing: () -> Trailing) {
+        self.items = items
+        self.trailing = trailing()
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -28,7 +34,8 @@ struct AppStatusBar: View {
                 }
                 .foregroundStyle(item.tint)
             }
-            Spacer(minLength: 0)
+            Spacer(minLength: 8)
+            trailing
         }
         .font(.caption)
         .padding(.horizontal, 12)
@@ -38,5 +45,11 @@ struct AppStatusBar: View {
             Divider()
         }
         .accessibilityElement(children: .combine)
+    }
+}
+
+extension AppStatusBar where Trailing == EmptyView {
+    init(items: [AppStatusItem]) {
+        self.init(items: items) { EmptyView() }
     }
 }

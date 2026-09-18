@@ -19,7 +19,11 @@ struct ProjectWorkspaceView: View {
             } else {
                 InboxGridView()
             }
-            AppStatusBar(items: workspaceStatusItems)
+            AppStatusBar(items: workspaceStatusItems) {
+                if session.showsFolderReview, session.mode != .triage {
+                    ThumbnailSizeControls()
+                }
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))

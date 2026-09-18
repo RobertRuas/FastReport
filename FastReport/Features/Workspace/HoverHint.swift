@@ -19,55 +19,69 @@ struct HoverHintModifier: ViewModifier {
         content
             .onHover(perform: handleHover)
             .onDisappear(perform: cancelTasks)
-            .overlay(alignment: placement == .below ? .bottom : .top) {
+            .overlay {
                 if showTitle {
                     bubble
-                        .offset(y: placement == .below ? 8 : -8)
-                        .alignmentGuide(placement == .below ? .bottom : .top) { dimensions in
-                            placement == .below ? dimensions[.top] : dimensions[.bottom]
-                        }
-                        .transition(.opacity.combined(with: .scale(scale: 0.98, anchor: placement == .below ? .top : .bottom)))
+                        .fixedSize()
+                        .offset(y: placement == .below ? 28 : -28)
+                        .transition(bubbleTransition)
                         .allowsHitTesting(false)
                 }
             }
             .zIndex(showTitle ? 80 : 0)
     }
 
+    private var bubbleTransition: AnyTransition {
+        let anchor: UnitPoint = placement == .below ? .top : .bottom
+        return .asymmetric(
+            insertion: .opacity
+                .combined(with: .scale(scale: 0.94, anchor: anchor))
+                .combined(with: .offset(y: placement == .below ? -6 : 6)),
+            removal: .opacity.combined(with: .scale(scale: 0.98, anchor: anchor))
+        )
+    }
+
     private var bubble: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 5) {
             title
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.primary)
                 .lineLimit(2)
+                .fixedSize(horizontal: true, vertical: true)
             if showHint, let hint {
                 hint
-                    .font(.caption2)
+                    .font(.caption)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
+                    .frame(width: 240, alignment: .leading)
+                    .transition(.opacity.combined(with: .move(edge: placement == .below ? .top : .bottom)))
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-        .frame(minWidth: 36, maxWidth: 220, alignment: .leading)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .strokeBorder(Color.primary.opacity(0.10), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(Color.primary.opacity(0.12), lineWidth: 1)
         }
-        .shadow(color: .black.opacity(0.14), radius: 8, y: 2)
+        .shadow(color: .black.opacity(0.16), radius: 12, y: 3)
+        .animation(.spring(response: 0.36, dampingFraction: 0.84), value: showHint)
     }
 
     private func handleHover(_ hovering: Bool) {
         cancelTasks()
         guard hovering else {
-            showTitle = false
-            showHint = false
+            withAnimation(.easeOut(duration: 0.14)) {
+                showTitle = false
+                showHint = false
+            }
             return
         }
         titleTask = Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(160))
+            try? await Task.sleep(for: .milliseconds(140))
             guard !Task.isCancelled else { return }
-            withAnimation(.easeOut(duration: 0.12)) {
+            withAnimation(.spring(response: 0.34, dampingFraction: 0.82)) {
                 showTitle = true
             }
         }
@@ -75,7 +89,7 @@ struct HoverHintModifier: ViewModifier {
         hintTask = Task { @MainActor in
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
-            withAnimation(.easeOut(duration: 0.16)) {
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.86)) {
                 showHint = true
             }
         }

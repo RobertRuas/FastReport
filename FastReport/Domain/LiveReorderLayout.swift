@@ -21,7 +21,14 @@ enum LiveReorderLayout {
         return ordered
     }
 
-    static func residualOffset(translationX: CGFloat, from: Int, to: Int, cellWidth: CGFloat) -> CGFloat {
-        translationX - CGFloat(to - from) * cellWidth
+    static func neighborOffset(index: Int, dragIndex: Int, targetIndex: Int, cellWidth: CGFloat) -> CGFloat {
+        guard dragIndex != targetIndex else { return 0 }
+        if dragIndex < targetIndex, index > dragIndex, index <= targetIndex {
+            return -cellWidth
+        }
+        if dragIndex > targetIndex, index >= targetIndex, index < dragIndex {
+            return cellWidth
+        }
+        return 0
     }
 }

@@ -8,31 +8,40 @@ struct ReviewGridView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let usableWidth = max(geo.size.width - 56, 1)
-            let maxPhotos = session.displaySlots().map { session.photos(in: $0).count }.max() ?? 0
-            let thumb = thumbnailSize.size(containerWidth: usableWidth, photoCount: maxPhotos)
-            ZStack(alignment: .bottomTrailing) {
-                ScrollView {
-                    let parts = session.reviewSlotPartitions()
-                    LazyVStack(alignment: .leading, spacing: 16) {
-                        if !parts.special.isEmpty {
-                            specialGroup(parts.special, thumbSize: thumb)
-                        }
-                        ForEach(parts.regular) { slot in
-                            folderCard(slot, emphasized: false, thumbSize: thumb)
-                        }
+            let thumb = thumbnailSize.resolvedSize
+            ScrollView {
+                let parts = session.reviewSlotPartitions()
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    if !parts.special.isEmpty {
+                        specialGroup(parts.special, thumbSize: thumb)
                     }
-                    .padding(20)
+                    ForEach(parts.regular) { slot in
+                        folderCard(slot, emphasized: false, thumbSize: thumb)
+                    }
                 }
-                sizeControls(currentSize: thumb)
-                    .padding(12)
+                .padding(20)
             }
+            .preference(key: ReviewWidthKey.self, value: geo.size.width)
+        }
+        .onPreferenceChange(ReviewWidthKey.self) { width in
+            syncLayout(width: width)
+        }
+        .onChange(of: session.photos.count) { _, _ in
+            thumbnailSize.updateLayout(width: thumbnailSize.layoutWidth, photoCount: maxPhotoCount)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .dropDestination(for: URL.self) { urls, _ in
             Task { await session.importURLs(urls, locale: languageStore.locale) }
             return true
         }
+    }
+
+    private var maxPhotoCount: Int {
+        session.displaySlots().map { session.photos(in: $0).count }.max() ?? 0
+    }
+
+    private func syncLayout(width: CGFloat) {
+        thumbnailSize.updateLayout(width: max(width - 56, 1), photoCount: maxPhotoCount)
     }
 
     private func specialGroup(_ slots: [Slot], thumbSize: CGFloat) -> some View {
@@ -110,8 +119,19 @@ struct ReviewGridView: View {
         }
         return slot.folder
     }
+}
 
-    private func sizeControls(currentSize: CGFloat) -> some View {
+private struct ReviewWidthKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+struct ThumbnailSizeControls: View {
+    @Environment(ThumbnailSizeStore.self) private var thumbnailSize
+
+    var body: some View {
         HStack(spacing: 2) {
             IconActionButton(
                 systemImage: "minus",
@@ -121,7 +141,7 @@ struct ReviewGridView: View {
                 isDisabled: !thumbnailSize.canShrink,
                 compact: true
             ) {
-                thumbnailSize.makeSmaller(currentSize: currentSize)
+                thumbnailSize.makeSmaller(currentSize: thumbnailSize.resolvedSize)
             }
             Button(action: thumbnailSize.useAutomatic) {
                 Text("review.thumbs.automatic")
@@ -145,11 +165,8 @@ struct ReviewGridView: View {
                 isDisabled: !thumbnailSize.canGrow,
                 compact: true
             ) {
-                thumbnailSize.makeLarger(currentSize: currentSize)
+                thumbnailSize.makeLarger(currentSize: thumbnailSize.resolvedSize)
             }
         }
-        .padding(4)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .opacity(0.88)
     }
 }

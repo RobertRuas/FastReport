@@ -13,11 +13,8 @@ struct LiveReorderStrip: View {
 
     private var cellWidth: CGFloat { size + ThumbnailSizeStore.spacing }
 
-    private var displayed: [DiskPhoto] {
-        if let start = dragStartIndex {
-            return LiveReorderLayout.movingItem(in: origin, from: start, to: currentTargetIndex)
-        }
-        return origin.isEmpty ? items : origin
+    private var layoutItems: [DiskPhoto] {
+        origin.isEmpty ? items : origin
     }
 
     private var currentTargetIndex: Int {
@@ -33,11 +30,10 @@ struct LiveReorderStrip: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: ThumbnailSizeStore.spacing) {
-                ForEach(displayed) { photo in
-                    cell(for: photo)
+                ForEach(Array(layoutItems.enumerated()), id: \.element.id) { index, photo in
+                    cell(index: index, photo: photo)
                 }
             }
-            .animation(.spring(response: 0.28, dampingFraction: 0.82), value: displayed.map(\.id))
             .padding(.vertical, 8)
             .padding(.horizontal, 2)
         }
@@ -50,30 +46,31 @@ struct LiveReorderStrip: View {
         }
     }
 
-    private func cell(for photo: DiskPhoto) -> some View {
-        let dragged = dragStartIndex.map { origin.indices.contains($0) && origin[$0].id == photo.id } ?? false
-        let residual: CGFloat = {
-            guard dragged, let start = dragStartIndex else { return 0 }
-            return LiveReorderLayout.residualOffset(
-                translationX: translationX,
-                from: start,
-                to: currentTargetIndex,
+    private func cell(index: Int, photo: DiskPhoto) -> some View {
+        let dragged = dragStartIndex.map { $0 == index } ?? false
+        let shift: CGFloat = {
+            guard let start = dragStartIndex, !dragged else { return dragged ? translationX : 0 }
+            return LiveReorderLayout.neighborOffset(
+                index: index,
+                dragIndex: start,
+                targetIndex: currentTargetIndex,
                 cellWidth: cellWidth
             )
         }()
 
         return ThumbnailView(url: photo.url, size: size, revision: revision)
-            .shadow(color: dragged ? Color.black.opacity(0.28) : .clear, radius: dragged ? 10 : 0, y: dragged ? 4 : 0)
-            .scaleEffect(dragged ? 1.08 : 1)
-            .offset(x: residual)
-            .zIndex(dragged ? 1 : 0)
+            .shadow(color: dragged ? Color.black.opacity(0.22) : .clear, radius: dragged ? 8 : 0, y: dragged ? 3 : 0)
+            .scaleEffect(dragged ? 1.05 : 1)
+            .offset(x: dragged ? translationX : shift)
+            .zIndex(dragged ? 10 : 0)
+            .animation(dragged ? nil : .interactiveSpring(response: 0.32, dampingFraction: 0.9), value: currentTargetIndex)
             .gesture(dragGesture(for: photo))
             .onTapGesture { onTap(photo) }
             .hoverHint(verbatim: photo.fileName)
     }
 
     private func dragGesture(for photo: DiskPhoto) -> some Gesture {
-        DragGesture(minimumDistance: 4)
+        DragGesture(minimumDistance: 6)
             .onChanged { value in
                 if dragStartIndex == nil {
                     origin = items
