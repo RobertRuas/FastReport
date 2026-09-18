@@ -24,49 +24,17 @@ struct SettingsGearButton: View {
 
 struct UpdateToolbarButton: View {
     @Environment(AppUpdateCenter.self) private var updates
-    @State private var animating = false
-
-    private let green = Color(red: 0.12, green: 0.68, blue: 0.38)
 
     var body: some View {
         if updates.showsToolbarUpdateIcon {
-            Button(action: updates.presentUpdateSheet) {
-                Image(systemName: updates.isUpdateInProgress ? "arrow.triangle.2.circlepath" : "arrow.down.app.fill")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(green)
-                    .frame(width: 30, height: 30)
-                    .background {
-                        RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .fill(green.opacity(0.12))
-                    }
-                    .rotationEffect(.degrees(updates.isUpdateInProgress && animating ? 360 : 0))
-                    .scaleEffect(!updates.isUpdateInProgress && animating ? 1.08 : 1)
-                    .shadow(color: green.opacity(animating ? 0.55 : 0.18), radius: animating ? 5 : 1)
-            }
-            .buttonStyle(.plain)
-            .hoverHint(
-                updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
-                hint: updates.isUpdateInProgress ? "updates.toolbar.progress.hint" : "updates.toolbar.available.hint"
-            )
-            .accessibilityLabel(Text(updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available"))
-            .onAppear(perform: restartMotion)
-            .onChange(of: updates.isUpdateInProgress) { _, _ in
-                restartMotion()
-            }
-        }
-    }
-
-    private func restartMotion() {
-        animating = false
-        DispatchQueue.main.async {
-            if updates.isUpdateInProgress {
-                withAnimation(.linear(duration: 0.9).repeatForever(autoreverses: false)) {
-                    animating = true
-                }
-            } else {
-                withAnimation(.easeInOut(duration: 0.85).repeatForever(autoreverses: true)) {
-                    animating = true
-                }
+            IconActionButton(
+                systemImage: updates.isUpdateInProgress ? "arrow.triangle.2.circlepath" : "arrow.down.app.fill",
+                help: updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
+                hint: updates.isUpdateInProgress ? "updates.toolbar.progress.hint" : "updates.toolbar.available.hint",
+                title: updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
+                filled: true
+            ) {
+                updates.presentUpdateSheet()
             }
         }
     }
@@ -159,7 +127,13 @@ struct UpdateProgressCard: View {
                 }
                 Spacer()
                 if updates.phase == .available {
-                    IconActionButton(systemImage: "arrow.down.app.fill", help: "settings.updates.install", hint: "settings.updates.install.hint", filled: true) {
+                    IconActionButton(
+                        systemImage: "arrow.down.app.fill",
+                        help: "settings.updates.install",
+                        hint: "settings.updates.install.hint",
+                        title: "settings.updates.install",
+                        filled: true
+                    ) {
                         updates.beginInstall()
                     }
                 } else if updates.phase == .readyToInstall {
@@ -167,6 +141,7 @@ struct UpdateProgressCard: View {
                         systemImage: "arrow.clockwise.circle.fill",
                         help: "settings.updates.relaunch",
                         hint: "settings.updates.relaunch.hint",
+                        title: "settings.updates.relaunch",
                         filled: true,
                         action: updates.beginInstall
                     )
@@ -223,6 +198,7 @@ struct UpdateOverlayHost<Content: View>: View {
 
     var body: some View {
         content
+            .coordinateSpace(name: HoverHintStore.space)
             .overlay {
                 if updates.showsUpdateSheet {
                     ZStack {
@@ -233,6 +209,7 @@ struct UpdateOverlayHost<Content: View>: View {
                     }
                 }
             }
+            .overlay { HoverHintCanvas() }
             .onAppear {
                 updates.checkInBackground(force: true)
             }

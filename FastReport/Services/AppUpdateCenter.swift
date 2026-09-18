@@ -82,32 +82,19 @@ final class AppUpdateCenter {
     }
 
     var overallProgress: Double {
-        switch phase {
-        case .checking:
-            return 0
-        case .downloading:
-            guard downloadExpected > 0 else { return 0.02 }
-            return min(0.72, 0.72 * Double(downloadReceived) / Double(downloadExpected))
-        case .extracting:
-            return 0.72 + (0.18 * max(0, min(1, extractionProgress)))
-        case .readyToInstall:
-            return 0.92
-        case .installing:
-            return 0.97
-        case .installed:
-            return 1
-        case .upToDate:
-            return 1
-        default:
-            return 0
-        }
+        UpdateProgressMath.fraction(
+            phase: phase,
+            received: downloadReceived,
+            expected: downloadExpected,
+            extraction: extractionProgress
+        )
     }
 
     var isProgressDeterminate: Bool {
         switch phase {
         case .downloading:
             return downloadExpected > 0
-        case .extracting, .readyToInstall:
+        case .extracting, .readyToInstall, .installing, .installed:
             return true
         default:
             return false
@@ -376,6 +363,29 @@ final class AppUpdateCenter {
             .replacingOccurrences(of: "&lt;", with: "<")
             .replacingOccurrences(of: "&gt;", with: ">")
             .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+enum UpdateProgressMath {
+    static func fraction(
+        phase: UpdatePhase,
+        received: UInt64,
+        expected: UInt64,
+        extraction: Double
+    ) -> Double {
+        switch phase {
+        case .checking:
+            return 0
+        case .downloading:
+            guard expected > 0 else { return 0.02 }
+            return min(0.9, 0.9 * Double(received) / Double(expected))
+        case .extracting:
+            return 0.9 + (0.09 * max(0, min(1, extraction)))
+        case .readyToInstall, .installing, .installed, .upToDate:
+            return 1
+        default:
+            return 0
+        }
     }
 }
 

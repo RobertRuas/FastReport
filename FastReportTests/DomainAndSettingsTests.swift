@@ -294,3 +294,44 @@ final class ThumbnailSizeStoreTests: XCTestCase {
         XCTAssertEqual(store.mode, .automatic)
     }
 }
+
+final class UpdateProgressMathTests: XCTestCase {
+    func testReachesOneHundredWhenWaitingToRelaunch() {
+        XCTAssertEqual(
+            UpdateProgressMath.fraction(phase: .readyToInstall, received: 0, expected: 0, extraction: 1),
+            1
+        )
+        XCTAssertEqual(
+            UpdateProgressMath.fraction(phase: .installing, received: 1, expected: 1, extraction: 1),
+            1
+        )
+        XCTAssertEqual(
+            UpdateProgressMath.fraction(phase: .downloading, received: 50, expected: 100, extraction: 0),
+            0.45,
+            accuracy: 0.0001
+        )
+    }
+}
+
+final class HoverHintLayoutTests: XCTestCase {
+    func testKeepsTheBubbleInsideTheWindowNearTheTrailingEdge() {
+        let origin = HoverHintLayout.origin(
+            anchor: CGRect(x: 760, y: 12, width: 30, height: 30),
+            bubble: CGSize(width: 240, height: 72),
+            container: CGSize(width: 800, height: 600),
+            preferred: .below
+        )
+        XCTAssertGreaterThanOrEqual(origin.width, 8)
+        XCTAssertLessThanOrEqual(origin.width + 240, 792)
+    }
+
+    func testFlipsAboveWhenTheButtonIsNearTheBottom() {
+        let origin = HoverHintLayout.origin(
+            anchor: CGRect(x: 40, y: 550, width: 30, height: 30),
+            bubble: CGSize(width: 200, height: 80),
+            container: CGSize(width: 800, height: 600),
+            preferred: .below
+        )
+        XCTAssertLessThan(origin.height + 80, 550)
+    }
+}

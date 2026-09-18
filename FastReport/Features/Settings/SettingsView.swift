@@ -52,6 +52,7 @@ struct SettingsView: View {
                         systemImage: "arrow.clockwise",
                         help: "settings.updates.check",
                         hint: "settings.updates.check.hint",
+                        title: "settings.updates.check",
                         isDisabled: updates.requiresApplicationsFolder
                     ) {
                         updates.checkForUpdatesUserInitiated(presentSheet: false)
@@ -61,6 +62,7 @@ struct SettingsView: View {
                             systemImage: updates.phase == .readyToInstall ? "arrow.clockwise.circle.fill" : "arrow.down.app.fill",
                             help: updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install",
                             hint: updates.phase == .readyToInstall ? "settings.updates.relaunch.hint" : "settings.updates.install.hint",
+                            title: updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install",
                             filled: true
                         ) {
                             updates.beginInstall()

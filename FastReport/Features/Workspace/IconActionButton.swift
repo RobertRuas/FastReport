@@ -5,6 +5,7 @@ struct IconActionButton: View {
     var help: LocalizedStringKey
     var hint: LocalizedStringKey? = nil
     var hintPlacement: HoverHintPlacement = .below
+    var title: LocalizedStringKey? = nil
     var tint: Color = .primary
     var filled: Bool = false
     var badge: Int? = nil
@@ -21,14 +22,24 @@ struct IconActionButton: View {
     var body: some View {
         Button(action: action) {
             ZStack(alignment: .topTrailing) {
-                Image(systemName: systemImage)
-                    .font(.system(size: iconSize, weight: .semibold))
-                    .foregroundStyle(filled ? Color.white : (isDisabled ? Color.secondary : tint))
-                    .frame(width: side, height: side)
-                    .background {
-                        RoundedRectangle(cornerRadius: corner, style: .continuous)
-                            .fill(fillColor)
+                HStack(spacing: 6) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: iconSize, weight: .semibold))
+                        .frame(width: title == nil ? side : nil, height: side)
+                    if let title {
+                        Text(title)
+                            .font(.caption.weight(.semibold))
+                            .lineLimit(1)
+                            .padding(.trailing, 4)
                     }
+                }
+                .foregroundStyle(filled ? Color.white : (isDisabled ? Color.secondary : tint))
+                .padding(.horizontal, title == nil ? 0 : 8)
+                .frame(height: side)
+                .background {
+                    RoundedRectangle(cornerRadius: corner, style: .continuous)
+                        .fill(fillColor)
+                }
                 if let badge, badge > 0 {
                     Text(badge > 99 ? "99+" : "\(badge)")
                         .font(.system(size: 9, weight: .bold, design: .rounded))
