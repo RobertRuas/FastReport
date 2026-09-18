@@ -74,6 +74,8 @@
     }
     article h2 { font-size: 15px; margin: 0 0 8px; letter-spacing: -0.02em; }
     article p { margin: 0; color: var(--muted); font-size: 14px; }
+    ol { color: var(--muted); padding-left: 1.2rem; max-width: 42rem; }
+    ol li { margin: 0 0 8px; }
     .split { border-top: 1px solid var(--line); padding-top: 36px; }
     .split h2 { font-size: 1.35rem; letter-spacing: -0.03em; margin: 0 0 12px; }
     footer { margin-top: 64px; color: var(--muted); font-size: 13px; }
@@ -86,7 +88,7 @@
       <div class="brand">FastReport</div>
       <nav>
         <a href="https://github.com/RobertRuas/FastReport">Código</a>
-        <a href="https://github.com/RobertRuas/FastReport/releases/latest">Versões</a>
+        <a href="https://github.com/RobertRuas/FastReport/releases/latest/download/FastReport.zip">Descarregar</a>
       </nav>
     </header>
 
@@ -98,7 +100,6 @@
     </p>
     <div class="cta">
       <a class="btn" href="https://github.com/RobertRuas/FastReport/releases/latest/download/FastReport.zip">Descarregar para Mac</a>
-      <a class="btn btn-ghost" href="https://github.com/RobertRuas/FastReport/releases/latest">Ver última versão</a>
       <span class="note">macOS 14 ou posterior · Apple Silicon e Intel</span>
     </div>
 
@@ -130,9 +131,20 @@
     </div>
 
     <section class="split">
+      <h2>Como instalar</h2>
+      <p class="lede">O FastReport não está na App Store. É uma aplicação de terceiros. O macOS pode bloquear a primeira abertura — isso é normal.</p>
+      <ol>
+        <li>Descarrega o zip e abre-o com um duplo clique.</li>
+        <li>Arrasta <strong>FastReport</strong> para a pasta <strong>Aplicações</strong>. Não a deixes em Descargas.</li>
+        <li>Abre a app a partir de Aplicações.</li>
+        <li>Se o sistema recusar: <strong>Definições do Sistema → Privacidade e segurança</strong>, desce até <strong>Segurança</strong> e clica <strong>Abrir mesmo assim</strong>. Confirma <strong>Abrir</strong>.</li>
+        <li>Em alternativa: no Finder, botão direito em FastReport (em Aplicações) → <strong>Abrir</strong> → <strong>Abrir</strong>.</li>
+      </ol>
+    </section>
+
+    <section class="split">
       <h2>Como se usa</h2>
       <p class="lede">Crias um projeto no sítio que escolheres. Importas as fotos do cartão. Classificas. Abres o Finder: T10 já tem <code>Projeto_T10_1.jpeg</code>. O relatório, noutro momento, lê essa estrutura.</p>
-      <p class="note">Na primeira abertura, o macOS pode pedir para abrir uma app de programador não identificado. Botão direito → Abrir. É esperado enquanto a distribuição for pelo GitHub, sem App Store.</p>
     </section>
 
     <footer>
