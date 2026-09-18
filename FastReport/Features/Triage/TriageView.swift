@@ -27,7 +27,7 @@ struct TriageView: View {
                 Image(systemName: "xmark")
                     .frame(width: 28, height: 28)
             }
-            .help(Text("triage.close"))
+            .hoverHint("triage.close", hint: "triage.close.hint")
 
             Text(session.currentSlotLabel)
                 .foregroundStyle(.white)
@@ -49,28 +49,28 @@ struct TriageView: View {
             } label: {
                 Image(systemName: "rotate.right")
             }
-            .help(Text("triage.rotate"))
+            .hoverHint("triage.rotate", hint: "triage.rotate.hint")
 
             Button {
                 session.trashCurrent(locale: languageStore.locale)
             } label: {
                 Image(systemName: "trash")
             }
-            .help(Text("triage.trash"))
+            .hoverHint("triage.trash", hint: "triage.trash.hint")
 
             Button {
                 session.undoLast(locale: languageStore.locale)
             } label: {
                 Image(systemName: "arrow.uturn.backward")
             }
-            .help(Text("triage.undo"))
+            .hoverHint("triage.undo", hint: "triage.undo.hint")
 
             Button {
                 session.revealCurrent()
             } label: {
                 Image(systemName: "folder")
             }
-            .help(Text("home.recents.reveal"))
+            .hoverHint("home.recents.reveal", hint: "home.recents.reveal.hint")
         }
         .buttonStyle(.plain)
         .foregroundStyle(.white)

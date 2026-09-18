@@ -11,12 +11,12 @@ final class ThumbnailStore {
         cache.countLimit = 400
     }
 
-    func image(for url: URL, revision: Int = 0) -> NSImage? {
-        let key = cacheKey(for: url, revision: revision)
+    func image(for url: URL, revision: Int = 0, maxPixelSize: Int = 96) -> NSImage? {
+        let key = cacheKey(for: url, revision: revision, maxPixelSize: maxPixelSize)
         if let cached = cache.object(forKey: key as NSString) {
             return cached
         }
-        guard let cg = ImagePipeline.thumbnail(from: url) else { return nil }
+        guard let cg = ImagePipeline.thumbnail(from: url, maxPixelSize: maxPixelSize) else { return nil }
         let image = NSImage(cgImage: cg, size: NSSize(width: cg.width, height: cg.height))
         cache.setObject(image, forKey: key as NSString)
         return image
@@ -30,9 +30,9 @@ final class ThumbnailStore {
         cache.removeAllObjects()
     }
 
-    private func cacheKey(for url: URL, revision: Int) -> String {
+    private func cacheKey(for url: URL, revision: Int, maxPixelSize: Int) -> String {
         let values = try? url.resourceValues(forKeys: [.contentModificationDateKey])
         let stamp = values?.contentModificationDate?.timeIntervalSince1970 ?? 0
-        return "\(url.standardizedFileURL.path)|\(stamp)|\(revision)"
+        return "\(url.standardizedFileURL.path)|\(stamp)|\(revision)|\(maxPixelSize)"
     }
 }

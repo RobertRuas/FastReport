@@ -41,6 +41,7 @@ struct SettingsView: View {
                     IconActionButton(
                         systemImage: "folder.badge.plus",
                         help: "settings.updates.move.action",
+                        hint: "settings.updates.move.action.hint",
                         filled: true
                     ) {
                         updates.moveToApplicationsFolder()
@@ -50,6 +51,7 @@ struct SettingsView: View {
                     IconActionButton(
                         systemImage: "arrow.clockwise",
                         help: "settings.updates.check",
+                        hint: "settings.updates.check.hint",
                         isDisabled: updates.requiresApplicationsFolder
                     ) {
                         updates.checkForUpdatesUserInitiated(presentSheet: false)
@@ -58,6 +60,7 @@ struct SettingsView: View {
                         IconActionButton(
                             systemImage: updates.phase == .readyToInstall ? "arrow.clockwise.circle.fill" : "arrow.down.app.fill",
                             help: updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install",
+                            hint: updates.phase == .readyToInstall ? "settings.updates.relaunch.hint" : "settings.updates.install.hint",
                             filled: true
                         ) {
                             updates.beginInstall()

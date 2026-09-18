@@ -17,7 +17,7 @@ struct SettingsGearButton: View {
         .buttonStyle(.plain)
         .labelStyle(.iconOnly)
         .onHover { hovering = $0 }
-        .help(Text("settings.title"))
+        .hoverHint("settings.title", hint: "settings.title.hint")
         .accessibilityLabel(Text("settings.title"))
     }
 }
@@ -44,7 +44,10 @@ struct UpdateToolbarButton: View {
                     .shadow(color: green.opacity(animating ? 0.55 : 0.18), radius: animating ? 5 : 1)
             }
             .buttonStyle(.plain)
-            .help(Text(updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available"))
+            .hoverHint(
+                updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
+                hint: updates.isUpdateInProgress ? "updates.toolbar.progress.hint" : "updates.toolbar.available.hint"
+            )
             .accessibilityLabel(Text(updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available"))
             .onAppear(perform: restartMotion)
             .onChange(of: updates.isUpdateInProgress) { _, _ in
@@ -86,7 +89,7 @@ struct UpdateProgressCard: View {
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .help(Text("updates.sheet.close"))
+                    .hoverHint("updates.sheet.close", hint: "updates.sheet.close.hint")
                     .accessibilityLabel(Text("updates.sheet.close"))
                 }
             }
@@ -96,7 +99,13 @@ struct UpdateProgressCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                 HStack {
                     Spacer()
-                    IconActionButton(systemImage: "checkmark", help: "common.ok", filled: true, action: updates.dismissInstalledNotice)
+                    IconActionButton(
+                        systemImage: "checkmark",
+                        help: "common.ok",
+                        hint: "common.ok.hint",
+                        filled: true,
+                        action: updates.dismissInstalledNotice
+                    )
                 }
             } else if let info = updates.available {
                 Text("settings.updates.available \(info.version)")
@@ -141,15 +150,26 @@ struct UpdateProgressCard: View {
             }
             HStack {
                 if updates.phase == .checking || updates.phase == .downloading {
-                    IconActionButton(systemImage: "xmark", help: "settings.updates.cancel", action: updates.cancelCurrent)
+                    IconActionButton(
+                        systemImage: "xmark",
+                        help: "settings.updates.cancel",
+                        hint: "settings.updates.cancel.hint",
+                        action: updates.cancelCurrent
+                    )
                 }
                 Spacer()
                 if updates.phase == .available {
-                    IconActionButton(systemImage: "arrow.down.app.fill", help: "settings.updates.install", filled: true) {
+                    IconActionButton(systemImage: "arrow.down.app.fill", help: "settings.updates.install", hint: "settings.updates.install.hint", filled: true) {
                         updates.beginInstall()
                     }
                 } else if updates.phase == .readyToInstall {
-                    IconActionButton(systemImage: "arrow.clockwise.circle.fill", help: "settings.updates.relaunch", filled: true, action: updates.beginInstall)
+                    IconActionButton(
+                        systemImage: "arrow.clockwise.circle.fill",
+                        help: "settings.updates.relaunch",
+                        hint: "settings.updates.relaunch.hint",
+                        filled: true,
+                        action: updates.beginInstall
+                    )
                 }
             }
         }

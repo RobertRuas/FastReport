@@ -41,4 +41,8 @@ struct Slot: Codable, Equatable, Identifiable, Sendable, Hashable {
             unlimited = expectedCount == nil
         }
     }
+
+    var isGeneral: Bool {
+        folder == "General" && !isTrash && !isInbox
+    }
 }

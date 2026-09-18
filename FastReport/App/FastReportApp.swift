@@ -6,6 +6,7 @@ struct FastReportApp: App {
     @State private var mapLibrary = MapLibrary()
     @State private var recents = RecentProjectsStore()
     @State private var imageSettings = ImageSettingsStore()
+    @State private var thumbnailSize = ThumbnailSizeStore()
     @State private var updates = AppUpdateCenter()
 
     var body: some Scene {
@@ -17,6 +18,7 @@ struct FastReportApp: App {
             .environment(mapLibrary)
             .environment(recents)
             .environment(imageSettings)
+            .environment(thumbnailSize)
             .environment(updates)
             .environment(\.locale, languageStore.locale)
             .frame(minWidth: 720, minHeight: 500)

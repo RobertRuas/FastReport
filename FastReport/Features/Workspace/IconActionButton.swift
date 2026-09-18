@@ -3,6 +3,8 @@ import SwiftUI
 struct IconActionButton: View {
     var systemImage: String
     var help: LocalizedStringKey
+    var hint: LocalizedStringKey? = nil
+    var hintPlacement: HoverHintPlacement = .below
     var tint: Color = .primary
     var filled: Bool = false
     var badge: Int? = nil
@@ -41,7 +43,7 @@ struct IconActionButton: View {
         .buttonStyle(.plain)
         .disabled(isDisabled)
         .onHover { hovering = $0 }
-        .help(Text(help))
+        .hoverHint(help, hint: hint, placement: hintPlacement)
         .accessibilityLabel(Text(help))
     }
 

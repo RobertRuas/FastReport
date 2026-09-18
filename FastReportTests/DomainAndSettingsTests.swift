@@ -195,3 +195,94 @@ final class StringCatalogTests: XCTestCase {
         XCTAssertEqual(Set(strings.keys).subtracting(StringCatalog.requiredKeys).count, 0, "catalog has extra keys not listed in StringCatalog.requiredKeys")
     }
 }
+
+final class LiveReorderLayoutTests: XCTestCase {
+    func testMovesForwardIntoTheNextIndexInsteadOfNoOp() {
+        XCTAssertEqual(LiveReorderLayout.movingItem(in: [0, 1, 2, 3], from: 0, to: 1), [1, 0, 2, 3])
+        XCTAssertEqual(LiveReorderLayout.movingItem(in: [0, 1, 2, 3], from: 0, to: 3), [1, 2, 3, 0])
+        XCTAssertEqual(LiveReorderLayout.movingItem(in: [0, 1, 2, 3], from: 3, to: 1), [0, 3, 1, 2])
+        XCTAssertEqual(LiveReorderLayout.movingItem(in: [0, 1, 2], from: 1, to: 1), [0, 1, 2])
+    }
+
+    func testTargetIndexCrossesOneCellAtHalfWidth() {
+        XCTAssertEqual(
+            LiveReorderLayout.targetIndex(from: 0, translationX: 40, cellWidth: 80, count: 5),
+            1
+        )
+        XCTAssertEqual(
+            LiveReorderLayout.targetIndex(from: 2, translationX: -40, cellWidth: 80, count: 5),
+            1
+        )
+        XCTAssertEqual(
+            LiveReorderLayout.targetIndex(from: 0, translationX: 400, cellWidth: 80, count: 3),
+            2
+        )
+        XCTAssertEqual(
+            LiveReorderLayout.targetIndex(from: 1, translationX: 10, cellWidth: 80, count: 3),
+            1
+        )
+    }
+
+    func testResidualKeepsTheDraggedItemUnderTheCursor() {
+        XCTAssertEqual(
+            LiveReorderLayout.residualOffset(translationX: 90, from: 0, to: 1, cellWidth: 80),
+            10
+        )
+    }
+}
+
+final class ReviewDisplaySlotsTests: XCTestCase {
+    func testKeepsGeneralAndTrashTogetherAheadOfNumberedSlots() throws {
+        let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+        let general = try XCTUnwrap(map.slot(folder: "General"))
+        let trash = try XCTUnwrap(map.trash)
+        let t1 = try XCTUnwrap(map.slot(folder: "T1"))
+        let t2 = try XCTUnwrap(map.slot(folder: "T2"))
+        let parts = ReviewDisplaySlots.partitions(
+            map: map,
+            occupiedIds: [general.id, trash.id, t1.id, t2.id]
+        )
+        XCTAssertEqual(parts.special.map(\.folder), ["General", "Trash"])
+        XCTAssertEqual(parts.regular.map(\.folder), ["T1", "T2"])
+        XCTAssertEqual(
+            ReviewDisplaySlots.ordered(map: map, occupiedIds: [general.id, trash.id, t1.id]).map(\.folder),
+            ["General", "Trash", "T1"]
+        )
+    }
+}
+
+@MainActor
+final class ThumbnailSizeStoreTests: XCTestCase {
+    func testAutomaticSizeGrowsWithWidthAndNeverDropsBelowMinimum() {
+        XCTAssertEqual(ThumbnailSizeStore.automaticSize(containerWidth: 696), 80)
+        XCTAssertEqual(ThumbnailSizeStore.automaticSize(containerWidth: 200), ThumbnailSizeStore.minSize)
+        XCTAssertEqual(ThumbnailSizeStore.automaticSize(containerWidth: 2_000), ThumbnailSizeStore.maxSize)
+        XCTAssertGreaterThan(
+            ThumbnailSizeStore.automaticSize(containerWidth: 900),
+            ThumbnailSizeStore.automaticSize(containerWidth: 720)
+        )
+        XCTAssertEqual(
+            ThumbnailSizeStore.automaticSize(containerWidth: 696, photoCount: 20),
+            ThumbnailSizeStore.minSize
+        )
+    }
+
+    func testMinusLeavesAutomaticAndPersistsManualStep() throws {
+        let suite = "dev.robert.FastReport.thumbs.\(UUID().uuidString)"
+        guard let defaults = UserDefaults(suiteName: suite) else {
+            return XCTFail("could not create defaults suite")
+        }
+        defaults.removePersistentDomain(forName: suite)
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let store = ThumbnailSizeStore(defaults: defaults)
+        XCTAssertEqual(store.mode, .automatic)
+        store.makeSmaller(currentSize: 80)
+        XCTAssertEqual(store.mode, .manual)
+        XCTAssertEqual(store.size(containerWidth: 900), 64)
+        XCTAssertEqual(defaults.string(forKey: ThumbnailSizeStore.modeKey), "manual")
+
+        store.useAutomatic()
+        XCTAssertEqual(store.mode, .automatic)
+    }
+}

@@ -144,7 +144,7 @@ struct ProjectWizardView: View {
                         .frame(width: 30, height: 30)
                 }
                 .buttonStyle(.plain)
-                .help(Text("wizard.location.choose"))
+                .hoverHint("wizard.location.choose", hint: "wizard.location.choose.hint")
                 .accessibilityLabel(Text("wizard.location.choose"))
                 if let locationError = model.locationError {
                     Text(locationError.message)
@@ -200,7 +200,7 @@ struct ProjectWizardView: View {
                         .frame(width: 30, height: 30)
                 }
                 .buttonStyle(.plain)
-                .help(Text("wizard.success.reveal"))
+                .hoverHint("wizard.success.reveal", hint: "wizard.success.reveal.hint")
                 .accessibilityLabel(Text("wizard.success.reveal"))
             }
             if let failure = model.failure {
@@ -227,7 +227,7 @@ struct ProjectWizardView: View {
     private var footer: some View {
         HStack(spacing: 8) {
             if model.step != .success {
-                IconActionButton(systemImage: "xmark", help: "common.cancel") {
+                IconActionButton(systemImage: "xmark", help: "common.cancel", hint: "common.cancel.hint") {
                     dismiss()
                 }
                 .keyboardShortcut(.cancelAction)
@@ -238,6 +238,7 @@ struct ProjectWizardView: View {
                 IconActionButton(
                     systemImage: "chevron.right",
                     help: "common.continue",
+                    hint: "common.continue.hint",
                     filled: true,
                     isDisabled: !model.canContinueFromMap
                 ) {
@@ -248,6 +249,7 @@ struct ProjectWizardView: View {
                 IconActionButton(
                     systemImage: "chevron.left",
                     help: "common.back",
+                    hint: "common.back.hint",
                     isDisabled: model.isCreating,
                     action: model.goBack
                 )
@@ -259,6 +261,7 @@ struct ProjectWizardView: View {
                     IconActionButton(
                         systemImage: "plus",
                         help: "wizard.create",
+                        hint: "wizard.create.hint",
                         filled: true,
                         isDisabled: !model.canCreate
                     ) {
@@ -267,7 +270,7 @@ struct ProjectWizardView: View {
                     .keyboardShortcut(.defaultAction)
                 }
             case .success:
-                IconActionButton(systemImage: "checkmark", help: "common.done", filled: true) {
+                IconActionButton(systemImage: "checkmark", help: "common.done", hint: "common.done.hint", filled: true) {
                     if let created = model.created {
                         onFinished?(created)
                     }

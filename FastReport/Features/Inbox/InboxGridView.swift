@@ -20,7 +20,7 @@ struct InboxGridView: View {
                                 .onTapGesture {
                                     session.startTriage(startingAt: photo)
                                 }
-                                .help(photo.fileName)
+                                .hoverHint(verbatim: photo.fileName)
                         }
                     }
                 }
@@ -46,6 +46,7 @@ struct InboxGridView: View {
             IconActionButton(
                 systemImage: "photo.badge.plus",
                 help: "import.choose",
+                hint: "import.choose.hint",
                 filled: true,
                 isDisabled: session.isImporting
             ) {

@@ -62,14 +62,10 @@ struct FileOrganizer {
 
     func reorder(urls: [URL], moving from: Int, to destination: Int, project: OpenedProject, slot: Slot) throws {
         guard from != destination else { return }
-        guard urls.indices.contains(from), destination >= 0, destination <= urls.count else {
+        guard urls.indices.contains(from), urls.indices.contains(destination) else {
             throw OrganizerError.invalidIndex
         }
-        var ordered = urls
-        let item = ordered.remove(at: from)
-        let insertAt = destination > from ? destination - 1 : destination
-        let clamped = min(max(insertAt, 0), ordered.count)
-        ordered.insert(item, at: clamped)
+        let ordered = LiveReorderLayout.movingItem(in: urls, from: from, to: destination)
         try renumber(urls: ordered, project: project, slot: slot)
     }
 

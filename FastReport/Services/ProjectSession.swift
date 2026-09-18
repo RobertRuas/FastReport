@@ -63,17 +63,15 @@ final class ProjectSession {
     }
 
     func displaySlots() -> [Slot] {
-        let map = project.map
-        let numbered = map.slots
-            .filter { $0.id.hasPrefix("t") && !$0.isTrash && !$0.isInbox }
-            .sorted { lhs, rhs in
-                (Int(lhs.folder.dropFirst()) ?? 0) < (Int(rhs.folder.dropFirst()) ?? 0)
-            }
-        let general = map.slots.filter { $0.folder == "General" }
-        let other = map.classificationSlots.filter { $0.folder != "General" && !numbered.contains($0) }
-        let inboxSlot = [map.inbox].compactMap { $0 }
-        let trash = [map.trash].compactMap { $0 }
-        return (general + numbered + other + inboxSlot + trash).filter { !photos(in: $0).isEmpty }
+        ReviewDisplaySlots.ordered(map: project.map, occupiedIds: occupiedSlotIDs)
+    }
+
+    func reviewSlotPartitions() -> (special: [Slot], regular: [Slot]) {
+        ReviewDisplaySlots.partitions(map: project.map, occupiedIds: occupiedSlotIDs)
+    }
+
+    private var occupiedSlotIDs: Set<String> {
+        Set(photos.map(\.slotId))
     }
 
     func reload() {
@@ -240,7 +238,6 @@ final class ProjectSession {
         do {
             try organizer.reorder(urls: urls, moving: from, to: to, project: project, slot: slot)
             reload()
-            imageRevision += 1
         } catch {
             failure = AppFailure(error, locale: locale)
         }

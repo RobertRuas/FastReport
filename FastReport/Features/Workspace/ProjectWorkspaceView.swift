@@ -52,31 +52,37 @@ struct ProjectWorkspaceView: View {
 
     private var workspaceHeader: some View {
         HStack(spacing: 8) {
-            IconActionButton(systemImage: "house", help: "workspace.home", action: onClose)
+            IconActionButton(systemImage: "house", help: "workspace.home", hint: "workspace.home.hint", action: onClose)
             Text(session.project.metadata.displayName)
                 .font(.headline)
             Spacer()
             IconActionButton(
                 systemImage: "photo.badge.plus",
                 help: "workspace.add_photos",
+                hint: "workspace.add_photos.hint",
                 isDisabled: session.isImporting
             ) {
                 Task { await session.pickAndImport(locale: languageStore.locale) }
             }
-            IconActionButton(systemImage: "arrow.up.right.square", help: "home.recents.reveal") {
+            IconActionButton(
+                systemImage: "arrow.up.right.square",
+                help: "home.recents.reveal",
+                hint: "home.recents.reveal.hint"
+            ) {
                 FinderReveal.reveal(session.project.url)
             }
             if session.pendingCount > 0 {
                 IconActionButton(
                     systemImage: "play.fill",
                     help: "workspace.triage.start \(session.pendingCount)",
+                    hint: "workspace.triage.start.hint",
                     filled: true,
                     badge: session.pendingCount
                 ) {
                     session.startTriage()
                 }
             }
-            IconActionButton(systemImage: "keyboard", help: "shortcuts.title") {
+            IconActionButton(systemImage: "keyboard", help: "shortcuts.title", hint: "shortcuts.title.hint") {
                 showShortcuts = true
             }
             UpdateToolbarButton()

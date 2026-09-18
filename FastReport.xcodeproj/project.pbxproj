@@ -68,6 +68,11 @@
 		F7B57A5FBC8A4585A4B9CB7C /* PhotoImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009A28FBF20D28E8493174FF /* PhotoImporter.swift */; };
 		FA609657D5D44093FA394B90 /* ProjectWizardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05E56B6EF3C941396267D90 /* ProjectWizardModel.swift */; };
 		FDC19F2283B9982B47835076 /* ThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB8F76404FA5E0C01465C0A /* ThumbnailView.swift */; };
+		B11C9E4B7D2E4F18A93B01C4 /* LiveReorderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11C9E4B7D2E4F18A93B01C4 /* LiveReorderLayout.swift */; };
+		B12C9E4B7D2E4F18A93B01C4 /* ReviewDisplaySlots.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12C9E4B7D2E4F18A93B01C4 /* ReviewDisplaySlots.swift */; };
+		B13C9E4B7D2E4F18A93B01C4 /* ThumbnailSizeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A13C9E4B7D2E4F18A93B01C4 /* ThumbnailSizeStore.swift */; };
+		B14C9E4B7D2E4F18A93B01C4 /* LiveReorderStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14C9E4B7D2E4F18A93B01C4 /* LiveReorderStrip.swift */; };
+		B15C9E4B7D2E4F18A93B01C4 /* HoverHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = A15C9E4B7D2E4F18A93B01C4 /* HoverHint.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +112,11 @@
 		7D85EFEBE7AD215AD3A6AABA /* FakeBookmarkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeBookmarkStore.swift; sourceTree = "<group>"; };
 		7E1537ADB20292B82F2D70F8 /* ProjectScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectScanner.swift; sourceTree = "<group>"; };
 		7EB8F76404FA5E0C01465C0A /* ThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailView.swift; sourceTree = "<group>"; };
+		A11C9E4B7D2E4F18A93B01C4 /* LiveReorderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveReorderLayout.swift; sourceTree = "<group>"; };
+		A12C9E4B7D2E4F18A93B01C4 /* ReviewDisplaySlots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewDisplaySlots.swift; sourceTree = "<group>"; };
+		A13C9E4B7D2E4F18A93B01C4 /* ThumbnailSizeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailSizeStore.swift; sourceTree = "<group>"; };
+		A14C9E4B7D2E4F18A93B01C4 /* LiveReorderStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveReorderStrip.swift; sourceTree = "<group>"; };
+		A15C9E4B7D2E4F18A93B01C4 /* HoverHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverHint.swift; sourceTree = "<group>"; };
 		8317BFF5B91A9037566844DC /* MapCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCatalog.swift; sourceTree = "<group>"; };
 		875AEA064865373975A8A97C /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		8B59FA945B3CC4CA6797F1CB /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
@@ -247,6 +257,7 @@
 			isa = PBXGroup;
 			children = (
 				AF31EF41C8BBD5706D1BE6B0 /* AppStatusBar.swift */,
+				A15C9E4B7D2E4F18A93B01C4 /* HoverHint.swift */,
 				ECA82C9CAC5581C1777FCDFD /* IconActionButton.swift */,
 				BE712AD9AACDE67731652B9E /* ProjectWorkspaceView.swift */,
 				7EB8F76404FA5E0C01465C0A /* ThumbnailView.swift */,
@@ -284,6 +295,7 @@
 				D398B8BBEC6BCEF8ECDB1A4E /* FolderWatcher.swift */,
 				EA22A2397A9CEDE803ED5CA1 /* ImagePipeline.swift */,
 				B1E9E2606F38EB419C250617 /* ImageSettingsStore.swift */,
+				A13C9E4B7D2E4F18A93B01C4 /* ThumbnailSizeStore.swift */,
 				8317BFF5B91A9037566844DC /* MapCatalog.swift */,
 				49FAD1547C5CB51E1D629A06 /* MapLibrary.swift */,
 				009A28FBF20D28E8493174FF /* PhotoImporter.swift */,
@@ -339,12 +351,14 @@
 				6659C86A5633F4E1AB61BF69 /* DiskPhoto.swift */,
 				B7B6FEF7B61D723F2594A813 /* FileNameFormatter.swift */,
 				97C05D7BC8A197EF6CE2AD10 /* LocalizedCopy.swift */,
+				A11C9E4B7D2E4F18A93B01C4 /* LiveReorderLayout.swift */,
 				ECB759403F492D8C1631C5FC /* MapValidator.swift */,
 				5EBF8310139978363983708B /* OrganizationMap.swift */,
 				FD9BA41A48C7520DA7055C4A /* PhotoItem.swift */,
 				F75EEF61DB9223E7661F0996 /* ProjectCreateError.swift */,
 				BAA27B572088E3B203DD32C3 /* ProjectFolderName.swift */,
 				449CCED022196C4615692B8E /* ProjectMetadata.swift */,
+				A12C9E4B7D2E4F18A93B01C4 /* ReviewDisplaySlots.swift */,
 				59E8E1E24D3CCC773D89E217 /* ProjectSlug.swift */,
 				875AEA064865373975A8A97C /* Slot.swift */,
 			);
@@ -362,6 +376,7 @@
 		F4C8E96AF884961B7A814A9C /* Review */ = {
 			isa = PBXGroup;
 			children = (
+				A14C9E4B7D2E4F18A93B01C4 /* LiveReorderStrip.swift */,
 				4CE40773B20064617B8DB9E6 /* ReviewGridView.swift */,
 			);
 			path = Review;
@@ -506,11 +521,14 @@
 				46F672326392197411BB636A /* FinderSupport.swift in Sources */,
 				61722FF6B51F176749D7B7F2 /* FolderWatcher.swift in Sources */,
 				898C4D062D5C87BA457F283C /* HomeView.swift in Sources */,
+				B15C9E4B7D2E4F18A93B01C4 /* HoverHint.swift in Sources */,
 				10F69D2B593AECCFECE66828 /* IconActionButton.swift in Sources */,
 				D51BD453D4C1DE73D45EDC8A /* ImagePipeline.swift in Sources */,
 				BD852DE215C352650AA8E01B /* ImageSettingsStore.swift in Sources */,
 				3EC11FB890AE5B07342BE175 /* InboxGridView.swift in Sources */,
 				F2713C5004148286385DCD50 /* LocalizedCopy.swift in Sources */,
+				B11C9E4B7D2E4F18A93B01C4 /* LiveReorderLayout.swift in Sources */,
+				B14C9E4B7D2E4F18A93B01C4 /* LiveReorderStrip.swift in Sources */,
 				391E03603D87B1F01E369B9D /* MapCatalog.swift in Sources */,
 				59B4380BA60C21AFD7D15C0C /* MapLibrary.swift in Sources */,
 				61D081FD90DFAA09ABE12E76 /* MapValidator.swift in Sources */,
@@ -529,12 +547,14 @@
 				6AD7EF087FB24D280E3AAA2D /* ProjectWizardView.swift in Sources */,
 				3DFF59DBEF4FFFED58F47C5E /* ProjectWorkspaceView.swift in Sources */,
 				0B5AC1D62FEBCB8E61165239 /* RecentProjectsStore.swift in Sources */,
+				B12C9E4B7D2E4F18A93B01C4 /* ReviewDisplaySlots.swift in Sources */,
 				C3B6301F132C2940EDBA73D8 /* ReviewGridView.swift in Sources */,
 				0B7FFC34DC29161FE27A58D8 /* SettingsView.swift in Sources */,
 				E6A96572148A708557F3407A /* Slot.swift in Sources */,
 				CE5A8E27A3423116EB1615A5 /* SparkleInstallError.swift in Sources */,
 				DF3A7AF770FB7CF1174AEE83 /* StringCatalog.swift in Sources */,
 				7C58BC9EB159785B8EB9B2AB /* ThumbnailStore.swift in Sources */,
+				B13C9E4B7D2E4F18A93B01C4 /* ThumbnailSizeStore.swift in Sources */,
 				FDC19F2283B9982B47835076 /* ThumbnailView.swift in Sources */,
 				2478DD70C600EEAB78D37612 /* TriageView.swift in Sources */,
 				9ACB59DD1753383675BAFF8C /* UpdateChecker.swift in Sources */,
@@ -640,7 +660,7 @@
 				CODE_SIGN_ENTITLEMENTS = FastReport/FastReportDebug.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_LANGUAGE = pt;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
@@ -657,7 +677,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.7;
+				MARKETING_VERSION = 0.3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.robert.FastReport;
 				PRODUCT_NAME = FastReport;
 				SDKROOT = macosx;
@@ -751,7 +771,7 @@
 				CODE_SIGN_ENTITLEMENTS = FastReport/FastReport.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_LANGUAGE = pt;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -767,7 +787,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.3.7;
+				MARKETING_VERSION = 0.3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.robert.FastReport;
 				PRODUCT_NAME = FastReport;
 				SDKROOT = macosx;

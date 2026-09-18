@@ -8,7 +8,7 @@ struct ThumbnailView: View {
 
     var body: some View {
         Group {
-            if let image = ThumbnailStore.shared.image(for: url, revision: revision) {
+            if let image = ThumbnailStore.shared.image(for: url, revision: revision, maxPixelSize: max(96, Int(size * 2))) {
                 Image(nsImage: image)
                     .resizable()
                     .scaledToFill()

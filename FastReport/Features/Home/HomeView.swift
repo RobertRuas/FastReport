@@ -126,7 +126,8 @@ struct HomeView: View {
                 HStack(spacing: 8) {
                     IconActionButton(
                         systemImage: "plus",
-                        help: mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action",
+                        help: "home.organize.action",
+                        hint: mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action.hint",
                         filled: true,
                         isDisabled: mapLibrary.maps.isEmpty
                     ) {
@@ -134,7 +135,8 @@ struct HomeView: View {
                     }
                     IconActionButton(
                         systemImage: "folder",
-                        help: "home.organize.open.help"
+                        help: "home.organize.open",
+                        hint: "home.organize.open.help"
                     ) {
                         openPickedProject()
                     }
@@ -197,12 +199,23 @@ struct HomeView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .help(Text("home.recents.open"))
+            .hoverHint("home.recents.open", hint: "home.recents.open.hint")
             .accessibilityLabel(Text("home.recents.open"))
-            IconActionButton(systemImage: "arrow.up.right.square", help: "home.recents.reveal", compact: true) {
+            IconActionButton(
+                systemImage: "arrow.up.right.square",
+                help: "home.recents.reveal",
+                hint: "home.recents.reveal.hint",
+                compact: true
+            ) {
                 reveal(project)
             }
-            IconActionButton(systemImage: "trash", help: "home.recents.remove", tint: .red, compact: true) {
+            IconActionButton(
+                systemImage: "trash",
+                help: "home.recents.remove",
+                hint: "home.recents.remove.hint",
+                tint: .red,
+                compact: true
+            ) {
                 projectPendingRemoval = project
             }
         }
@@ -246,7 +259,12 @@ struct HomeView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
-                IconActionButton(systemImage: "arrow.clockwise", help: "common.retry", action: loadIfNeeded)
+                IconActionButton(
+                    systemImage: "arrow.clockwise",
+                    help: "common.retry",
+                    hint: "common.retry.hint",
+                    action: loadIfNeeded
+                )
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
