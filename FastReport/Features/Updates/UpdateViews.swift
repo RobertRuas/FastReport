@@ -198,7 +198,6 @@ struct UpdateOverlayHost<Content: View>: View {
 
     var body: some View {
         content
-            .coordinateSpace(name: HoverHintStore.space)
             .overlay {
                 if updates.showsUpdateSheet {
                     ZStack {
@@ -209,7 +208,6 @@ struct UpdateOverlayHost<Content: View>: View {
                     }
                 }
             }
-            .overlay { HoverHintCanvas() }
             .onAppear {
                 updates.checkInBackground(force: true)
             }

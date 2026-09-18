@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 enum HoverHintPlacement {
@@ -5,106 +6,65 @@ enum HoverHintPlacement {
     case above
 }
 
-@MainActor
-@Observable
-final class HoverHintStore {
-    static let space = "fastreport.hoverHint"
-
-    var isVisible = false
-    var showDetail = false
-    var title = Text("")
-    var hint: Text?
-    var anchor: CGRect = .zero
-    var preferredPlacement: HoverHintPlacement = .below
-
-    @ObservationIgnored private var session: UUID?
-
-    func present(
-        session: UUID,
-        title: Text,
-        hint: Text?,
-        anchor: CGRect,
-        placement: HoverHintPlacement
-    ) {
-        self.session = session
-        self.title = title
-        self.hint = hint
-        self.anchor = anchor
-        self.preferredPlacement = placement
-        isVisible = true
-    }
-
-    func move(session: UUID, anchor: CGRect) {
-        guard self.session == session else { return }
-        self.anchor = anchor
-    }
-
-    func revealDetail(session: UUID) {
-        guard self.session == session, isVisible else { return }
-        showDetail = true
-    }
-
-    func dismiss(session: UUID) {
-        guard self.session == session else { return }
-        isVisible = false
-        showDetail = false
-        self.session = nil
-    }
-}
-
 struct HoverHintModifier: ViewModifier {
     var title: Text
     var hint: Text?
     var placement: HoverHintPlacement = .below
 
-    @Environment(HoverHintStore.self) private var store
+    @Environment(\.locale) private var locale
     @State private var session = UUID()
-    @State private var lastFrame: CGRect = .zero
+    @State private var screenAnchor: CGRect = .zero
     @State private var titleTask: Task<Void, Never>?
     @State private var hintTask: Task<Void, Never>?
 
     func body(content: Content) -> some View {
         content
             .background {
-                GeometryReader { geo in
-                    Color.clear
-                        .onAppear {
-                            lastFrame = geo.frame(in: .named(HoverHintStore.space))
-                        }
-                        .onChange(of: geo.frame(in: .named(HoverHintStore.space))) { _, frame in
-                            lastFrame = frame
-                            store.move(session: session, anchor: frame)
-                        }
-                }
+                ScreenAnchorReader { screenAnchor = $0 }
             }
             .onHover { hovering in
-                handleHover(hovering, anchor: lastFrame)
+                handleHover(hovering)
             }
             .onDisappear {
                 cancelTasks()
-                store.dismiss(session: session)
+                HoverHintPanel.shared.hide(session: session)
             }
     }
 
-    private func handleHover(_ hovering: Bool, anchor: CGRect) {
+    private func handleHover(_ hovering: Bool) {
         cancelTasks()
         guard hovering else {
-            store.dismiss(session: session)
+            HoverHintPanel.shared.hide(session: session)
             return
         }
         let current = session
+        let anchor = screenAnchor
         titleTask = Task { @MainActor in
             try? await Task.sleep(for: .milliseconds(140))
             guard !Task.isCancelled else { return }
-            store.present(session: current, title: title, hint: hint, anchor: anchor, placement: placement)
+            HoverHintPanel.shared.show(
+                session: current,
+                title: title,
+                hint: hint,
+                showDetail: false,
+                anchor: anchor,
+                placement: placement,
+                locale: locale
+            )
         }
         guard hint != nil else { return }
         hintTask = Task { @MainActor in
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.86)) {
-                store.revealDetail(session: current)
-            }
+            HoverHintPanel.shared.show(
+                session: current,
+                title: title,
+                hint: hint,
+                showDetail: true,
+                anchor: screenAnchor,
+                placement: placement,
+                locale: locale
+            )
         }
     }
 
@@ -116,43 +76,132 @@ struct HoverHintModifier: ViewModifier {
     }
 }
 
-struct HoverHintCanvas: View {
-    @Environment(HoverHintStore.self) private var store
-    @State private var bubbleSize = CGSize(width: 180, height: 36)
+private struct ScreenAnchorReader: NSViewRepresentable {
+    var onChange: (CGRect) -> Void
 
-    var body: some View {
-        GeometryReader { geo in
-            if store.isVisible {
-                bubble
-                    .background {
-                        GeometryReader { inner in
-                            Color.clear.preference(key: HintBubbleSizeKey.self, value: inner.size)
-                        }
-                    }
-                    .onPreferenceChange(HintBubbleSizeKey.self) { bubbleSize = $0 }
-                    .offset(origin(in: geo.size))
-                    .transition(
-                        .opacity.combined(with: .scale(scale: 0.96, anchor: .top))
-                    )
-            }
-        }
-        .allowsHitTesting(false)
+    func makeNSView(context: Context) -> AnchorView {
+        let view = AnchorView()
+        view.onChange = onChange
+        return view
     }
 
-    private var bubble: some View {
+    func updateNSView(_ nsView: AnchorView, context: Context) {
+        nsView.onChange = onChange
+        DispatchQueue.main.async {
+            nsView.report()
+        }
+    }
+
+    final class AnchorView: NSView {
+        var onChange: ((CGRect) -> Void)?
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            report()
+        }
+
+        override func layout() {
+            super.layout()
+            report()
+        }
+
+        func report() {
+            guard let window, window.occlusionState.contains(.visible), bounds.width > 0, bounds.height > 0 else { return }
+            let inWindow = convert(bounds, to: nil)
+            onChange?(window.convertToScreen(inWindow))
+        }
+    }
+}
+
+@MainActor
+final class HoverHintPanel {
+    static let shared = HoverHintPanel()
+
+    private var panel: NSPanel?
+    private var session: UUID?
+
+    func show(
+        session: UUID,
+        title: Text,
+        hint: Text?,
+        showDetail: Bool,
+        anchor: CGRect,
+        placement: HoverHintPlacement,
+        locale: Locale
+    ) {
+        guard anchor.width > 0, anchor.height > 0 else { return }
+        self.session = session
+        let root = HoverHintBubble(title: title, hint: hint, showDetail: showDetail)
+            .environment(\.locale, locale)
+        let hosting = NSHostingView(rootView: root)
+        hosting.sizingOptions = .intrinsicContentSize
+        let size = hosting.fittingSize
+        guard size.width > 1, size.height > 1 else { return }
+
+        let visible = NSScreen.main?.visibleFrame ?? NSScreen.screens.first?.visibleFrame ?? .zero
+        let frame = HoverHintLayout.panelFrame(
+            anchor: anchor,
+            bubble: size,
+            visible: visible,
+            preferred: placement
+        )
+
+        let panel = existingPanel()
+        panel.contentView = hosting
+        panel.setFrame(frame, display: true)
+        panel.orderFrontRegardless()
+    }
+
+    func hide(session: UUID) {
+        guard self.session == session || self.session == nil else { return }
+        self.session = nil
+        panel?.orderOut(nil)
+    }
+
+    private func existingPanel() -> NSPanel {
+        if let panel {
+            return panel
+        }
+        let panel = NSPanel(
+            contentRect: .zero,
+            styleMask: [.borderless, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.isFloatingPanel = true
+        panel.level = .statusBar
+        panel.backgroundColor = .clear
+        panel.isOpaque = false
+        panel.hasShadow = true
+        panel.hidesOnDeactivate = false
+        panel.becomesKeyOnlyIfNeeded = true
+        panel.ignoresMouseEvents = true
+        panel.isReleasedWhenClosed = false
+        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
+        self.panel = panel
+        return panel
+    }
+}
+
+private struct HoverHintBubble: View {
+    var title: Text
+    var hint: Text?
+    var showDetail: Bool
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            store.title
+            title
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(Color(white: 0.18))
                 .lineLimit(2)
                 .fixedSize(horizontal: true, vertical: true)
-            if store.showDetail, let hint = store.hint {
+            if showDetail, let hint {
                 hint
                     .font(.caption.weight(.light))
                     .foregroundStyle(Color(white: 0.32))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                    .frame(width: 240, alignment: .leading)
+                    .frame(minWidth: 180, idealWidth: 240, maxWidth: 260, alignment: .leading)
             }
         }
         .padding(.horizontal, 10)
@@ -164,54 +213,40 @@ struct HoverHintCanvas: View {
         }
         .shadow(color: .black.opacity(0.12), radius: 10, y: 3)
     }
-
-    private func origin(in container: CGSize) -> CGSize {
-        HoverHintLayout.origin(
-            anchor: store.anchor,
-            bubble: bubbleSize,
-            container: container,
-            preferred: store.preferredPlacement
-        )
-    }
 }
 
 enum HoverHintLayout {
-    static func origin(
+    static func panelFrame(
         anchor: CGRect,
         bubble: CGSize,
-        container: CGSize,
+        visible: CGRect,
         preferred: HoverHintPlacement
-    ) -> CGSize {
+    ) -> CGRect {
         let margin: CGFloat = 8
         let width = max(bubble.width, 1)
         let height = max(bubble.height, 1)
         var x = anchor.midX - width / 2
-        x = min(max(margin, x), max(margin, container.width - width - margin))
+        let minX = visible.minX + margin
+        let maxX = max(minX, visible.maxX - width - margin)
+        x = min(max(minX, x), maxX)
 
-        let below = anchor.maxY + margin
-        let above = anchor.minY - margin - height
+        let belowY = anchor.minY - margin - height
+        let aboveY = anchor.maxY + margin
         var place = preferred
-        if place == .below, below + height > container.height - margin {
+        if place == .below, belowY < visible.minY + margin {
             place = .above
         }
-        if place == .above, above < margin {
+        if place == .above, aboveY + height > visible.maxY - margin {
             place = .below
         }
         let y: CGFloat
         switch place {
         case .below:
-            y = min(below, max(margin, container.height - height - margin))
+            y = max(visible.minY + margin, belowY)
         case .above:
-            y = max(margin, above)
+            y = min(aboveY, visible.maxY - height - margin)
         }
-        return CGSize(width: x, height: y)
-    }
-}
-
-private struct HintBubbleSizeKey: PreferenceKey {
-    static var defaultValue: CGSize { .zero }
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-        value = nextValue()
+        return CGRect(x: x, y: y, width: width, height: height)
     }
 }
 
@@ -238,10 +273,5 @@ extension View {
             hint: hint.map { Text($0) },
             placement: placement
         ))
-    }
-
-    func hoverHintHost() -> some View {
-        coordinateSpace(name: HoverHintStore.space)
-            .overlay { HoverHintCanvas() }
     }
 }

@@ -314,24 +314,26 @@ final class UpdateProgressMathTests: XCTestCase {
 }
 
 final class HoverHintLayoutTests: XCTestCase {
-    func testKeepsTheBubbleInsideTheWindowNearTheTrailingEdge() {
-        let origin = HoverHintLayout.origin(
-            anchor: CGRect(x: 760, y: 12, width: 30, height: 30),
+    func testKeepsThePanelInsideTheVisibleFrameNearTheTrailingEdge() {
+        let frame = HoverHintLayout.panelFrame(
+            anchor: CGRect(x: 760, y: 200, width: 30, height: 30),
             bubble: CGSize(width: 240, height: 72),
-            container: CGSize(width: 800, height: 600),
+            visible: CGRect(x: 0, y: 0, width: 800, height: 600),
             preferred: .below
         )
-        XCTAssertGreaterThanOrEqual(origin.width, 8)
-        XCTAssertLessThanOrEqual(origin.width + 240, 792)
+        XCTAssertGreaterThanOrEqual(frame.minX, 8)
+        XCTAssertLessThanOrEqual(frame.maxX, 792)
+        XCTAssertEqual(frame.width, 240)
     }
 
     func testFlipsAboveWhenTheButtonIsNearTheBottom() {
-        let origin = HoverHintLayout.origin(
-            anchor: CGRect(x: 40, y: 550, width: 30, height: 30),
+        let frame = HoverHintLayout.panelFrame(
+            anchor: CGRect(x: 40, y: 12, width: 30, height: 30),
             bubble: CGSize(width: 200, height: 80),
-            container: CGSize(width: 800, height: 600),
+            visible: CGRect(x: 0, y: 0, width: 800, height: 600),
             preferred: .below
         )
-        XCTAssertLessThan(origin.height + 80, 550)
+        XCTAssertGreaterThanOrEqual(frame.minY, 8)
+        XCTAssertGreaterThan(frame.minY, 42)
     }
 }

@@ -8,8 +8,6 @@ struct FastReportApp: App {
     @State private var imageSettings = ImageSettingsStore()
     @State private var thumbnailSize = ThumbnailSizeStore()
     @State private var updates = AppUpdateCenter()
-    @State private var hoverHints = HoverHintStore()
-    @State private var settingsHints = HoverHintStore()
 
     var body: some Scene {
         WindowGroup {
@@ -22,7 +20,6 @@ struct FastReportApp: App {
             .environment(imageSettings)
             .environment(thumbnailSize)
             .environment(updates)
-            .environment(hoverHints)
             .environment(\.locale, languageStore.locale)
             .frame(minWidth: 720, minHeight: 500)
         }
@@ -46,10 +43,7 @@ struct FastReportApp: App {
                 .environment(languageStore)
                 .environment(imageSettings)
                 .environment(updates)
-                .environment(settingsHints)
                 .environment(\.locale, languageStore.locale)
-                .coordinateSpace(name: HoverHintStore.space)
-                .overlay { HoverHintCanvas() }
         }
     }
 }
