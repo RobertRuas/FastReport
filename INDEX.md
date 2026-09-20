@@ -2,7 +2,7 @@
 
 Mapa **funcionalidade → ficheiros**. Ler isto primeiro; só abrir os ficheiros da funcionalidade pedida. Não vasculhar o repositório inteiro.
 
-Produto e decisões: `PLANO.md`. Stack e instalação: `README.md`.
+Produto e decisões: `PLANO.md`. Alinhamento HIG / menus / ícones: `PLANO-PADRAO-APPLE.md`. Stack e instalação: `README.md`.
 
 Vocabulário estável: **Mapa**, **Projeto**, **Inbox**, **Slot**, **Triagem**, **Revisão**. Disco = fonte da verdade.
 

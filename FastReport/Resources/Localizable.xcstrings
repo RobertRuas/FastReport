@@ -2184,13 +2184,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "As atualizações vêm das GitHub Releases. Copia a app para a pasta Aplicações e abre-a de lá. A instalação só começa quando clicar em Atualizar."
+            "value": "As atualizações vêm das GitHub Releases. A app procura sozinha ao abrir e de 4 em 4 horas, descarrega e instala. Copia a app para a pasta Aplicações e abre-a de lá."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Updates come from GitHub Releases. Copy the app to the Applications folder and open it from there. Installation starts only when you click Update."
+            "value": "Updates come from GitHub Releases. The app checks on launch and every 4 hours, then downloads and installs on its own. Copy the app to the Applications folder and open it from there."
           }
         }
       }
@@ -2779,13 +2779,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ao abrir a app e de vez em quando enquanto ela estiver aberta, procura versões novas nas GitHub Releases."
+            "value": "Ao abrir a app e de 4 em 4 horas, procura, descarrega e instala versões novas."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When the app opens and occasionally while it stays open, it looks for new versions on GitHub Releases."
+            "value": "When the app opens and every 4 hours, it looks for new versions, then downloads and installs them."
           }
         }
       }
@@ -2932,13 +2932,13 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "A atualização está pronta a instalar."
+            "value": "A atualização está pronta. A app vai fechar e reabrir sozinha."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The update is ready to install."
+            "value": "The update is ready. The app will close and reopen on its own."
           }
         }
       }

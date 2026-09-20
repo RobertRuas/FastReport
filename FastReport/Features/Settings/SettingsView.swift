@@ -67,8 +67,6 @@ struct SettingsView: View {
             Section("settings.version") {
                 LabeledContent("settings.version.marketing", value: AppVersion.display())
                     .textSelection(.enabled)
-                Toggle("settings.updates.autoCheck", isOn: autoCheckBinding)
-                    .help(Text("settings.updates.autoCheck.help"))
                 if updates.requiresApplicationsFolder {
                     Text("error.updates.location")
                         .foregroundStyle(.secondary)
@@ -82,27 +80,14 @@ struct SettingsView: View {
                         updates.moveToApplicationsFolder()
                     }
                 }
-                HStack(spacing: 8) {
-                    IconActionButton(
-                        systemImage: "arrow.clockwise",
-                        help: "settings.updates.check",
-                        hint: "settings.updates.check.hint",
-                        title: "settings.updates.check",
-                        isDisabled: updates.requiresApplicationsFolder
-                    ) {
-                        updates.checkForUpdatesUserInitiated(presentSheet: false)
-                    }
-                    if updates.available != nil, updates.phase == .available || updates.phase == .readyToInstall {
-                        IconActionButton(
-                            systemImage: updates.phase == .readyToInstall ? "arrow.clockwise.circle.fill" : "arrow.down.app.fill",
-                            help: updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install",
-                            hint: updates.phase == .readyToInstall ? "settings.updates.relaunch.hint" : "settings.updates.install.hint",
-                            title: updates.phase == .readyToInstall ? "settings.updates.relaunch" : "settings.updates.install",
-                            filled: true
-                        ) {
-                            updates.beginInstall()
-                        }
-                    }
+                IconActionButton(
+                    systemImage: "arrow.clockwise",
+                    help: "settings.updates.check",
+                    hint: "settings.updates.check.hint",
+                    title: "settings.updates.check",
+                    isDisabled: updates.requiresApplicationsFolder
+                ) {
+                    updates.checkForUpdatesUserInitiated(presentSheet: true)
                 }
                 if updates.phase == .checking {
                     ProgressView("settings.updates.checking")
@@ -173,13 +158,6 @@ struct SettingsView: View {
         Binding(
             get: { macros.stepDelayMs },
             set: { macros.setStepDelayMs($0) }
-        )
-    }
-
-    private var autoCheckBinding: Binding<Bool> {
-        Binding(
-            get: { updates.automaticallyChecksForUpdates },
-            set: { updates.setAutomaticallyChecks($0) }
         )
     }
 

@@ -201,7 +201,7 @@ Menu nativo: FastReport, Projeto, Foto, Ver, Janela, Ajuda (folha de atalhos). �
 
 ## 6. Design
 
-- Seguir **Human Interface Guidelines** de macOS: barra de ferramentas nativa, tipografia SF, materiais (sidebar / background), espaçamento 8 pt.
+- Seguir **Human Interface Guidelines** de macOS: barra de ferramentas nativa, tipografia SF, materiais (sidebar / background), espaçamento 8 pt. Lista de trabalho no código actual: `PLANO-PADRAO-APPLE.md`.
 - Uma hierarquia: **um** botão principal por ecrã.
 - Pouco texto. Estado com números e ícones, não parágrafos.
 - Formulários do assistente: labels em cima, campos largos, erro por baixo do campo.

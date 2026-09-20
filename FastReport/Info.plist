@@ -9,7 +9,7 @@
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUAutomaticallyUpdate</key>
-	<false/>
+	<true/>
 	<key>SUAllowsAutomaticUpdates</key>
 	<true/>
 	<key>SUScheduledCheckInterval</key>

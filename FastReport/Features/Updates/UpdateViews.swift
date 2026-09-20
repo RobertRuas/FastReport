@@ -116,37 +116,6 @@ struct UpdateProgressCard: View {
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
-            HStack {
-                if updates.phase == .checking || updates.phase == .downloading {
-                    IconActionButton(
-                        systemImage: "xmark",
-                        help: "settings.updates.cancel",
-                        hint: "settings.updates.cancel.hint",
-                        action: updates.cancelCurrent
-                    )
-                }
-                Spacer()
-                if updates.phase == .available {
-                    IconActionButton(
-                        systemImage: "arrow.down.app.fill",
-                        help: "settings.updates.install",
-                        hint: "settings.updates.install.hint",
-                        title: "settings.updates.install",
-                        filled: true
-                    ) {
-                        updates.beginInstall()
-                    }
-                } else if updates.phase == .readyToInstall {
-                    IconActionButton(
-                        systemImage: "arrow.clockwise.circle.fill",
-                        help: "settings.updates.relaunch",
-                        hint: "settings.updates.relaunch.hint",
-                        title: "settings.updates.relaunch",
-                        filled: true,
-                        action: updates.beginInstall
-                    )
-                }
-            }
         }
         .padding(16)
         .frame(maxWidth: 360)
@@ -203,8 +172,12 @@ struct UpdateOverlayHost<Content: View>: View {
                     ZStack {
                         Color.black.opacity(0.18)
                             .ignoresSafeArea()
-                            .onTapGesture(perform: updates.dismissUpdateSheet)
-                        UpdateProgressCard(showsClose: true)
+                            .onTapGesture {
+                                if !updates.isUpdateInProgress {
+                                    updates.dismissUpdateSheet()
+                                }
+                            }
+                        UpdateProgressCard(showsClose: !updates.isUpdateInProgress)
                     }
                 }
             }

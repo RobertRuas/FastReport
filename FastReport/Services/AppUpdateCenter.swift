@@ -103,24 +103,22 @@ final class AppUpdateCenter {
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
-        if defaults.object(forKey: Self.autoCheckKey) == nil {
-            defaults.set(true, forKey: Self.autoCheckKey)
-        }
-        automaticallyChecksForUpdates = defaults.object(forKey: Self.autoCheckKey) as? Bool ?? true
-        defaults.set(false, forKey: "fastreport.updates.autoInstall")
-        defaults.set(false, forKey: "SUAutomaticallyUpdate")
+        automaticallyChecksForUpdates = true
+        defaults.set(true, forKey: Self.autoCheckKey)
+        defaults.set(true, forKey: "fastreport.updates.autoInstall")
+        defaults.set(true, forKey: "SUAutomaticallyUpdate")
         driver = SparkleUserDriver()
         driver.center = self
         startSparkleIfNeeded()
     }
 
     func setAutomaticallyChecks(_ enabled: Bool) {
-        automaticallyChecksForUpdates = enabled
-        defaults.set(enabled, forKey: Self.autoCheckKey)
-        updater?.automaticallyChecksForUpdates = enabled
-        if enabled {
-            checkInBackground(force: true)
-        }
+        _ = enabled
+        automaticallyChecksForUpdates = true
+        defaults.set(true, forKey: Self.autoCheckKey)
+        updater?.automaticallyChecksForUpdates = true
+        updater?.automaticallyDownloadsUpdates = true
+        checkInBackground(force: true)
     }
 
     func checkForUpdatesUserInitiated(presentSheet: Bool = true) {
@@ -327,12 +325,13 @@ final class AppUpdateCenter {
             userDriver: driver,
             delegate: driver
         )
-        updater.automaticallyChecksForUpdates = automaticallyChecksForUpdates
-        updater.automaticallyDownloadsUpdates = false
+        updater.automaticallyChecksForUpdates = true
+        updater.automaticallyDownloadsUpdates = true
         updater.updateCheckInterval = Self.checkInterval
         do {
             try updater.start()
-            updater.automaticallyDownloadsUpdates = false
+            updater.automaticallyChecksForUpdates = true
+            updater.automaticallyDownloadsUpdates = true
             self.updater = updater
             if automaticallyChecksForUpdates {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
@@ -417,12 +416,10 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
                 reply(.dismiss)
                 return
             }
-            if alreadyDownloaded {
-                center.pendingInstallChoice = reply
-                center.noteReadyToInstall()
-                return
-            }
-            center.pendingUpdateChoice = reply
+            center.showsUpdateSheet = true
+            center.pendingUpdateChoice = nil
+            center.pendingInstallChoice = nil
+            reply(.install)
         }
     }
 
@@ -468,8 +465,10 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
     }
 
     func showDownloadInitiated(cancellation: @escaping () -> Void) {
+        _ = cancellation
         Task { @MainActor in
-            center?.cancelDownload = cancellation
+            center?.cancelDownload = nil
+            center?.showsUpdateSheet = true
             center?.noteDownloadStarted()
         }
     }
@@ -500,21 +499,32 @@ final class SparkleUserDriver: NSObject, SPUUserDriver, SPUUpdaterDelegate {
 
     func showReady(toInstallAndRelaunch reply: @escaping (SPUUserUpdateChoice) -> Void) {
         Task { @MainActor in
-            guard let center else {
-                reply(.install)
-                return
-            }
-            center.pendingInstallChoice = reply
-            center.noteReadyToInstall()
+            center?.showsUpdateSheet = true
+            center?.pendingInstallChoice = nil
+            center?.noteReadyToInstall()
+            reply(.install)
         }
     }
 
     func showInstallingUpdate(withApplicationTerminated applicationTerminated: Bool, retryTerminatingApplication: @escaping () -> Void) {
         Task { @MainActor in
+            center?.showsUpdateSheet = true
             center?.noteInstalling()
+            if !applicationTerminated {
+                retryTerminatingApplication()
+            }
         }
-        _ = applicationTerminated
-        _ = retryTerminatingApplication
+    }
+
+    func updater(_ updater: SPUUpdater, willInstallUpdateOnQuit item: SUAppcastItem, immediateInstallationBlock immediateInstallHandler: @escaping () -> Void) -> Bool {
+        _ = updater
+        _ = item
+        Task { @MainActor in
+            center?.showsUpdateSheet = true
+            center?.noteInstalling()
+            immediateInstallHandler()
+        }
+        return true
     }
 
     func showUpdateInstalledAndRelaunched(_ relaunched: Bool, acknowledgement: @escaping () -> Void) {
