@@ -62,6 +62,7 @@
 		B366FC9D9AF31C062A803EAC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 999AA0445CB92567EF96C965 /* Assets.xcassets */; };
 		B3B42E0FF10C32EB96210BD4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = BDA97FF565CD38724B7EF11D /* Sparkle */; };
 		B64F42219633A11B4867F911 /* FakeBookmarkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D85EFEBE7AD215AD3A6AABA /* FakeBookmarkStore.swift */; };
+		BBABDB74434E19B217B3DC7F /* AppCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D3222B48FAEF8F260DB4B3A /* AppCommands.swift */; };
 		BD21C86A0E3C61063E208E4F /* DeliveryBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E62175862D5A57AB959E7D /* DeliveryBoardView.swift */; };
 		BD852DE215C352650AA8E01B /* ImageSettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E9E2606F38EB419C250617 /* ImageSettingsStore.swift */; };
 		C3B6301F132C2940EDBA73D8 /* ReviewGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CE40773B20064617B8DB9E6 /* ReviewGridView.swift */; };
@@ -139,6 +140,7 @@
 		84A67C1625C76830BEF85BE0 /* DeliveryLedger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryLedger.swift; sourceTree = "<group>"; };
 		875AEA064865373975A8A97C /* Slot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slot.swift; sourceTree = "<group>"; };
 		8B59FA945B3CC4CA6797F1CB /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
+		8D3222B48FAEF8F260DB4B3A /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
 		93E3CEBCE19CE5C857663B7A /* FinderSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderSupport.swift; sourceTree = "<group>"; };
 		962E80CB10A8AE5DF81CCB01 /* FastReport.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FastReport.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97C05D7BC8A197EF6CE2AD10 /* LocalizedCopy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedCopy.swift; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 		339C6F338DF03FE4A942C23C /* App */ = {
 			isa = PBXGroup;
 			children = (
+				8D3222B48FAEF8F260DB4B3A /* AppCommands.swift */,
 				5F5E5299B8BB2868211FE8A9 /* AppVersion.swift */,
 				1BFAB2C3DC266E09017BA741 /* FastReportApp.swift */,
 				BBEEED4E7D02CF819C13406C /* StringCatalog.swift */,
@@ -549,6 +552,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BBABDB74434E19B217B3DC7F /* AppCommands.swift in Sources */,
 				F00A61A8C6BE87B5E63E3AAF /* AppFailure.swift in Sources */,
 				96D6B323568E037AA62DFE01 /* AppInstallLocation.swift in Sources */,
 				280CA23C412B6EA8D61E2CC8 /* AppLanguage.swift in Sources */,

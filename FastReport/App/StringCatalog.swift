@@ -3,6 +3,7 @@ import Foundation
 enum StringCatalog {
     static let requiredKeys: [String] = [
         "home.title",
+        "home.projects",
         "home.subtitle",
         "home.organize.title",
         "home.organize.subtitle",
@@ -105,6 +106,7 @@ enum StringCatalog {
         "home.recents.open",
         "workspace.home",
         "workspace.triage.start",
+        "workspace.triage.start.menu",
         "workspace.inbox.count %lld",
         "workspace.inbox.label",
         "import.drop",
@@ -328,6 +330,9 @@ enum StringCatalog {
         "settings.macro.status",
         "settings.macro.trusted",
         "settings.macro.untrusted",
-        "settings.macro.delay"
+        "settings.macro.delay",
+        "menu.file.close_project",
+        "menu.view",
+        "menu.photo"
     ]
 }

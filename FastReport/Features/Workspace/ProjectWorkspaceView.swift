@@ -4,13 +4,10 @@ struct ProjectWorkspaceView: View {
     @Environment(ProjectSession.self) private var session
     @Environment(AppLanguageStore.self) private var languageStore
     var onClose: () -> Void
-    @State private var showShortcuts = false
 
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                workspaceHeader
-                Divider()
                 board
                 AppStatusBar(items: workspaceStatusItems) {
                     if session.mode == .delivery || session.showsFolderReview {
@@ -26,6 +23,9 @@ struct ProjectWorkspaceView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
+        .navigationTitle(session.project.metadata.displayName)
+        .toolbar(session.mode == .triage ? .hidden : .automatic)
+        .toolbar { workspaceToolbar }
         .alert(
             Text("error.generic"),
             isPresented: Binding(
@@ -41,14 +41,9 @@ struct ProjectWorkspaceView: View {
             if session.mode == .triage, let failure = session.failure {
                 Text(failure.message)
                     .padding(8)
-                    .background(.red.opacity(0.85), in: Capsule())
-                    .foregroundStyle(.white)
+                    .background(.regularMaterial, in: Capsule())
                     .padding(.bottom, 40)
             }
-        }
-        .sheet(isPresented: $showShortcuts) {
-            ShortcutsSheet()
-                .environment(\.locale, languageStore.locale)
         }
         .overlay(alignment: .bottomTrailing) {
             if session.mode == .delivery {
@@ -56,6 +51,61 @@ struct ProjectWorkspaceView: View {
             }
         }
         .onDisappear { session.close() }
+    }
+
+    @ToolbarContentBuilder
+    private var workspaceToolbar: some ToolbarContent {
+        ToolbarItem(placement: .navigation) {
+            Button(action: onClose) {
+                Label("workspace.home", systemImage: "chevron.backward")
+            }
+            .help(Text("workspace.home.hint"))
+        }
+        ToolbarItemGroup {
+            Button {
+                Task { await session.pickAndImport(locale: languageStore.locale) }
+            } label: {
+                Label("workspace.add_photos", systemImage: "photo.badge.plus")
+            }
+            .disabled(session.isImporting)
+            .help(Text("workspace.add_photos.hint"))
+
+            Button {
+                FinderReveal.reveal(session.project.url)
+            } label: {
+                Label("home.recents.reveal", systemImage: "folder")
+            }
+            .help(Text("home.recents.reveal.hint"))
+
+            Button {
+                session.toggleDelivery()
+            } label: {
+                Label("workspace.delivery", systemImage: "doc.text.image")
+                    .symbolVariant(session.mode == .delivery ? .fill : .none)
+            }
+            .disabled(!session.showsFolderReview && session.mode != .delivery)
+            .help(Text("workspace.delivery.hint"))
+
+            if session.pendingCount > 0 {
+                Button {
+                    session.flipPending(locale: languageStore.locale)
+                } label: {
+                    Label("workspace.flip_pending", systemImage: "arrow.up.arrow.down")
+                }
+                .disabled(session.isImporting)
+                .help(Text("workspace.flip_pending.hint"))
+            }
+        }
+        if session.pendingCount > 0 {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    session.startTriage()
+                } label: {
+                    Label("workspace.triage.start.menu", systemImage: "play.fill")
+                }
+                .help(Text("workspace.triage.start.hint"))
+            }
+        }
     }
 
     @ViewBuilder
@@ -67,65 +117,6 @@ struct ProjectWorkspaceView: View {
         } else {
             InboxGridView()
         }
-    }
-
-    private var workspaceHeader: some View {
-        HStack(spacing: 8) {
-            IconActionButton(systemImage: "house", help: "workspace.home", hint: "workspace.home.hint", action: onClose)
-            Text(session.project.metadata.displayName)
-                .font(.headline)
-            Spacer()
-            IconActionButton(
-                systemImage: "photo.badge.plus",
-                help: "workspace.add_photos",
-                hint: "workspace.add_photos.hint",
-                isDisabled: session.isImporting
-            ) {
-                Task { await session.pickAndImport(locale: languageStore.locale) }
-            }
-            IconActionButton(
-                systemImage: "arrow.up.right.square",
-                help: "home.recents.reveal",
-                hint: "home.recents.reveal.hint"
-            ) {
-                FinderReveal.reveal(session.project.url)
-            }
-            IconActionButton(
-                systemImage: "doc.text.image",
-                help: "workspace.delivery",
-                hint: "workspace.delivery.hint",
-                filled: session.mode == .delivery,
-                isDisabled: !session.showsFolderReview && session.mode != .delivery
-            ) {
-                session.toggleDelivery()
-            }
-            if session.pendingCount > 0 {
-                IconActionButton(
-                    systemImage: "arrow.left.and.right.righttriangle.left.righttriangle.right",
-                    help: "workspace.flip_pending",
-                    hint: "workspace.flip_pending.hint",
-                    isDisabled: session.isImporting
-                ) {
-                    session.flipPending(locale: languageStore.locale)
-                }
-                IconActionButton(
-                    systemImage: "play.fill",
-                    help: "workspace.triage.start \(session.pendingCount)",
-                    hint: "workspace.triage.start.hint",
-                    filled: true,
-                    badge: session.pendingCount
-                ) {
-                    session.startTriage()
-                }
-            }
-            IconActionButton(systemImage: "keyboard", help: "shortcuts.title", hint: "shortcuts.title.hint") {
-                showShortcuts = true
-            }
-            UpdateToolbarButton()
-            SettingsGearButton()
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
     }
 
     private var workspaceStatusItems: [AppStatusItem] {
@@ -176,25 +167,34 @@ struct ProjectWorkspaceView: View {
 }
 
 struct ShortcutsSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("shortcuts.title")
-                .font(.headline)
-            shortcut("1–24 ↵", "shortcuts.slot")
-            shortcut("0 ↵ / G ↵", "shortcuts.general")
-            shortcut("⌘⌫", "shortcuts.trash")
-            shortcut("← →", "shortcuts.nav")
-            shortcut("R", "shortcuts.rotate")
-            shortcut("F", "shortcuts.flip")
-            shortcut("C", "shortcuts.crop")
-            shortcut("⌘Z", "shortcuts.undo")
-            shortcut("⌘␣", "shortcuts.macro")
-            shortcut("S", "shortcuts.skip")
-            shortcut("Esc", "shortcuts.esc")
-            Spacer()
-        }
-        .padding(24)
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 10) {
+                shortcut("1–24 ↵", "shortcuts.slot")
+                shortcut("0 ↵ / G ↵", "shortcuts.general")
+                shortcut("⌘⌫", "shortcuts.trash")
+                shortcut("← →", "shortcuts.nav")
+                shortcut("R", "shortcuts.rotate")
+                shortcut("F", "shortcuts.flip")
+                shortcut("C", "shortcuts.crop")
+                shortcut("⌘Z", "shortcuts.undo")
+                shortcut("⌘␣", "shortcuts.macro")
+                shortcut("S", "shortcuts.skip")
+                shortcut("Esc", "shortcuts.esc")
+                Spacer()
+            }
+            .padding(24)
             .frame(width: 420, height: 408)
+            .navigationTitle(Text("shortcuts.title"))
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("common.done") { dismiss() }
+                        .keyboardShortcut(.defaultAction)
+                }
+            }
+        }
     }
 
     private func shortcut(_ keys: String, _ label: LocalizedStringKey) -> some View {

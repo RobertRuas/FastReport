@@ -52,15 +52,10 @@ struct SettingsView: View {
                 }
                 .help(Text("macro.delay.hint"))
                 if !macros.isTrusted {
-                    IconActionButton(
-                        systemImage: "lock.open",
-                        help: "macro.grant",
-                        hint: "macro.grant.hint",
-                        title: "macro.grant",
-                        filled: true
-                    ) {
+                    Button("macro.grant") {
                         macros.requestTrust()
                     }
+                    .help(Text("macro.grant.hint"))
                 }
             }
 
@@ -71,24 +66,16 @@ struct SettingsView: View {
                     Text("error.updates.location")
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
-                    IconActionButton(
-                        systemImage: "folder.badge.plus",
-                        help: "settings.updates.move.action",
-                        hint: "settings.updates.move.action.hint",
-                        filled: true
-                    ) {
+                    Button("settings.updates.move.action") {
                         updates.moveToApplicationsFolder()
                     }
+                    .help(Text("settings.updates.move.action.hint"))
                 }
-                IconActionButton(
-                    systemImage: "arrow.clockwise",
-                    help: "settings.updates.check",
-                    hint: "settings.updates.check.hint",
-                    title: "settings.updates.check",
-                    isDisabled: updates.requiresApplicationsFolder
-                ) {
+                Button("settings.updates.check") {
                     updates.checkForUpdatesUserInitiated(presentSheet: true)
                 }
+                .disabled(updates.requiresApplicationsFolder)
+                .help(Text("settings.updates.check.hint"))
                 if updates.phase == .checking {
                     ProgressView("settings.updates.checking")
                 } else if updates.showsProgressDetails || updates.phase == .installed {

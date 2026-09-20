@@ -271,7 +271,7 @@ struct MacroPadView: View {
                 action: macros.beginClickCapture
             )
             padButton(
-                systemImage: "plus.circle.fill",
+                systemImage: "plus",
                 help: "macro.append",
                 hint: "macro.append.hint",
                 tint: .red,

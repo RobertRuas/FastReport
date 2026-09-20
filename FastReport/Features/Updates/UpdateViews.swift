@@ -1,41 +1,19 @@
 import SwiftUI
 
-struct SettingsGearButton: View {
-    @State private var hovering = false
-
-    var body: some View {
-        SettingsLink {
-            Image(systemName: "gearshape")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(.primary)
-                .frame(width: 30, height: 30)
-                .background {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color.primary.opacity(hovering ? 0.10 : 0.05))
-                }
-        }
-        .buttonStyle(.plain)
-        .labelStyle(.iconOnly)
-        .onHover { hovering = $0 }
-        .hoverHint("settings.title", hint: "settings.title.hint")
-        .accessibilityLabel(Text("settings.title"))
-    }
-}
-
 struct UpdateToolbarButton: View {
     @Environment(AppUpdateCenter.self) private var updates
 
     var body: some View {
         if updates.showsToolbarUpdateIcon {
-            IconActionButton(
-                systemImage: updates.isUpdateInProgress ? "arrow.triangle.2.circlepath" : "arrow.down.app.fill",
-                help: updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
-                hint: updates.isUpdateInProgress ? "updates.toolbar.progress.hint" : "updates.toolbar.available.hint",
-                title: updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
-                filled: true
-            ) {
+            Button {
                 updates.presentUpdateSheet()
+            } label: {
+                Label(
+                    updates.isUpdateInProgress ? "updates.toolbar.progress" : "updates.toolbar.available",
+                    systemImage: updates.isUpdateInProgress ? "arrow.triangle.2.circlepath" : "arrow.down.app"
+                )
             }
+            .help(Text(updates.isUpdateInProgress ? "updates.toolbar.progress.hint" : "updates.toolbar.available.hint"))
         }
     }
 }
@@ -53,11 +31,11 @@ struct UpdateProgressCard: View {
                 Spacer(minLength: 8)
                 if showsClose {
                     Button(action: updates.dismissUpdateSheet) {
-                        Image(systemName: "xmark.circle.fill")
+                        Image(systemName: "xmark.circle")
                             .foregroundStyle(.secondary)
                     }
                     .buttonStyle(.plain)
-                    .hoverHint("updates.sheet.close", hint: "updates.sheet.close.hint")
+                    .help(Text("updates.sheet.close.hint"))
                     .accessibilityLabel(Text("updates.sheet.close"))
                 }
             }
@@ -67,13 +45,8 @@ struct UpdateProgressCard: View {
                     .fixedSize(horizontal: false, vertical: true)
                 HStack {
                     Spacer()
-                    IconActionButton(
-                        systemImage: "checkmark",
-                        help: "common.ok",
-                        hint: "common.ok.hint",
-                        filled: true,
-                        action: updates.dismissInstalledNotice
-                    )
+                    Button("common.ok", action: updates.dismissInstalledNotice)
+                        .keyboardShortcut(.defaultAction)
                 }
             } else if let info = updates.available {
                 Text("settings.updates.available \(info.version)")
@@ -119,8 +92,6 @@ struct UpdateProgressCard: View {
         }
         .padding(16)
         .frame(maxWidth: 360)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .shadow(color: .black.opacity(0.16), radius: 12, y: 4)
     }
 
     private var progressTitle: LocalizedStringKey {
@@ -167,19 +138,9 @@ struct UpdateOverlayHost<Content: View>: View {
 
     var body: some View {
         content
-            .overlay {
-                if updates.showsUpdateSheet {
-                    ZStack {
-                        Color.black.opacity(0.18)
-                            .ignoresSafeArea()
-                            .onTapGesture {
-                                if !updates.isUpdateInProgress {
-                                    updates.dismissUpdateSheet()
-                                }
-                            }
-                        UpdateProgressCard(showsClose: !updates.isUpdateInProgress)
-                    }
-                }
+            .sheet(isPresented: updateSheetBinding) {
+                UpdateProgressCard(showsClose: !updates.isUpdateInProgress)
+                    .interactiveDismissDisabled(updates.isUpdateInProgress)
             }
             .onAppear {
                 updates.checkInBackground(force: true)
@@ -189,5 +150,16 @@ struct UpdateOverlayHost<Content: View>: View {
                     updates.checkInBackground()
                 }
             }
+    }
+
+    private var updateSheetBinding: Binding<Bool> {
+        Binding(
+            get: { updates.showsUpdateSheet },
+            set: { presented in
+                if !presented, !updates.isUpdateInProgress {
+                    updates.dismissUpdateSheet()
+                }
+            }
+        )
     }
 }

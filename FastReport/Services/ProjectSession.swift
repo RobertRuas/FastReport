@@ -24,6 +24,7 @@ final class ProjectSession {
     private(set) var isImporting = false
     private(set) var imageRevision = 0
     private(set) var deliveryLedger = DeliveryLedger()
+    private(set) var cropRequest = 0
 
     var settings: ImageExportSettings
     private let organizer: FileOrganizer
@@ -374,6 +375,11 @@ final class ProjectSession {
         } else {
             FinderReveal.reveal(project.url)
         }
+    }
+
+    func requestCrop() {
+        guard mode == .triage else { return }
+        cropRequest += 1
     }
 
     func clearFailure() {

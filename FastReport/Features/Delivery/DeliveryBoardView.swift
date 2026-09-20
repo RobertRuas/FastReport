@@ -151,7 +151,7 @@ private struct DeliveryThumbnailCell: View {
                     .allowsHitTesting(false)
             }
         }
-        .hoverHint(verbatim: photo.fileName)
+        .help(photo.fileName)
     }
 }
 

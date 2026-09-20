@@ -28,9 +28,7 @@ struct FastReportApp: App {
         .defaultSize(width: 920, height: 640)
         .windowResizability(.contentMinSize)
         .commands {
-            CommandGroup(replacing: .help) {
-                EmptyView()
-            }
+            AppCommands()
             CommandGroup(after: .appInfo) {
                 Button("settings.updates.check") {
                     updates.checkForUpdatesUserInitiated()

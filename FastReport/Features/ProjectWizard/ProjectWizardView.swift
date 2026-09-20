@@ -17,39 +17,15 @@ struct ProjectWizardView: View {
 
     var body: some View {
         @Bindable var model = model
-        return VStack(spacing: 0) {
-            header
-            Divider()
+        return NavigationStack {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .padding(24)
-            Divider()
-            footer
-                .padding(.horizontal, 20)
-                .padding(.vertical, 14)
+                .navigationTitle(Text(stepCaption))
+                .toolbar { wizardToolbar }
         }
         .frame(width: 560, height: 500)
         .background(Color(nsColor: .windowBackgroundColor))
-    }
-
-    private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("wizard.title")
-                    .font(.headline)
-                Text(stepCaption)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            Spacer()
-            if model.step != .success {
-                Text("wizard.step \(model.step.rawValue)")
-                    .font(.subheadline.monospacedDigit())
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(.horizontal, 24)
-        .padding(.vertical, 16)
     }
 
     private var stepCaption: LocalizedStringKey {
@@ -57,6 +33,53 @@ struct ProjectWizardView: View {
         case .map: "wizard.step.map"
         case .details: "wizard.step.details"
         case .success: "wizard.step.success"
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var wizardToolbar: some ToolbarContent {
+        if model.step != .success {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("common.cancel") { dismiss() }
+                    .keyboardShortcut(.cancelAction)
+            }
+        }
+        switch model.step {
+        case .map:
+            ToolbarItem(placement: .confirmationAction) {
+                Button("common.continue") {
+                    model.goToDetails(locale: languageStore.locale)
+                }
+                .disabled(!model.canContinueFromMap)
+                .keyboardShortcut(.defaultAction)
+            }
+        case .details:
+            ToolbarItem(placement: .automatic) {
+                Button("common.back", action: model.goBack)
+                    .disabled(model.isCreating)
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                if model.isCreating {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Button("wizard.create") {
+                        model.createProject(creator: creator, recents: recents, locale: languageStore.locale)
+                    }
+                    .disabled(!model.canCreate)
+                    .keyboardShortcut(.defaultAction)
+                }
+            }
+        case .success:
+            ToolbarItem(placement: .confirmationAction) {
+                Button("common.done") {
+                    if let created = model.created {
+                        onFinished?(created)
+                    }
+                    dismiss()
+                }
+                .keyboardShortcut(.defaultAction)
+            }
         }
     }
 
@@ -139,13 +162,9 @@ struct ProjectWizardView: View {
                 Button {
                     model.chooseParent(locale: languageStore.locale)
                 } label: {
-                    Image(systemName: "folder.badge.plus")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 30, height: 30)
+                    Label("wizard.location.choose", systemImage: "folder.badge.plus")
                 }
-                .buttonStyle(.plain)
-                .hoverHint("wizard.location.choose", hint: "wizard.location.choose.hint")
-                .accessibilityLabel(Text("wizard.location.choose"))
+                .help(Text("wizard.location.choose.hint"))
                 if let locationError = model.locationError {
                     Text(locationError.message)
                         .font(.callout)
@@ -195,13 +214,9 @@ struct ProjectWizardView: View {
                 Button {
                     FinderReveal.reveal(created.url)
                 } label: {
-                    Image(systemName: "arrow.up.right.square")
-                        .font(.system(size: 14, weight: .semibold))
-                        .frame(width: 30, height: 30)
+                    Label("wizard.success.reveal", systemImage: "folder")
                 }
-                .buttonStyle(.plain)
-                .hoverHint("wizard.success.reveal", hint: "wizard.success.reveal.hint")
-                .accessibilityLabel(Text("wizard.success.reveal"))
+                .help(Text("wizard.success.reveal.hint"))
             }
             if let failure = model.failure {
                 errorBanner(failure)
@@ -211,7 +226,7 @@ struct ProjectWizardView: View {
 
     private func errorBanner(_ failure: AppFailure) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Label(failure.message, systemImage: "exclamationmark.triangle.fill")
+            Label(failure.message, systemImage: "exclamationmark.triangle")
             if failure.debugDescription != failure.message {
                 Text(failure.debugDescription)
                     .font(.caption)
@@ -222,62 +237,5 @@ struct ProjectWizardView: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-    }
-
-    private var footer: some View {
-        HStack(spacing: 8) {
-            if model.step != .success {
-                IconActionButton(systemImage: "xmark", help: "common.cancel", hint: "common.cancel.hint") {
-                    dismiss()
-                }
-                .keyboardShortcut(.cancelAction)
-            }
-            Spacer()
-            switch model.step {
-            case .map:
-                IconActionButton(
-                    systemImage: "chevron.right",
-                    help: "common.continue",
-                    hint: "common.continue.hint",
-                    filled: true,
-                    isDisabled: !model.canContinueFromMap
-                ) {
-                    model.goToDetails(locale: languageStore.locale)
-                }
-                .keyboardShortcut(.defaultAction)
-            case .details:
-                IconActionButton(
-                    systemImage: "chevron.left",
-                    help: "common.back",
-                    hint: "common.back.hint",
-                    isDisabled: model.isCreating,
-                    action: model.goBack
-                )
-                if model.isCreating {
-                    ProgressView()
-                        .controlSize(.small)
-                        .frame(width: 30, height: 30)
-                } else {
-                    IconActionButton(
-                        systemImage: "plus",
-                        help: "wizard.create",
-                        hint: "wizard.create.hint",
-                        filled: true,
-                        isDisabled: !model.canCreate
-                    ) {
-                        model.createProject(creator: creator, recents: recents, locale: languageStore.locale)
-                    }
-                    .keyboardShortcut(.defaultAction)
-                }
-            case .success:
-                IconActionButton(systemImage: "checkmark", help: "common.done", hint: "common.done.hint", filled: true) {
-                    if let created = model.created {
-                        onFinished?(created)
-                    }
-                    dismiss()
-                }
-                .keyboardShortcut(.defaultAction)
-            }
-        }
     }
 }

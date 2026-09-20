@@ -29,7 +29,7 @@ struct InboxGridView: View {
                                 .onTapGesture {
                                     session.startTriage(startingAt: photo)
                                 }
-                                .hoverHint(verbatim: photo.fileName)
+                                .help(photo.fileName)
                         }
                     }
                 }
@@ -52,15 +52,14 @@ struct InboxGridView: View {
             Text("import.drop")
                 .foregroundStyle(.secondary)
             Spacer()
-            IconActionButton(
-                systemImage: "photo.badge.plus",
-                help: "import.choose",
-                hint: "import.choose.hint",
-                filled: true,
-                isDisabled: session.isImporting
-            ) {
+            Button {
                 Task { await session.pickAndImport(locale: languageStore.locale) }
+            } label: {
+                Label("import.choose", systemImage: "photo.badge.plus")
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(session.isImporting)
+            .help(Text("import.choose.hint"))
         }
         .padding(12)
         .frame(maxWidth: .infinity)

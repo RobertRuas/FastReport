@@ -6,19 +6,24 @@ struct HomeView: View {
     @Environment(RecentProjectsStore.self) private var recents
     @Environment(ImageSettingsStore.self) private var imageSettings
     @Environment(KeyboardMacroCenter.self) private var macros
+    @Environment(ThumbnailSizeStore.self) private var thumbnailSize
     @State private var isWizardPresented = false
+    @State private var showShortcuts = false
     @State private var revealFailure: AppFailure?
     @State private var session: ProjectSession?
     @State private var projectPendingRemoval: RecentProject?
+    @State private var commandFocus = AppCommandFocus()
 
     var body: some View {
         VStack(spacing: 0) {
-            Group {
-                if let session {
-                    ProjectWorkspaceView(onClose: closeProject)
-                        .environment(session)
-                } else {
-                    homeContent
+            NavigationStack {
+                Group {
+                    if let session {
+                        ProjectWorkspaceView(onClose: closeProject)
+                            .environment(session)
+                    } else {
+                        homeContent
+                    }
                 }
             }
             if session == nil {
@@ -33,9 +38,13 @@ struct HomeView: View {
             .environment(recents)
             .environment(\.locale, languageStore.locale)
         }
-        .onAppear(perform: loadIfNeeded)
-        .onChange(of: languageStore.language) { _, _ in
-            mapLibrary.loadBundled(locale: languageStore.locale)
+        .sheet(isPresented: $showShortcuts) {
+            ShortcutsSheet()
+                .environment(\.locale, languageStore.locale)
+        }
+        .onAppear {
+            loadIfNeeded()
+            syncCommandFocus()
         }
         .alert(
             Text("error.generic"),
@@ -79,32 +88,55 @@ struct HomeView: View {
         } message: {
             Text("home.recents.remove.body \(projectPendingRemoval?.displayName ?? "")")
         }
+        .focusedSceneValue(\.appCommands, commandFocus)
+        .onChange(of: session?.project.metadata.displayName) { _, _ in
+            syncCommandFocus()
+        }
+        .onChange(of: session?.mode) { _, _ in
+            syncCommandFocus()
+        }
+        .onChange(of: session?.pendingCount) { _, _ in
+            syncCommandFocus()
+        }
+        .onChange(of: session?.undoStack.count) { _, _ in
+            syncCommandFocus()
+        }
+        .onChange(of: languageStore.language) { _, _ in
+            mapLibrary.loadBundled(locale: languageStore.locale)
+            syncCommandFocus()
+        }
+    }
+
+    private func syncCommandFocus() {
+        commandFocus.session = session
+        commandFocus.mapsEmpty = mapLibrary.maps.isEmpty
+        commandFocus.locale = languageStore.locale
+        commandFocus.thumbnailSize = thumbnailSize
+        commandFocus.presentWizard = { isWizardPresented = true }
+        commandFocus.openFolder = { openPickedProject() }
+        commandFocus.closeProject = { closeProject() }
+        commandFocus.presentShortcuts = { showShortcuts = true }
     }
 
     private var homeContent: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 20) {
-                header
-                organizeCard
-                mapsStatus
-                Spacer(minLength: 0)
-            }
-            .padding(28)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .navigationTitle(Text("home.title"))
-            .toolbar {
-                ToolbarItemGroup(placement: .automatic) {
-                    UpdateToolbarButton()
-                    SettingsGearButton()
-                }
+        VStack(alignment: .leading, spacing: 20) {
+            header
+            organizeCard
+            mapsStatus
+            Spacer(minLength: 0)
+        }
+        .padding(28)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .navigationTitle(Text("home.projects"))
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                UpdateToolbarButton()
             }
         }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("home.title")
-                .font(.largeTitle.weight(.semibold))
             Text("home.subtitle")
                 .foregroundStyle(.secondary)
             Text("status.version \(AppVersion.display())")
@@ -127,22 +159,21 @@ struct HomeView: View {
                 }
                 Spacer(minLength: 8)
                 HStack(spacing: 8) {
-                    IconActionButton(
-                        systemImage: "plus",
-                        help: "home.organize.action",
-                        hint: mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action.hint",
-                        filled: true,
-                        isDisabled: mapLibrary.maps.isEmpty
-                    ) {
+                    Button {
                         isWizardPresented = true
+                    } label: {
+                        Label("home.organize.action", systemImage: "plus")
                     }
-                    IconActionButton(
-                        systemImage: "folder",
-                        help: "home.organize.open",
-                        hint: "home.organize.open.help"
-                    ) {
+                    .buttonStyle(.borderedProminent)
+                    .disabled(mapLibrary.maps.isEmpty)
+                    .help(Text(mapLibrary.maps.isEmpty ? "home.organize.disabled" : "home.organize.action.hint"))
+                    Button {
                         openPickedProject()
+                    } label: {
+                        Label("home.organize.open", systemImage: "folder")
                     }
+                    .buttonStyle(.bordered)
+                    .help(Text("home.organize.open.help"))
                 }
             }
             if !recents.items.isEmpty {
@@ -202,25 +233,25 @@ struct HomeView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .hoverHint("home.recents.open", hint: "home.recents.open.hint")
+            .help(Text("home.recents.open.hint"))
             .accessibilityLabel(Text("home.recents.open"))
-            IconActionButton(
-                systemImage: "arrow.up.right.square",
-                help: "home.recents.reveal",
-                hint: "home.recents.reveal.hint",
-                compact: true
-            ) {
+            Button {
                 reveal(project)
+            } label: {
+                Image(systemName: "folder")
             }
-            IconActionButton(
-                systemImage: "trash",
-                help: "home.recents.remove",
-                hint: "home.recents.remove.hint",
-                tint: .red,
-                compact: true
-            ) {
+            .buttonStyle(.borderless)
+            .help(Text("home.recents.reveal.hint"))
+            .accessibilityLabel(Text("home.recents.reveal"))
+            Button {
                 projectPendingRemoval = project
+            } label: {
+                Image(systemName: "trash")
             }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.red)
+            .help(Text("home.recents.remove.hint"))
+            .accessibilityLabel(Text("home.recents.remove"))
         }
         .padding(.leading, 10)
         .padding(.trailing, 6)
@@ -255,19 +286,15 @@ struct HomeView: View {
             }
         case let .failed(failure):
             VStack(alignment: .leading, spacing: 10) {
-                Label(failure.message, systemImage: "exclamationmark.triangle.fill")
+                    Label(failure.message, systemImage: "exclamationmark.triangle")
                     .foregroundStyle(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(failure.debugDescription)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .textSelection(.enabled)
-                IconActionButton(
-                    systemImage: "arrow.clockwise",
-                    help: "common.retry",
-                    hint: "common.retry.hint",
-                    action: loadIfNeeded
-                )
+                Button("common.retry", systemImage: "arrow.clockwise", action: loadIfNeeded)
+                    .help(Text("common.retry.hint"))
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -358,7 +385,7 @@ struct HomeView: View {
             text: String(localized: "status.recents \(recents.items.count)", locale: languageStore.locale)
         ))
         items.append(AppStatusItem(
-            icon: "number",
+            icon: "info.circle",
             text: String(localized: "status.version \(AppVersion.display())", locale: languageStore.locale)
         ))
         return items

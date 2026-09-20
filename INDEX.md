@@ -20,7 +20,7 @@ Vocabulário estável: **Mapa**, **Projeto**, **Inbox**, **Slot**, **Triagem**, 
 
 | Recurso | Ficheiros |
 |---|---|
-| Entrada da app, janela, menu Ajuda/Updates, injeção de stores | `FastReport/App/FastReportApp.swift` |
+| Entrada da app, janela, menus Ficheiro/Editar/Foto/Ver/Ajuda, injeção de stores | `FastReport/App/FastReportApp.swift`, `FastReport/App/AppCommands.swift` |
 | Versão marketing + build | `FastReport/App/AppVersion.swift` |
 | Acesso ao String Catalog | `FastReport/App/StringCatalog.swift` |
 | Info.plist, entitlements | `FastReport/Info.plist`, `FastReport/FastReport.entitlements`, `FastReport/FastReportDebug.entitlements` |
@@ -83,7 +83,7 @@ Sessão aberta: fotos no disco, import, triagem, undo, watcher.
 
 | Recurso | Ficheiros |
 |---|---|
-| UI contentor (Inbox vs triagem, atalhos, folhas) | `FastReport/Features/Workspace/ProjectWorkspaceView.swift` |
+| UI contentor (Inbox vs triagem, toolbar nativa, atalhos) | `FastReport/Features/Workspace/ProjectWorkspaceView.swift` |
 | Estado da sessão (`ProjectSession`, `WorkspaceMode`) | `FastReport/Services/ProjectSession.swift` |
 | Inventário de fotos nas pastas | `FastReport/Services/ProjectScanner.swift` |
 | Mover / renomear / undo / limpar lixeira | `FastReport/Services/FileOrganizer.swift` |
@@ -170,8 +170,8 @@ Testes: `FastReportTests/DomainAndSettingsTests.swift` (`DeliveryLedgerTests`, `
 | Recurso | Ficheiros |
 |---|---|
 | Barra de estado | `FastReport/Features/Workspace/AppStatusBar.swift` |
-| Botão só ícone | `FastReport/Features/Workspace/IconActionButton.swift` |
-| Hint ao pairar | `FastReport/Features/Workspace/HoverHint.swift` |
+| Botão só ícone (painel de macro) | `FastReport/Features/Workspace/IconActionButton.swift` |
+| Hint ao pairar (macro / orbe) | `FastReport/Features/Workspace/HoverHint.swift` |
 
 ---
 

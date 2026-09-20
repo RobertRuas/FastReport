@@ -125,19 +125,12 @@ struct ReviewGridView: View {
             }
             if slot.isTrash {
                 Spacer(minLength: 8)
-                IconActionButton(
-                    systemImage: "trash",
-                    help: "review.trash.empty",
-                    hint: "review.trash.empty.hint",
-                    hintPlacement: .above,
-                    title: "review.trash.empty",
-                    tint: .red,
-                    isDisabled: count == 0,
-                    compact: true
-                ) {
+                Button("review.trash.empty", systemImage: "trash", role: .destructive) {
                     emptyTrashCount = count
                     isConfirmingEmptyTrash = true
                 }
+                .disabled(count == 0)
+                .help(Text("review.trash.empty.hint"))
             }
         }
     }
@@ -155,41 +148,29 @@ struct ThumbnailSizeControls: View {
     @Environment(ThumbnailSizeStore.self) private var thumbnailSize
 
     var body: some View {
-        HStack(spacing: 2) {
-            IconActionButton(
-                systemImage: "minus",
-                help: "review.thumbs.smaller",
-                hint: "review.thumbs.smaller.hint",
-                hintPlacement: .above,
-                isDisabled: !thumbnailSize.canShrink,
-                compact: true
-            ) {
+        HStack(spacing: 6) {
+            Button {
                 thumbnailSize.makeSmaller(currentSize: thumbnailSize.resolvedSize)
+            } label: {
+                Image(systemName: "minus")
             }
-            Button(action: thumbnailSize.useAutomatic) {
-                Text("review.thumbs.automatic")
-                    .font(.caption2.weight(thumbnailSize.mode == .automatic ? .semibold : .regular))
-                    .foregroundStyle(thumbnailSize.mode == .automatic ? Color.primary : Color.secondary)
-                    .padding(.horizontal, 6)
-                    .frame(height: 22)
-                    .background(
-                        RoundedRectangle(cornerRadius: 6, style: .continuous)
-                            .fill(Color.primary.opacity(thumbnailSize.mode == .automatic ? 0.10 : 0.04))
-                    )
-            }
-            .buttonStyle(.plain)
-            .hoverHint("review.thumbs.automatic", hint: "review.thumbs.automatic.hint", placement: .above)
-            .accessibilityLabel(Text("review.thumbs.automatic"))
-            IconActionButton(
-                systemImage: "plus",
-                help: "review.thumbs.larger",
-                hint: "review.thumbs.larger.hint",
-                hintPlacement: .above,
-                isDisabled: !thumbnailSize.canGrow,
-                compact: true
-            ) {
+            .buttonStyle(.borderless)
+            .disabled(!thumbnailSize.canShrink)
+            .help(Text("review.thumbs.smaller.hint"))
+            .accessibilityLabel(Text("review.thumbs.smaller"))
+            Button("review.thumbs.automatic", action: thumbnailSize.useAutomatic)
+                .buttonStyle(.borderless)
+                .fontWeight(thumbnailSize.mode == .automatic ? .semibold : .regular)
+                .help(Text("review.thumbs.automatic.hint"))
+            Button {
                 thumbnailSize.makeLarger(currentSize: thumbnailSize.resolvedSize)
+            } label: {
+                Image(systemName: "plus")
             }
+            .buttonStyle(.borderless)
+            .disabled(!thumbnailSize.canGrow)
+            .help(Text("review.thumbs.larger.hint"))
+            .accessibilityLabel(Text("review.thumbs.larger"))
         }
     }
 }

@@ -114,7 +114,7 @@ Janela única, limpa:
 
 - Cartão **Organizar fotos** (primeiro recurso; outros recursos no futuro).
 - Lista **Projetos recentes** (reabre a pasta via bookmark).
-- Barra: Definições.
+- Definições no menu da app (`⌘,`).
 
 ### 4.2 Novo projeto (assistente curto, 3 passos)
 

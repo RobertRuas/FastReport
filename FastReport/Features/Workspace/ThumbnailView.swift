@@ -66,7 +66,7 @@ private struct ThumbnailCornerButton: View {
                 .background(Circle().fill(.black.opacity(0.48)))
         }
         .buttonStyle(.plain)
-        .hoverHint(help, hint: hint, placement: .above)
+        .help(Text(hint))
         .accessibilityLabel(Text(help))
     }
 }

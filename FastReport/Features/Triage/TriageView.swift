@@ -21,6 +21,9 @@ struct TriageView: View {
         .onChange(of: session.currentTriagePhoto?.id) { _, _ in
             cancelCrop()
         }
+        .onChange(of: session.cropRequest) { _, _ in
+            beginCrop()
+        }
         .onKeyPress(action: handleKey)
     }
 
@@ -36,10 +39,8 @@ struct TriageView: View {
                 Image(systemName: "xmark")
                     .frame(width: 28, height: 28)
             }
-            .hoverHint(
-                isCropping ? "triage.crop.cancel" : "triage.close",
-                hint: isCropping ? "triage.crop.cancel.hint" : "triage.close.hint"
-            )
+            .help(Text(isCropping ? "triage.crop.cancel.hint" : "triage.close.hint"))
+            .accessibilityLabel(Text(isCropping ? "triage.crop.cancel" : "triage.close"))
 
             Text(session.currentSlotLabel)
                 .foregroundStyle(.white)
@@ -62,49 +63,56 @@ struct TriageView: View {
                 } label: {
                     Image(systemName: "checkmark")
                 }
-                .hoverHint("triage.crop.apply", hint: "triage.crop.apply.hint")
+                .help(Text("triage.crop.apply.hint"))
+                .accessibilityLabel(Text("triage.crop.apply"))
             } else {
                 Button {
                     session.rotateCurrent(locale: languageStore.locale)
                 } label: {
                     Image(systemName: "rotate.right")
                 }
-                .hoverHint("triage.rotate", hint: "triage.rotate.hint")
+                .help(Text("triage.rotate.hint"))
+                .accessibilityLabel(Text("triage.rotate"))
 
                 Button {
                     session.flipCurrent(locale: languageStore.locale)
                 } label: {
-                    Image(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right")
+                    Image(systemName: "flip.horizontal")
                 }
-                .hoverHint("triage.flip", hint: "triage.flip.hint")
+                .help(Text("triage.flip.hint"))
+                .accessibilityLabel(Text("triage.flip"))
 
                 Button {
                     beginCrop()
                 } label: {
                     Image(systemName: "crop")
                 }
-                .hoverHint("triage.crop", hint: "triage.crop.hint")
+                .help(Text("triage.crop.hint"))
+                .accessibilityLabel(Text("triage.crop"))
 
                 Button {
                     session.trashCurrent(locale: languageStore.locale)
                 } label: {
                     Image(systemName: "trash")
                 }
-                .hoverHint("triage.trash", hint: "triage.trash.hint")
+                .help(Text("triage.trash.hint"))
+                .accessibilityLabel(Text("triage.trash"))
 
                 Button {
                     session.undoLast(locale: languageStore.locale)
                 } label: {
                     Image(systemName: "arrow.uturn.backward")
                 }
-                .hoverHint("triage.undo", hint: "triage.undo.hint")
+                .help(Text("triage.undo.hint"))
+                .accessibilityLabel(Text("triage.undo"))
 
                 Button {
                     session.revealCurrent()
                 } label: {
                     Image(systemName: "folder")
                 }
-                .hoverHint("home.recents.reveal", hint: "home.recents.reveal.hint")
+                .help(Text("home.recents.reveal.hint"))
+                .accessibilityLabel(Text("home.recents.reveal"))
             }
         }
         .buttonStyle(.plain)
