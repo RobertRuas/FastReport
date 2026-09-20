@@ -36,6 +36,7 @@ struct AppStatusBar<Trailing: View>: View {
             }
             Spacer(minLength: 8)
             trailing
+            StatusSettingsButton()
         }
         .font(.caption)
         .padding(.horizontal, 12)
@@ -51,5 +52,21 @@ struct AppStatusBar<Trailing: View>: View {
 extension AppStatusBar where Trailing == EmptyView {
     init(items: [AppStatusItem]) {
         self.init(items: items) { EmptyView() }
+    }
+}
+
+struct StatusSettingsButton: View {
+    var body: some View {
+        SettingsLink {
+            Image(systemName: "gearshape")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(width: 18, height: 18)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(Text("settings.title.hint"))
+        .accessibilityLabel(Text("settings.title"))
+        .padding(.leading, 8)
     }
 }
