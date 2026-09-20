@@ -59,7 +59,7 @@ xcodegen generate
 open FastReport.xcodeproj
 ```
 
-O esquema `FastReport` corre testes e a app. Um lançamento público só acontece quando se publica uma etiqueta `vX.Y.Z` no GitHub.
+O esquema `FastReport` corre testes e a app. Mapa do código: `INDEX.md`. Regras para agentes: `AGENTS.md` e `.cursor/rules/index-first.mdc`. A versão pública actual é `v1.0.0`.
 
 ## Licença
 

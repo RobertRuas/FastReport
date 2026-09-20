@@ -1,213 +1,99 @@
 # FastReport — Índice de código
 
-Mapa **funcionalidade → ficheiros**. Ler isto primeiro; só abrir os ficheiros da funcionalidade pedida. Não vasculhar o repositório inteiro.
+Ler **só isto** para localizar ficheiros. Abrir apenas os da funcionalidade. Não vasculhar o repo.
 
-Produto e decisões: `PLANO.md`. Alinhamento HIG / menus / ícones: `PLANO-PADRAO-APPLE.md`. Stack e instalação: `README.md`.
+Produto/roadmap (opcional, tarefas de produto): `PLANO.md`. Instalação e uso: `README.md`. Agentes: `AGENTS.md` e `.cursor/rules/index-first.mdc`.
 
-Vocabulário estável: **Mapa**, **Projeto**, **Inbox**, **Slot**, **Triagem**, **Revisão**. Disco = fonte da verdade.
+Vocabulário: **Mapa**, **Projeto**, **Inbox**, **Slot**, **Triagem**, **Revisão**, **Entrega**. Disco = fonte da verdade. Metadata: `fastreport.json` (legado: `.fastreport.json`).
 
----
-
-## Como usar (agentes)
-
-1. Localizar a funcionalidade na tabela abaixo.
-2. Abrir só esses ficheiros (e o teste associado, se for correção).
-3. Atualizar **esta tabela** se criares, moveres ou apagares ficheiros.
+Se criares, moveres ou apagares código, atualiza esta tabela no mesmo trabalho.
 
 ---
 
-## Arranque e ciclo de vida
+## Arranque
 
 | Recurso | Ficheiros |
 |---|---|
-| Entrada da app, janela, menus Ficheiro/Editar/Foto/Ver/Ajuda, injeção de stores | `FastReport/App/FastReportApp.swift`, `FastReport/App/AppCommands.swift` |
-| Versão marketing + build | `FastReport/App/AppVersion.swift` |
-| Acesso ao String Catalog | `FastReport/App/StringCatalog.swift` |
-| Info.plist, entitlements | `FastReport/Info.plist`, `FastReport/FastReport.entitlements`, `FastReport/FastReportDebug.entitlements` |
-| XcodeGen / projeto | `project.yml`, `FastReport.xcodeproj/` |
-| Bundle id, sandbox, Sparkle no target | `project.yml` |
+| App, janela, menus, stores | `FastReport/App/FastReportApp.swift`, `FastReport/App/AppCommands.swift` |
+| Versão marketing + build | `FastReport/App/AppVersion.swift` — valores em `project.yml` (`MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`) |
+| String Catalog | `FastReport/App/StringCatalog.swift` |
+| Plist / entitlements | `FastReport/Info.plist`, `FastReport/FastReport.entitlements`, `FastReport/FastReportDebug.entitlements` |
+| XcodeGen | `project.yml` → `FastReport.xcodeproj/` |
 
 ---
 
-## Casa
-
-Ecrã inicial: novo projeto, abrir pasta, recentes.
+## Casa e novo projeto
 
 | Recurso | Ficheiros |
 |---|---|
-| UI da casa | `FastReport/Features/Home/HomeView.swift` |
-| Lista de projetos recentes + bookmarks | `FastReport/Services/RecentProjectsStore.swift` |
-| Abrir pasta existente (lê `.fastreport.json`) | `FastReport/Services/ProjectOpener.swift` |
-| Bookmarks security-scoped | `FastReport/Services/BookmarkStore.swift` |
-| Seletor de pasta nativo | `FastReport/Services/FinderSupport.swift` (`DirectoryPicker`) |
+| Casa | `FastReport/Features/Home/HomeView.swift` |
+| Recentes + bookmarks | `FastReport/Services/RecentProjectsStore.swift`, `FastReport/Services/BookmarkStore.swift` |
+| Abrir pasta | `FastReport/Services/ProjectOpener.swift` |
+| Seletor Finder | `FastReport/Services/FinderSupport.swift` (`DirectoryPicker`) |
+| Assistente 3 passos | `FastReport/Features/ProjectWizard/ProjectWizardView.swift`, `ProjectWizardModel.swift` |
+| Criar pasta + metadata | `FastReport/Services/ProjectCreator.swift`, `FastReport/Domain/ProjectCreateError.swift`, `ProjectFolderName.swift`, `ProjectSlug.swift`, `ProjectMetadata.swift` |
 
 ---
 
-## Assistente de novo projeto
+## Mapas (JSON)
 
 | Recurso | Ficheiros |
 |---|---|
-| UI dos 3 passos (mapa, pasta/nome, import) | `FastReport/Features/ProjectWizard/ProjectWizardView.swift` |
-| Estado do assistente | `FastReport/Features/ProjectWizard/ProjectWizardModel.swift` |
-| Criar pasta + subpastas + metadata | `FastReport/Services/ProjectCreator.swift` |
-| Erros de criação / `CreatedProject` | `FastReport/Domain/ProjectCreateError.swift` |
-| Nome da pasta no Finder | `FastReport/Domain/ProjectFolderName.swift` |
-| Slug nos nomes de ficheiro | `FastReport/Domain/ProjectSlug.swift` |
-| `.fastreport.json` | `FastReport/Domain/ProjectMetadata.swift` |
-
-Testes: `FastReportTests/ProjectCreatorTests.swift`
-
----
-
-## Mapas (receitas JSON)
-
-| Recurso | Ficheiros |
-|---|---|
-| Modelo `OrganizationMap` | `FastReport/Domain/OrganizationMap.swift` |
-| Slot (Inbox, T1…, General, Trash) | `FastReport/Domain/Slot.swift` |
-| Validação do JSON | `FastReport/Domain/MapValidator.swift` |
-| Carregar JSON do bundle | `FastReport/Services/MapCatalog.swift` |
-| Catálogo em memória (environment) | `FastReport/Services/MapLibrary.swift` |
+| Modelo / slot / validação | `FastReport/Domain/OrganizationMap.swift`, `Slot.swift`, `MapValidator.swift`, `LocalizedCopy.swift` |
+| Catálogo | `FastReport/Services/MapCatalog.swift`, `MapLibrary.swift` |
 | Mapa 1 — Inspeção T24 | `FastReport/Resources/Maps/inspection-t24.json` |
-| Textos localizáveis dentro do mapa | `FastReport/Domain/LocalizedCopy.swift` |
 
-Testes: `FastReportTests/OrganizationMapTests.swift`, `FastReportTests/MapCatalogTests.swift`
-
-Novo mapa = JSON em `FastReport/Resources/Maps/` + entrada no catálogo. A triagem/grelha/import **não** mudam.
+Novo mapa = JSON em `FastReport/Resources/Maps/` + entrada no catálogo. Triagem/grelha/import não mudam.
 
 ---
 
-## Área de trabalho do projeto (orquestração)
-
-Sessão aberta: fotos no disco, import, triagem, undo, watcher.
+## Workspace, import, Inbox, triagem, revisão
 
 | Recurso | Ficheiros |
 |---|---|
-| UI contentor (Inbox vs triagem, toolbar nativa, atalhos) | `FastReport/Features/Workspace/ProjectWorkspaceView.swift` |
-| Estado da sessão (`ProjectSession`, `WorkspaceMode`) | `FastReport/Services/ProjectSession.swift` |
-| Inventário de fotos nas pastas | `FastReport/Services/ProjectScanner.swift` |
-| Mover / renomear / undo / limpar lixeira | `FastReport/Services/FileOrganizer.swift` |
-| Foto no disco, undo, stats, erros de pasta | `FastReport/Domain/DiskPhoto.swift` |
-| Item de foto (domínio) | `FastReport/Domain/PhotoItem.swift` |
-| Padrão de nome `{projeto}_{slot}_{índice}.jpeg` | `FastReport/Domain/FileNameFormatter.swift` |
-| FSEvents (Finder mexe → app atualiza) | `FastReport/Services/FolderWatcher.swift` |
-| Revelar no Finder / enviar para o Lixo | `FastReport/Services/FinderSupport.swift` (`FinderReveal`, `FinderTrash`) |
-| Erros mostrados na UI | `FastReport/Domain/AppFailure.swift` |
+| Contentor, toolbar, atalhos | `FastReport/Features/Workspace/ProjectWorkspaceView.swift` (`ShortcutsSheet`) |
+| Sessão | `FastReport/Services/ProjectSession.swift` |
+| Scan / mover / undo / watcher | `FastReport/Services/ProjectScanner.swift`, `FileOrganizer.swift`, `FolderWatcher.swift` |
+| Foto no disco, nomes, erros | `FastReport/Domain/DiskPhoto.swift`, `PhotoItem.swift`, `FileNameFormatter.swift`, `AppFailure.swift` |
+| Finder (revelar / lixo) | `FastReport/Services/FinderSupport.swift` (`FinderReveal`, `FinderTrash`) |
+| Import JPEG 1024 | `FastReport/Services/PhotoImporter.swift`, `ImagePipeline.swift`, `ImageSettingsStore.swift` |
+| Inbox | `FastReport/Features/Inbox/InboxGridView.swift` |
+| Miniaturas | `FastReport/Features/Workspace/ThumbnailView.swift`, `FastReport/Services/ThumbnailStore.swift`, `ThumbnailSizeStore.swift` |
+| Triagem | `FastReport/Features/Triage/TriageView.swift`, `PhotoCropOverlay.swift`, `FastReport/Domain/PhotoCropGeometry.swift`, `ClassificationBuffer.swift` |
+| Revisão + reordenar | `FastReport/Features/Review/ReviewGridView.swift`, `LiveReorderStrip.swift`, `FastReport/Domain/ReviewDisplaySlots.swift`, `LiveReorderLayout.swift` |
+
+Import UI: wizard + workspace/Inbox — não há `Features/Import/`.
 
 ---
 
-## Importação de fotos
+## Entrega (arrastar JPEGs para o relatório noutro programa)
+
+Persistência: `fastreport-delivery.json` (inode + caminho relativo).
 
 | Recurso | Ficheiros |
 |---|---|
-| Drop / escolher ficheiros, copiar vs mover | `FastReport/Services/PhotoImporter.swift` |
-| HEIC/JPEG/PNG → JPEG, resize, EXIF | `FastReport/Services/ImagePipeline.swift` |
-| Qualidade / lado máximo (persistido) | `FastReport/Services/ImageSettingsStore.swift` |
-| Contadores `ImportStats` | `FastReport/Domain/DiskPhoto.swift` |
-
-A UI de import está no assistente e na workspace (`ProjectWizardView`, `ProjectWorkspaceView` / `InboxGridView`), não num Feature `Import/` separado.
+| Quadro + arrasto nativo | `FastReport/Features/Delivery/DeliveryBoardView.swift`, `ExternalFileDragOverlay.swift` |
+| Marcações | `FastReport/Domain/DeliveryLedger.swift` |
+| Macro (orbe, painel, cliques) | `MacroPadView.swift`, `MacroPadWindow.swift`, `DeliveryFloatingOrb.swift`, `MacroClickMarkers.swift` em `FastReport/Features/Delivery/` |
+| Modelo / biblioteca | `FastReport/Domain/KeyboardMacro.swift`, `KeyLayout.swift`, `FastReport/Services/KeyboardMacroCenter.swift` (`Application Support/FastReport/macros.json`) |
+| Ligar/desligar no projeto | `FastReport/Features/Home/HomeView.swift` |
 
 ---
 
-## Inbox (grelha “sem categoria”)
+## UI partilhada, definições, i18n, updates
 
 | Recurso | Ficheiros |
 |---|---|
-| Grelha Inbox, iniciar triagem | `FastReport/Features/Inbox/InboxGridView.swift` |
-| Miniatura | `FastReport/Features/Workspace/ThumbnailView.swift` (rodar / lixo no canto, ao pairar) |
-| Cache de miniaturas | `FastReport/Services/ThumbnailStore.swift` |
-| Tamanho das miniaturas (persistido) | `FastReport/Services/ThumbnailSizeStore.swift` |
-
----
-
-## Triagem (teclado, uma foto de cada vez)
-
-| Recurso | Ficheiros |
-|---|---|
-| Ecrã de triagem | `FastReport/Features/Triage/TriageView.swift` |
-| Recorte / reenquadramento | `FastReport/Features/Triage/PhotoCropOverlay.swift`, `FastReport/Domain/PhotoCropGeometry.swift` |
-| Buffer numérico + Enter (`T10`, `0` = General) | `FastReport/Domain/ClassificationBuffer.swift` |
-| Folha de atalhos | `FastReport/Features/Workspace/ProjectWorkspaceView.swift` (`ShortcutsSheet`) |
-
-Ações: classificar, lixo, setas, rodar, espelhar, cortar, undo — lógica em `ProjectSession` + `FileOrganizer`. Inverter todas as da Inbox: barra da workspace, ao lado de iniciar triagem.
-
----
-
-## Revisão (grelha por slot + reordenar)
-
-| Recurso | Ficheiros |
-|---|---|
-| Grelha por linhas (General, T1…T24, Inbox, Trash; limpar lixeira com confirmação) | `FastReport/Features/Review/ReviewGridView.swift` |
-| Ordem / partições dos slots na grelha | `FastReport/Domain/ReviewDisplaySlots.swift` |
-| Arrastar para reordenar na linha | `FastReport/Features/Review/LiveReorderStrip.swift` |
-| Layout do drag | `FastReport/Domain/LiveReorderLayout.swift` |
-| Controlos de tamanho de miniatura | `FastReport/Features/Review/ReviewGridView.swift` (`ThumbnailSizeControls`) |
-
----
-
-## Entrega (arrastar fotos para o relatório)
-
-Modo na workspace: pastas com miniaturas; arrastar para Word/Pages/Finder como no Finder. Fotos já colocadas ficam esbatidas. Persistência: `fastreport-delivery.json` na pasta do projeto (inode + caminho relativo).
-
-| Recurso | Ficheiros |
-|---|---|
-| Ecrã de entrega | `FastReport/Features/Delivery/DeliveryBoardView.swift` |
-| Arrasto nativo para outras apps | `FastReport/Features/Delivery/ExternalFileDragOverlay.swift` |
-| Marcações colocadas | `FastReport/Domain/DeliveryLedger.swift` |
-| Modo `.delivery`, marcar/desmarcar | `FastReport/Services/ProjectSession.swift` |
-| Ícone na barra (`doc.text.image`) | `FastReport/Features/Workspace/ProjectWorkspaceView.swift` |
-| Painel de macro (ícone na app; caixa de edição flutuante) | `FastReport/Features/Delivery/MacroPadView.swift`, `FastReport/Features/Delivery/MacroPadWindow.swift`, `FastReport/Features/Delivery/DeliveryFloatingOrb.swift`, `FastReport/Features/Delivery/MacroClickMarkers.swift` |
-| Modelo da sequência (teclas, rato, globais vs projeto) | `FastReport/Domain/KeyboardMacro.swift`, `FastReport/Domain/KeyLayout.swift` |
-| Biblioteca `Application Support/FastReport/macros.json` (cliques: posição exacta do ecrã) | `FastReport/Services/KeyboardMacroCenter.swift` |
-| Ligar/desligar projeto e apagar macros da pasta | `FastReport/Features/Home/HomeView.swift` |
-
-Testes: `FastReportTests/DomainAndSettingsTests.swift` (`DeliveryLedgerTests`, `ReviewDisplaySlotsTests`, `KeyboardMacroTests`)
-
----
-
-## Peças de UI partilhadas
-
-| Recurso | Ficheiros |
-|---|---|
-| Barra de estado | `FastReport/Features/Workspace/AppStatusBar.swift` |
-| Botão só ícone (painel de macro) | `FastReport/Features/Workspace/IconActionButton.swift` |
-| Hint ao pairar (macro / orbe) | `FastReport/Features/Workspace/HoverHint.swift` |
-
----
-
-## Definições e idioma
-
-| Recurso | Ficheiros |
-|---|---|
-| Definições (idioma, imagem, macro, updates, sobre) | `FastReport/Features/Settings/SettingsView.swift` |
-| PT / EN | `FastReport/Services/AppLanguage.swift`, `FastReport/Services/AppLanguageStore.swift` |
-| Strings da UI | `FastReport/Resources/Localizable.xcstrings` |
-
----
-
-## Atualizações (Sparkle + GitHub)
-
-| Recurso | Ficheiros |
-|---|---|
-| Centro de updates (environment) | `FastReport/Services/AppUpdateCenter.swift` |
-| Consulta GitHub Releases | `FastReport/Services/UpdateChecker.swift` |
-| Overlay / botões / progresso | `FastReport/Features/Updates/UpdateViews.swift` |
-| Erro se a app não está em Aplicações | `FastReport/Services/SparkleInstallError.swift` |
-| Detetar pasta Aplicações / mover | `FastReport/Services/AppInstallLocation.swift` |
-| Appcast | `packaging/appcast.xml` |
-| Relançar Debug (mata, build, copia para Descargas, abre) | `rebuild.sh` |
-| Script de release | `packaging/make_release.sh` |
-| Reassinar Sparkle no build | `packaging/resign_embedded_sparkle.sh` |
+| Status bar / botão ícone / hint | `FastReport/Features/Workspace/AppStatusBar.swift`, `IconActionButton.swift`, `HoverHint.swift` |
+| Definições | `FastReport/Features/Settings/SettingsView.swift` |
+| PT / EN | `FastReport/Services/AppLanguage.swift`, `AppLanguageStore.swift`, `FastReport/Resources/Localizable.xcstrings` |
+| Sparkle + GitHub | `FastReport/Services/AppUpdateCenter.swift`, `UpdateChecker.swift`, `SparkleInstallError.swift`, `AppInstallLocation.swift`, `FastReport/Features/Updates/UpdateViews.swift` |
+| Appcast / scripts | `packaging/appcast.xml`, `packaging/make_release.sh`, `packaging/resign_embedded_sparkle.sh`, `rebuild.sh` |
 | CI / release | `.github/workflows/ci.yml`, `.github/workflows/release.yml` |
 | Página de download | `docs/index.html` |
+| Ícone | `FastReport/Resources/Assets.xcassets/` |
 
----
-
-## Recursos visuais
-
-| Recurso | Ficheiros |
-|---|---|
-| Ícone e acento | `FastReport/Resources/Assets.xcassets/` |
+Feed Sparkle: `releases/latest/download/appcast.xml` (`FastReport/Info.plist`). Uma versão pública: etiqueta `v1.0.0`.
 
 ---
 
@@ -215,32 +101,23 @@ Testes: `FastReportTests/DomainAndSettingsTests.swift` (`DeliveryLedgerTests`, `
 
 | Recurso | Ficheiros |
 |---|---|
-| Fluxo (criar, import, classificar, undo) | `FastReportTests/WorkflowTests.swift` |
-| Domínio + definições | `FastReportTests/DomainAndSettingsTests.swift` |
+| Fluxo | `FastReportTests/WorkflowTests.swift` |
+| Domínio + definições + entrega + macros | `FastReportTests/DomainAndSettingsTests.swift` |
 | Mapas / catálogo / criador | `FastReportTests/OrganizationMapTests.swift`, `MapCatalogTests.swift`, `ProjectCreatorTests.swift` |
-| Fixtures e imagens de teste | `FastReportTests/TestFixtures.swift`, `TestImageFactory.swift` |
-| Bookmark falso | `FastReportTests/FakeBookmarkStore.swift` |
+| Fixtures | `FastReportTests/TestFixtures.swift`, `TestImageFactory.swift`, `FakeBookmarkStore.swift` |
 
 ---
 
-## Árvore rápida (só código da app)
+## Árvore
 
 ```
-FastReport/
-  App/           ciclo de vida
-  Domain/        modelos e regras (sem UI)
-    Features/      ecrãs SwiftUI
-    Home/ ProjectWizard/ Inbox/ Triage/ Review/ Delivery/ Workspace/ Settings/ Updates/
-  Services/      disco, import, sessão, i18n, updates
-  Resources/     Maps/*.json, Localizable.xcstrings, Assets
+FastReport/App/ Domain/ Features/ Services/ Resources/
+  Features: Home ProjectWizard Inbox Triage Review Delivery Workspace Settings Updates
 FastReportTests/
+.cursor/rules/index-first.mdc
 ```
 
----
+## Onde não está
 
-## Onde **não** está
-
-- Não há pasta `Features/Import/` — import vive nos serviços + wizard/workspace.
-- Não há editor de mapas na UI (v2 no plano).
-- Não há geração de relatório PDF/Word — a **Entrega** só arrasta as JPEGs já no disco para o documento noutro programa.
-- Protótipo Flutter antigo (`~/PhotoOrganizer`) **não** faz parte deste repo.
+- Sem `Features/Import/`, sem editor de mapas na UI, sem PDF/Word (Entrega só arrasta JPEGs).
+- Protótipo Flutter (`~/PhotoOrganizer`) não está neste repo.
