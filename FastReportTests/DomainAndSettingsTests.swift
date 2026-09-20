@@ -1,3 +1,4 @@
+import CoreGraphics
 import XCTest
 @testable import FastReport
 
@@ -256,6 +257,172 @@ final class ReviewDisplaySlotsTests: XCTestCase {
             ReviewDisplaySlots.ordered(map: map, occupiedIds: [general.id, trash.id, t1.id]).map(\.folder),
             ["General", "Trash", "T1"]
         )
+    }
+
+    func testDeliveryOmitsTrashAndInbox() throws {
+        let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+        let general = try XCTUnwrap(map.slot(folder: "General"))
+        let trash = try XCTUnwrap(map.trash)
+        let inbox = try XCTUnwrap(map.inbox)
+        let t1 = try XCTUnwrap(map.slot(folder: "T1"))
+        let parts = ReviewDisplaySlots.deliveryPartitions(
+            map: map,
+            occupiedIds: [general.id, trash.id, inbox.id, t1.id]
+        )
+        XCTAssertEqual(parts.special.map(\.folder), ["General"])
+        XCTAssertEqual(parts.regular.map(\.folder), ["T1"])
+    }
+}
+
+final class DeliveryLedgerTests: XCTestCase {
+    func testRoundTripAndKeepsPlacementAfterRename() throws {
+        try TestFixtures.withTempDirectory { dir in
+            let folder = dir.appendingPathComponent("T1", isDirectory: true)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            let original = folder.appendingPathComponent("Inspecao_T1_1.jpeg")
+            try TestImageFactory.writePNG(width: 32, height: 32, to: original)
+
+            let photo = DiskPhoto(url: original, slotId: "t1", fileName: original.lastPathComponent)
+            let marked = DeliveryLedger().placing(photo, projectURL: dir)
+            try marked.save(in: dir)
+            XCTAssertTrue(FileManager.default.fileExists(atPath: DeliveryLedger.fileURL(in: dir).path))
+
+            let renamed = folder.appendingPathComponent("Inspecao_T1_2.jpeg")
+            try FileManager.default.moveItem(at: original, to: renamed)
+            let loaded = DeliveryLedger.load(from: dir)
+            let moved = DiskPhoto(url: renamed, slotId: "t1", fileName: renamed.lastPathComponent)
+            XCTAssertTrue(loaded.contains(moved, projectURL: dir))
+
+            let refreshed = loaded.refreshing(to: [moved], projectURL: dir)
+            XCTAssertTrue(refreshed.contains(moved, projectURL: dir))
+            XCTAssertEqual(refreshed.placedPaths, ["T1/Inspecao_T1_2.jpeg"])
+        }
+    }
+
+    func testToggleRemovesPlacement() throws {
+        try TestFixtures.withTempDirectory { dir in
+            let url = dir.appendingPathComponent("General/a.png")
+            try FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try TestImageFactory.writePNG(width: 16, height: 16, to: url)
+            let photo = DiskPhoto(url: url, slotId: "general", fileName: "a.png")
+            let marked = DeliveryLedger().placing(photo, projectURL: dir)
+            XCTAssertTrue(marked.contains(photo, projectURL: dir))
+            XCTAssertFalse(marked.toggling(photo, projectURL: dir).contains(photo, projectURL: dir))
+        }
+    }
+}
+
+final class KeyboardMacroTests: XCTestCase {
+    func testBuildsKeycapsWithoutPerStepPauses() {
+        let commandTab = KeyboardMacroEvent(
+            keyCode: 48,
+            flags: CGEventFlags.maskCommand.rawValue,
+            isKeyDown: true
+        )
+        let commandUp = KeyboardMacroEvent(
+            keyCode: 55,
+            flags: 0,
+            isKeyDown: false
+        )
+        let enter = KeyboardMacroEvent(
+            keyCode: 36,
+            flags: 0,
+            isKeyDown: true
+        )
+        let chips = MacroDisplay.chips(from: [commandTab, commandUp, enter])
+        XCTAssertEqual(chips.count, 2)
+        XCTAssertEqual(chips[0].kind, .key(parts: ["⌘", "⇥"]))
+        XCTAssertEqual(chips[1].kind, .key(parts: ["↵"]))
+    }
+
+    func testClampsStepDelay() {
+        XCTAssertEqual(KeyboardMacroEvent.clampedStepDelayMs(1), 50)
+        XCTAssertEqual(KeyboardMacroEvent.clampedStepDelayMs(150), 150)
+        XCTAssertEqual(KeyboardMacroEvent.clampedStepDelayMs(9_000), 1_000)
+    }
+
+    func testRoundTripJSON() throws {
+        let original = KeyboardMacro(
+            events: [
+                KeyboardMacroEvent(keyCode: 48, flags: CGEventFlags.maskCommand.rawValue, delayNanoseconds: 12, isKeyDown: true),
+                KeyboardMacroEvent.mouseMove(to: CGPoint(x: 120, y: 80)),
+                KeyboardMacroEvent.mouseDown(at: CGPoint(x: 120, y: 80), count: 1)
+            ],
+            recordedAt: Date(timeIntervalSince1970: 1_700_000_000)
+        )
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(KeyboardMacro.self, from: data)
+        XCTAssertEqual(decoded, original)
+    }
+
+    func testDecodesLegacyEventsWithoutKind() throws {
+        let json = Data("""
+        {"keyCode":36,"flags":0,"delayNanoseconds":0,"isKeyDown":true}
+        """.utf8)
+        let event = try JSONDecoder().decode(KeyboardMacroEvent.self, from: json)
+        XCTAssertEqual(event.kind, .key)
+        XCTAssertEqual(event.keyCode, 36)
+        XCTAssertTrue(event.isKeyDown)
+    }
+
+    func testProjectMacrosAreRemovedWhileGlobalsRemain() {
+        let project = StoredMacro(
+            id: UUID(),
+            name: "Local",
+            events: [KeyboardMacroEvent(keyCode: 36, flags: 0, isKeyDown: true)],
+            recordedAt: Date(timeIntervalSince1970: 1),
+            projectPath: "/tmp/proj"
+        )
+        let global = project.makingGlobal(name: "Global — Relatório")
+        XCTAssertNil(global.projectPath)
+        XCTAssertEqual(global.name, "Global — Relatório")
+        let remaining = StoredMacro.removing(projectPath: "/tmp/proj", from: [project, global])
+        XCTAssertEqual(remaining.map(\.name), ["Global — Relatório"])
+    }
+
+    func testAvailableListsGlobalsFirst() {
+        let local = StoredMacro(id: UUID(), name: "A", events: [], recordedAt: Date(timeIntervalSince1970: 2), projectPath: "/p")
+        let global = StoredMacro(id: UUID(), name: "B", events: [], recordedAt: Date(timeIntervalSince1970: 1), projectPath: nil)
+        let listed = StoredMacro.available(in: [local, global], projectPath: "/p")
+        XCTAssertEqual(listed.map(\.name), ["B", "A"])
+    }
+
+    func testClickChipFromMouseDown() {
+        let events = [
+            KeyboardMacroEvent.mouseMove(to: CGPoint(x: 10, y: 10)),
+            KeyboardMacroEvent.mouseDown(at: CGPoint(x: 10, y: 10), count: 1),
+            KeyboardMacroEvent.mouseUp(at: CGPoint(x: 10, y: 10), count: 1)
+        ]
+        let chips = MacroDisplay.chips(from: events)
+        XCTAssertEqual(chips.map(\.kind), [.click(x: 10, y: 10)])
+        XCTAssertEqual(chips[0].eventIndex, 0)
+        XCTAssertEqual(chips[0].eventCount, 3)
+        XCTAssertEqual(chips[0].stepNumber, 1)
+        XCTAssertEqual(MacroDisplay.suggestedGlobalName(from: "Macro 1"), "Global — Macro 1")
+    }
+
+    func testSequenceInsertsKeysClicksAndMovesClick() {
+        var events = MacroSequence.keyEvents(code: 36, flags: 0)
+        events = MacroSequence.inserting(
+            MacroSequence.clickEvents(at: CGPoint(x: 40, y: 80)),
+            in: events,
+            atEventIndex: events.count
+        )
+        let chips = MacroDisplay.chips(from: events)
+        XCTAssertEqual(chips.count, 2)
+        XCTAssertEqual(chips[1].kind, .click(x: 40, y: 80))
+        let moved = MacroSequence.movingClick(in: events, chip: chips[1], to: CGPoint(x: 100, y: 200))
+        XCTAssertEqual(MacroDisplay.chips(from: moved)[1].kind, .click(x: 100, y: 200))
+        let reordered = MacroSequence.movingStep(in: events, chip: chips[1], offset: -1)
+        XCTAssertEqual(MacroDisplay.chips(from: reordered).map(\.kind), [.click(x: 40, y: 80), .key(parts: ["↵"])])
+        let removed = MacroSequence.removingStep(in: events, chip: chips[0])
+        XCTAssertEqual(MacroDisplay.chips(from: removed).map(\.kind), [.click(x: 40, y: 80)])
+        let replaced = MacroSequence.replacingStep(
+            in: events,
+            chip: chips[0],
+            with: MacroSequence.keyEvents(code: 48, flags: CGEventFlags.maskCommand.rawValue)
+        )
+        XCTAssertEqual(MacroDisplay.chips(from: replaced).map(\.kind), [.key(parts: ["⌘", "⇥"]), .click(x: 40, y: 80)])
     }
 }
 

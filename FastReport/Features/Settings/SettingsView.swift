@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppLanguageStore.self) private var languageStore
     @Environment(ImageSettingsStore.self) private var imageSettings
+    @Environment(KeyboardMacroCenter.self) private var macros
     @Environment(AppUpdateCenter.self) private var updates
 
     var body: some View {
@@ -26,6 +27,40 @@ struct SettingsView: View {
                 Picker("settings.image.quality", selection: qualityBinding) {
                     Text("settings.image.quality.high").tag(0.85)
                     Text("settings.image.quality.medium").tag(0.7)
+                }
+            }
+
+            Section("settings.macro") {
+                Text("settings.macro.help")
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                LabeledContent(
+                    "settings.macro.status",
+                    value: String(
+                        localized: macros.isTrusted ? "settings.macro.trusted" : "settings.macro.untrusted",
+                        locale: languageStore.locale
+                    )
+                )
+                LabeledContent("settings.macro.delay") {
+                    Stepper(
+                        value: delayBinding,
+                        in: KeyboardMacroEvent.minStepDelayMs...KeyboardMacroEvent.maxStepDelayMs,
+                        step: 50
+                    ) {
+                        Text(String(localized: "macro.delay.value \(macros.stepDelayMs)", locale: languageStore.locale))
+                    }
+                }
+                .help(Text("macro.delay.hint"))
+                if !macros.isTrusted {
+                    IconActionButton(
+                        systemImage: "lock.open",
+                        help: "macro.grant",
+                        hint: "macro.grant.hint",
+                        title: "macro.grant",
+                        filled: true
+                    ) {
+                        macros.requestTrust()
+                    }
                 }
             }
 
@@ -110,6 +145,7 @@ struct SettingsView: View {
         .frame(minHeight: 420)
         .navigationTitle(Text("settings.title"))
         .padding(.top, 8)
+        .onAppear { macros.refreshTrust() }
     }
 
     private var languageBinding: Binding<AppLanguage> {
@@ -130,6 +166,13 @@ struct SettingsView: View {
         Binding(
             get: { imageSettings.settings.quality },
             set: { imageSettings.setQuality($0) }
+        )
+    }
+
+    private var delayBinding: Binding<Int> {
+        Binding(
+            get: { macros.stepDelayMs },
+            set: { macros.setStepDelayMs($0) }
         )
     }
 

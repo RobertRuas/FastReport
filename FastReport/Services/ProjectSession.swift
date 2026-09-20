@@ -5,6 +5,7 @@ import Observation
 enum WorkspaceMode: Equatable {
     case gallery
     case triage
+    case delivery
 }
 
 @MainActor
@@ -22,16 +23,19 @@ final class ProjectSession {
     private(set) var triageIndex = 0
     private(set) var isImporting = false
     private(set) var imageRevision = 0
+    private(set) var deliveryLedger = DeliveryLedger()
 
     var settings: ImageExportSettings
-    private let organizer = FileOrganizer()
+    private let organizer: FileOrganizer
     private let watcher = FolderWatcher()
     private var ignoringWatcher = false
     private var reloadTask: Task<Void, Never>?
 
-    init(project: OpenedProject, settings: ImageExportSettings = .default) {
+    init(project: OpenedProject, settings: ImageExportSettings = .default, organizer: FileOrganizer = FileOrganizer()) {
         self.project = project
         self.settings = settings
+        self.organizer = organizer
+        deliveryLedger = DeliveryLedger.load(from: project.url)
         reload()
         startWatcher()
     }
@@ -48,6 +52,42 @@ final class ProjectSession {
     }
     var pendingCount: Int { inbox.count }
     var showsFolderReview: Bool { classifiedCount > 0 }
+    var hasTrashItems: Bool {
+        guard let trash = project.map.trash else { return false }
+        return photos.contains { $0.slotId == trash.id }
+    }
+
+    var placedCount: Int {
+        photos.filter { photo in
+            guard isPlaced(photo), let slot = project.map.slot(id: photo.slotId) else { return false }
+            return !slot.isInbox && !slot.isTrash
+        }.count
+    }
+
+    func isPlaced(_ photo: DiskPhoto) -> Bool {
+        deliveryLedger.contains(photo, projectURL: project.url)
+    }
+
+    func deliverySlotPartitions() -> (special: [Slot], regular: [Slot]) {
+        ReviewDisplaySlots.deliveryPartitions(map: project.map, occupiedIds: occupiedSlotIDs)
+    }
+
+    func deliveryDisplaySlots() -> [Slot] {
+        ReviewDisplaySlots.deliveryOrdered(map: project.map, occupiedIds: occupiedSlotIDs)
+    }
+
+    func toggleDelivery() {
+        mode = mode == .delivery ? .gallery : .delivery
+    }
+
+    func markPlaced(_ photo: DiskPhoto) {
+        persistLedger(deliveryLedger.placing(photo, projectURL: project.url))
+    }
+
+    func togglePlaced(_ photo: DiskPhoto) {
+        persistLedger(deliveryLedger.toggling(photo, projectURL: project.url))
+    }
+
     var currentTriagePhoto: DiskPhoto? {
         guard triagePhotos.indices.contains(triageIndex) else { return nil }
         return triagePhotos[triageIndex]
@@ -77,6 +117,7 @@ final class ProjectSession {
     func reload() {
         do {
             photos = try ProjectScanner.photos(in: project)
+            deliveryLedger = deliveryLedger.refreshing(to: photos, projectURL: project.url)
             if mode == .triage {
                 refreshTriageListKeepingCurrent()
             }
@@ -171,11 +212,46 @@ final class ProjectSession {
     }
 
     func trashCurrent(locale: Locale) {
+        guard let photo = currentTriagePhoto else { return }
+        trash(photo, locale: locale)
+    }
+
+    func trash(_ photo: DiskPhoto, locale: Locale) {
         guard let trash = project.map.trash else {
             failure = AppFailure(OrganizerError.missingTrash, locale: locale)
             return
         }
-        moveCurrent(to: trash, locale: locale)
+        if photo.slotId == trash.id { return }
+        move(photo, to: trash, locale: locale)
+    }
+
+    func emptyTrash(locale: Locale) {
+        guard let trash = project.map.trash else {
+            failure = AppFailure(OrganizerError.missingTrash, locale: locale)
+            return
+        }
+        let items = photos(in: trash)
+        guard !items.isEmpty else { return }
+        ignoringWatcher = true
+        defer { ignoringWatcher = false }
+        do {
+            try organizer.emptyTrash(items)
+            let emptied = Set(items.map { $0.url.standardizedFileURL.path })
+            undoStack.removeAll { record in
+                emptied.contains(record.from.standardizedFileURL.path)
+                    || emptied.contains(record.to.standardizedFileURL.path)
+            }
+            ThumbnailStore.shared.removeAll()
+            imageRevision += 1
+            if mode == .triage, triagePhotos.contains(where: { emptied.contains($0.url.standardizedFileURL.path) }) {
+                exitTriage()
+            }
+            reload()
+            failure = nil
+        } catch {
+            failure = AppFailure(error, locale: locale)
+            reload()
+        }
     }
 
     func skipCurrent() {
@@ -196,10 +272,59 @@ final class ProjectSession {
 
     func rotateCurrent(locale: Locale) {
         guard let photo = currentTriagePhoto else { return }
+        rotate(photo, locale: locale)
+    }
+
+    func rotate(_ photo: DiskPhoto, locale: Locale) {
+        rewrite(photo, locale: locale) { url, settings in
+            try ImagePipeline.rotateClockwise(at: url, settings: settings)
+        }
+    }
+
+    func flipCurrent(locale: Locale) {
+        rewriteCurrent(locale: locale) { url, settings in
+            try ImagePipeline.flipHorizontal(at: url, settings: settings)
+        }
+    }
+
+    func cropCurrent(normalized: CGRect, locale: Locale) {
+        rewriteCurrent(locale: locale) { url, settings in
+            try ImagePipeline.crop(at: url, normalized: normalized, settings: settings)
+        }
+    }
+
+    func flipPending(locale: Locale) {
+        let targets = inbox
+        guard !targets.isEmpty else { return }
+        ignoringWatcher = true
+        defer { ignoringWatcher = false }
+        var firstError: Error?
+        for photo in targets {
+            do {
+                try ImagePipeline.flipHorizontal(at: photo.url, settings: settings)
+            } catch {
+                if firstError == nil { firstError = error }
+            }
+        }
+        ThumbnailStore.shared.removeAll()
+        imageRevision += 1
+        if let firstError {
+            failure = AppFailure(firstError, locale: locale)
+        } else {
+            failure = nil
+        }
+    }
+
+    private func rewriteCurrent(locale: Locale, transform: (URL, ImageExportSettings) throws -> Void) {
+        guard let photo = currentTriagePhoto else { return }
+        rewrite(photo, locale: locale, transform: transform)
+    }
+
+    private func rewrite(_ photo: DiskPhoto, locale: Locale, transform: (URL, ImageExportSettings) throws -> Void) {
         ignoringWatcher = true
         defer { ignoringWatcher = false }
         do {
-            try ImagePipeline.rotateClockwise(at: photo.url, settings: settings)
+            try transform(photo.url, settings)
             ThumbnailStore.shared.removeAll()
             imageRevision += 1
             failure = nil
@@ -260,8 +385,17 @@ final class ProjectSession {
         ThumbnailStore.shared.removeAll()
     }
 
+    private func persistLedger(_ ledger: DeliveryLedger) {
+        deliveryLedger = ledger
+        try? ledger.save(in: project.url)
+    }
+
     private func moveCurrent(to slot: Slot, locale: Locale) {
         guard let photo = currentTriagePhoto else { return }
+        move(photo, to: slot, locale: locale)
+    }
+
+    private func move(_ photo: DiskPhoto, to slot: Slot, locale: Locale) {
         ignoringWatcher = true
         defer { ignoringWatcher = false }
         do {

@@ -14,6 +14,18 @@ enum FinderReveal {
     }
 }
 
+enum FinderTrash {
+    static func move(_ url: URL) throws {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer {
+            if accessed {
+                url.stopAccessingSecurityScopedResource()
+            }
+        }
+        try FileManager.default.trashItem(at: url, resultingItemURL: nil)
+    }
+}
+
 enum DirectoryPicker {
     @MainActor
     static func pickParentDirectory(locale: Locale) -> URL? {

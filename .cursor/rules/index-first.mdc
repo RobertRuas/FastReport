@@ -1,0 +1,12 @@
+---
+description: Usar INDEX.md em vez de vasculhar o repositório inteiro.
+alwaysApply: true
+---
+
+# Código: mapa primeiro
+
+Antes de procurar ficheiros ou de `Glob`/`Grep` em todo o projeto, lê `INDEX.md` na raiz e abre **só** os ficheiros da funcionalidade pedida.
+
+Não faças busca alargada salvo se o índice não listar o recurso, ou se o pedido for transversal (renomear, arquitetura, i18n em massa).
+
+Se criares, moveres ou apagares código, atualiza `INDEX.md` no mesmo trabalho.

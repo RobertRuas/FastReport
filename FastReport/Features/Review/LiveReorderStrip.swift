@@ -5,6 +5,8 @@ struct LiveReorderStrip: View {
     let size: CGFloat
     let revision: Int
     var onTap: (DiskPhoto) -> Void
+    var onRotate: ((DiskPhoto) -> Void)? = nil
+    var onTrash: ((DiskPhoto) -> Void)? = nil
     var onCommitMove: (Int, Int) -> Void
 
     @State private var origin: [DiskPhoto] = []
@@ -58,7 +60,13 @@ struct LiveReorderStrip: View {
             )
         }()
 
-        return ThumbnailView(url: photo.url, size: size, revision: revision)
+        return ThumbnailView(
+            url: photo.url,
+            size: size,
+            revision: revision,
+            onRotate: onRotate.map { action in { action(photo) } },
+            onTrash: onTrash.map { action in { action(photo) } }
+        )
             .shadow(color: dragged ? Color.black.opacity(0.22) : .clear, radius: dragged ? 8 : 0, y: dragged ? 3 : 0)
             .scaleEffect(dragged ? 1.05 : 1)
             .offset(x: dragged ? translationX : shift)

@@ -15,7 +15,7 @@ final class OrganizationMapTests: XCTestCase {
 
         let tSlots = map.slots.filter { $0.id.hasPrefix("t") && !$0.isTrash && !$0.isInbox }
         XCTAssertEqual(tSlots.count, 24)
-        XCTAssertTrue(tSlots.allSatisfy { $0.expectedCount == 7 && $0.folder.hasPrefix("T") })
+        XCTAssertTrue(tSlots.allSatisfy { $0.expectedCount == nil && $0.unlimited && $0.folder.hasPrefix("T") })
         XCTAssertEqual(map.name.resolved(language: .portuguese), "Inspeção T1–T24")
         XCTAssertEqual(map.name.resolved(language: .english), "Inspection T1–T24")
     }

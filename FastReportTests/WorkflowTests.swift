@@ -1,3 +1,4 @@
+import CoreGraphics
 import XCTest
 @testable import FastReport
 
@@ -59,6 +60,91 @@ final class ImagePipelineTests: XCTestCase {
             XCTAssertEqual(size.0, 200)
             XCTAssertEqual(size.1, 400)
         }
+    }
+
+    func testFlipHorizontalMirrorsLeftAndRight() throws {
+        try TestFixtures.withTempDirectory { directory in
+            let source = directory.appendingPathComponent("split.png")
+            let jpeg = directory.appendingPathComponent("split.jpeg")
+            try TestImageFactory.writeSplitPNG(width: 400, height: 200, to: source)
+            try ImagePipeline.convertToJPEG(source: source, destination: jpeg, settings: ImageExportSettings(maxDimension: 400, quality: 1))
+            let before = try XCTUnwrap(redSamples(of: jpeg))
+            XCTAssertGreaterThan(before.left, 180)
+            XCTAssertLessThan(before.right, 40)
+            try ImagePipeline.flipHorizontal(at: jpeg, settings: ImageExportSettings(maxDimension: 400, quality: 1))
+            let size = try XCTUnwrap(ImagePipeline.pixelSize(of: jpeg))
+            XCTAssertEqual(size.0, 400)
+            XCTAssertEqual(size.1, 200)
+            let after = try XCTUnwrap(redSamples(of: jpeg))
+            XCTAssertLessThan(after.left, 40)
+            XCTAssertGreaterThan(after.right, 180)
+        }
+    }
+
+    func testCropKeepsLeftHalf() throws {
+        try TestFixtures.withTempDirectory { directory in
+            let source = directory.appendingPathComponent("split.png")
+            let jpeg = directory.appendingPathComponent("split.jpeg")
+            try TestImageFactory.writeSplitPNG(width: 400, height: 200, to: source)
+            try ImagePipeline.convertToJPEG(
+                source: source,
+                destination: jpeg,
+                settings: ImageExportSettings(maxDimension: 400, quality: 1)
+            )
+            try ImagePipeline.crop(
+                at: jpeg,
+                normalized: CGRect(x: 0, y: 0, width: 0.5, height: 1),
+                settings: ImageExportSettings(maxDimension: 400, quality: 1)
+            )
+            let size = try XCTUnwrap(ImagePipeline.pixelSize(of: jpeg))
+            XCTAssertEqual(size.0, 200)
+            XCTAssertEqual(size.1, 200)
+            let samples = try XCTUnwrap(redSamples(of: jpeg))
+            XCTAssertGreaterThan(samples.left, 180)
+            XCTAssertGreaterThan(samples.right, 180)
+        }
+    }
+
+    private func redSamples(of url: URL) -> (left: UInt8, right: UInt8)? {
+        guard let image = ImagePipeline.thumbnail(from: url, maxPixelSize: 400) else { return nil }
+        let width = image.width
+        let height = image.height
+        let bytesPerPixel = 4
+        var data = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(
+            data: &data,
+            width: width,
+            height: height,
+            bitsPerComponent: 8,
+            bytesPerRow: width * bytesPerPixel,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return nil }
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let y = height / 2
+        let left = data[(y * width + 8) * bytesPerPixel]
+        let right = data[(y * width + (width - 9)) * bytesPerPixel]
+        return (left, right)
+    }
+}
+
+final class PhotoCropGeometryTests: XCTestCase {
+    func testClampAndSouthEastDragStayInsideUnitSquare() {
+        let overflow = PhotoCropGeometry.clamp(CGRect(x: -0.2, y: 0.3, width: 2, height: 0.9))
+        XCTAssertEqual(overflow.origin.x, 0, accuracy: 0.0001)
+        XCTAssertEqual(overflow.width, 1, accuracy: 0.0001)
+        XCTAssertGreaterThanOrEqual(overflow.minY, 0)
+        XCTAssertLessThanOrEqual(overflow.maxY, 1)
+
+        let dragged = PhotoCropGeometry.apply(
+            handle: .southEast,
+            to: CGRect(x: 0.2, y: 0.2, width: 0.3, height: 0.3),
+            dx: 1,
+            dy: 1
+        )
+        XCTAssertEqual(dragged.maxX, 1, accuracy: 0.0001)
+        XCTAssertEqual(dragged.maxY, 1, accuracy: 0.0001)
     }
 }
 
@@ -176,6 +262,50 @@ final class FileOrganizerFlowTests: XCTestCase {
             XCTAssertEqual(renamed.map(\.lastPathComponent), ["Inspecao1_T1_1.jpeg", "Inspecao1_T1_2.jpeg"])
         }
     }
+
+    func testEmptyTrashMovesFilesToFinderTrashDestination() throws {
+        try TestFixtures.withTempDirectory { parent in
+            let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+            let created = try ProjectCreator(bookmarkStore: FakeBookmarkStore()).create(
+                map: map,
+                parent: parent,
+                displayName: "Inspecao1"
+            )
+            let project = try ProjectOpener.open(url: created.url, maps: [map])
+            let inbox = project.folderURL(for: try XCTUnwrap(map.inbox))
+            let source = parent.appendingPathComponent("a.png")
+            try TestImageFactory.writePNG(width: 400, height: 300, to: source)
+            XCTAssertEqual(PhotoImporter().importFiles([source], into: project).imported, 1)
+
+            let finderTrash = parent.appendingPathComponent("FinderTrash", isDirectory: true)
+            try FileManager.default.createDirectory(at: finderTrash, withIntermediateDirectories: true)
+            var organizer = FileOrganizer()
+            organizer.moveToFinderTrash = { url in
+                try FileManager.default.moveItem(
+                    at: url,
+                    to: finderTrash.appendingPathComponent(url.lastPathComponent)
+                )
+            }
+
+            let inboxPhotos = try ProjectScanner.imageURLs(in: inbox)
+            XCTAssertEqual(inboxPhotos.count, 1)
+            let trash = try XCTUnwrap(map.trash)
+            let moved = try organizer.move(
+                DiskPhoto(url: inboxPhotos[0], slotId: "inbox", fileName: inboxPhotos[0].lastPathComponent),
+                to: trash,
+                in: project
+            )
+            try organizer.emptyTrash([
+                DiskPhoto(url: moved.to, slotId: trash.id, fileName: moved.to.lastPathComponent)
+            ])
+            XCTAssertFalse(FileManager.default.fileExists(atPath: moved.to.path))
+            XCTAssertTrue(
+                FileManager.default.fileExists(
+                    atPath: finderTrash.appendingPathComponent(moved.to.lastPathComponent).path
+                )
+            )
+        }
+    }
 }
 
 @MainActor
@@ -216,6 +346,48 @@ final class ProjectSessionTests: XCTestCase {
 
         session.undoLast(locale: Locale(identifier: "pt"))
         XCTAssertEqual(session.inbox.count, 1)
+        session.close()
+    }
+
+    func testEmptyTrashClearsTrashAfterConfirmationPath() async throws {
+        let parent = FileManager.default.temporaryDirectory.appendingPathComponent("FastReportTests-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: parent, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: parent) }
+
+        let map = try MapCatalog.decodeAndValidate(file: TestFixtures.inspectionMap)
+        let created = try ProjectCreator(bookmarkStore: FakeBookmarkStore()).create(
+            map: map,
+            parent: parent,
+            displayName: "Dia 2"
+        )
+        let opened = try ProjectOpener.open(url: created.url, maps: [map])
+        let finderTrash = parent.appendingPathComponent("FinderTrash", isDirectory: true)
+        try FileManager.default.createDirectory(at: finderTrash, withIntermediateDirectories: true)
+        var organizer = FileOrganizer()
+        organizer.moveToFinderTrash = { url in
+            try FileManager.default.moveItem(
+                at: url,
+                to: finderTrash.appendingPathComponent(url.lastPathComponent)
+            )
+        }
+
+        let session = ProjectSession(project: opened, organizer: organizer)
+        let source = parent.appendingPathComponent("cam.png")
+        try TestImageFactory.writePNG(width: 640, height: 480, to: source)
+        await session.importURLs([source], locale: Locale(identifier: "pt"))
+        session.startTriage()
+        session.handleKey("1")
+        session.commitBuffer(locale: Locale(identifier: "pt"))
+        let classified = try XCTUnwrap(session.photos(in: try XCTUnwrap(map.slot(folder: "T1"))).first)
+        session.trash(classified, locale: Locale(identifier: "pt"))
+        XCTAssertTrue(session.hasTrashItems)
+        XCTAssertEqual(session.photos(in: try XCTUnwrap(map.trash)).count, 1)
+
+        session.emptyTrash(locale: Locale(identifier: "pt"))
+        XCTAssertFalse(session.hasTrashItems)
+        XCTAssertEqual(session.photos(in: try XCTUnwrap(map.trash)).count, 0)
+        XCTAssertEqual(session.classifiedCount, 0)
+        XCTAssertEqual(try FileManager.default.contentsOfDirectory(at: finderTrash, includingPropertiesForKeys: nil).count, 1)
         session.close()
     }
 }

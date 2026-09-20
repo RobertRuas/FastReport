@@ -23,6 +23,8 @@ enum ImagePipelineError: Error, Equatable {
     case emptyImage(String)
     case writeFailed(String)
     case rotateFailed(String)
+    case flipFailed(String)
+    case cropFailed(String)
 
     var code: String {
         switch self {
@@ -30,6 +32,8 @@ enum ImagePipelineError: Error, Equatable {
         case .emptyImage: "image.empty"
         case .writeFailed: "image.write"
         case .rotateFailed: "image.rotate"
+        case .flipFailed: "image.flip"
+        case .cropFailed: "image.crop"
         }
     }
 
@@ -43,6 +47,10 @@ enum ImagePipelineError: Error, Equatable {
             String(localized: "error.image.write", locale: locale)
         case .rotateFailed:
             String(localized: "error.image.rotate", locale: locale)
+        case .flipFailed:
+            String(localized: "error.image.flip", locale: locale)
+        case .cropFailed:
+            String(localized: "error.image.crop", locale: locale)
         }
     }
 }
@@ -96,17 +104,68 @@ enum ImagePipeline {
     }
 
     static func rotateClockwise(at url: URL, settings: ImageExportSettings = .default) throws {
+        try rewrite(at: url, settings: settings, failure: ImagePipelineError.rotateFailed) { $0.oriented(.right) }
+    }
+
+    static func flipHorizontal(at url: URL, settings: ImageExportSettings = .default) throws {
+        try rewrite(at: url, settings: settings, failure: ImagePipelineError.flipFailed) { $0.oriented(.upMirrored) }
+    }
+
+    static func crop(at url: URL, normalized: CGRect, settings: ImageExportSettings = .default) throws {
+        try rewrite(at: url, settings: settings, failure: ImagePipelineError.cropFailed) { input in
+            let crop = pixelCrop(normalized, in: input.extent)
+            guard crop.width >= 1, crop.height >= 1 else {
+                throw ImagePipelineError.cropFailed(url.lastPathComponent)
+            }
+            return input.cropped(to: crop)
+        }
+    }
+
+    static func pixelCrop(_ normalized: CGRect, in extent: CGRect) -> CGRect {
+        let n = PhotoCropGeometry.clamp(normalized)
+        let raw = CGRect(
+            x: extent.minX + n.minX * extent.width,
+            y: extent.minY + (1 - n.maxY) * extent.height,
+            width: n.width * extent.width,
+            height: n.height * extent.height
+        )
+        let intersected = raw.intersection(extent)
+        return intersected.isNull ? .null : intersected.integral
+    }
+
+    static func thumbnail(from url: URL, maxPixelSize: Int = 96) -> CGImage? {
+        makeNormalizedImage(from: url, maxDimension: maxPixelSize)
+    }
+
+    static func pixelSize(of url: URL) -> (Int, Int)? {
+        guard let image = makeNormalizedImage(from: url, maxDimension: 10_000) else { return nil }
+        return (image.width, image.height)
+    }
+
+    private static func rewrite(
+        at url: URL,
+        settings: ImageExportSettings,
+        failure: (String) -> ImagePipelineError,
+        transform: (CIImage) throws -> CIImage
+    ) throws {
         let settings = try settings.validated()
         let accessed = url.startAccessingSecurityScopedResource()
         defer { if accessed { url.stopAccessingSecurityScopedResource() } }
 
         guard let input = CIImage(contentsOf: url, options: [.applyOrientationProperty: true]) else {
-            throw ImagePipelineError.rotateFailed(url.lastPathComponent)
+            throw failure(url.lastPathComponent)
         }
-        let rotated = input.oriented(.right)
+        let output: CIImage
+        do {
+            output = try transform(input)
+        } catch let pipeline as ImagePipelineError {
+            throw pipeline
+        } catch {
+            throw failure(error.localizedDescription)
+        }
         let context = CIContext(options: [.useSoftwareRenderer: false])
-        guard let cgImage = context.createCGImage(rotated, from: rotated.extent) else {
-            throw ImagePipelineError.rotateFailed(url.lastPathComponent)
+        guard let cgImage = context.createCGImage(output, from: output.extent) else {
+            throw failure(url.lastPathComponent)
         }
 
         let temp = url.deletingLastPathComponent().appendingPathComponent("\(UUID().uuidString).jpeg")
@@ -118,17 +177,8 @@ enum ImagePipeline {
             try FileManager.default.moveItem(at: temp, to: url)
         } catch {
             try? FileManager.default.removeItem(at: temp)
-            throw ImagePipelineError.rotateFailed(error.localizedDescription)
+            throw failure(error.localizedDescription)
         }
-    }
-
-    static func thumbnail(from url: URL, maxPixelSize: Int = 96) -> CGImage? {
-        makeNormalizedImage(from: url, maxDimension: maxPixelSize)
-    }
-
-    static func pixelSize(of url: URL) -> (Int, Int)? {
-        guard let image = makeNormalizedImage(from: url, maxDimension: 10_000) else { return nil }
-        return (image.width, image.height)
     }
 
     private static func makeNormalizedImage(from url: URL, maxDimension: Int) -> CGImage? {

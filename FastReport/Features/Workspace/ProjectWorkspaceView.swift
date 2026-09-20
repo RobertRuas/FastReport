@@ -7,22 +7,21 @@ struct ProjectWorkspaceView: View {
     @State private var showShortcuts = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            if session.mode != .triage {
+        ZStack {
+            VStack(spacing: 0) {
                 workspaceHeader
                 Divider()
+                board
+                AppStatusBar(items: workspaceStatusItems) {
+                    if session.mode == .delivery || session.showsFolderReview {
+                        ThumbnailSizeControls()
+                    }
+                }
             }
+            .allowsHitTesting(session.mode != .triage)
+
             if session.mode == .triage {
                 TriageView()
-            } else if session.showsFolderReview {
-                ReviewGridView()
-            } else {
-                InboxGridView()
-            }
-            AppStatusBar(items: workspaceStatusItems) {
-                if session.showsFolderReview, session.mode != .triage {
-                    ThumbnailSizeControls()
-                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -51,7 +50,23 @@ struct ProjectWorkspaceView: View {
             ShortcutsSheet()
                 .environment(\.locale, languageStore.locale)
         }
+        .overlay(alignment: .bottomTrailing) {
+            if session.mode == .delivery {
+                MacroPadSpace()
+            }
+        }
         .onDisappear { session.close() }
+    }
+
+    @ViewBuilder
+    private var board: some View {
+        if session.mode == .delivery {
+            DeliveryBoardView()
+        } else if session.showsFolderReview || session.hasTrashItems {
+            ReviewGridView()
+        } else {
+            InboxGridView()
+        }
     }
 
     private var workspaceHeader: some View {
@@ -75,7 +90,24 @@ struct ProjectWorkspaceView: View {
             ) {
                 FinderReveal.reveal(session.project.url)
             }
+            IconActionButton(
+                systemImage: "doc.text.image",
+                help: "workspace.delivery",
+                hint: "workspace.delivery.hint",
+                filled: session.mode == .delivery,
+                isDisabled: !session.showsFolderReview && session.mode != .delivery
+            ) {
+                session.toggleDelivery()
+            }
             if session.pendingCount > 0 {
+                IconActionButton(
+                    systemImage: "arrow.left.and.right.righttriangle.left.righttriangle.right",
+                    help: "workspace.flip_pending",
+                    hint: "workspace.flip_pending.hint",
+                    isDisabled: session.isImporting
+                ) {
+                    session.flipPending(locale: languageStore.locale)
+                }
                 IconActionButton(
                     systemImage: "play.fill",
                     help: "workspace.triage.start \(session.pendingCount)",
@@ -101,20 +133,12 @@ struct ProjectWorkspaceView: View {
         var items: [AppStatusItem] = [
             AppStatusItem(icon: "folder", text: session.project.metadata.displayName, tint: .primary)
         ]
-        if session.mode == .triage {
-            items.append(AppStatusItem(icon: "keyboard", text: String(localized: "status.triage", locale: locale)))
+        if session.mode == .delivery {
+            items.append(AppStatusItem(icon: "doc.text.image", text: String(localized: "status.delivery.mode", locale: locale)))
             items.append(AppStatusItem(
-                text: String(localized: "triage.position \(session.triageIndex + 1) \(session.triagePhotos.count)", locale: locale)
+                icon: "checkmark.circle",
+                text: String(localized: "status.delivery \(session.placedCount) \(session.classifiedCount)", locale: locale)
             ))
-            if !session.currentSlotLabel.isEmpty {
-                items.append(AppStatusItem(
-                    icon: "tag",
-                    text: String(localized: "status.slot \(session.currentSlotLabel)", locale: locale)
-                ))
-            }
-            if !session.buffer.preview.isEmpty {
-                items.append(AppStatusItem(text: session.buffer.preview, tint: .orange))
-            }
         } else if session.showsFolderReview {
             items.append(AppStatusItem(icon: "square.grid.2x2", text: String(localized: "status.review", locale: locale)))
             items.append(AppStatusItem(
@@ -161,13 +185,16 @@ struct ShortcutsSheet: View {
             shortcut("⌘⌫", "shortcuts.trash")
             shortcut("← →", "shortcuts.nav")
             shortcut("R", "shortcuts.rotate")
+            shortcut("F", "shortcuts.flip")
+            shortcut("C", "shortcuts.crop")
             shortcut("⌘Z", "shortcuts.undo")
+            shortcut("⌘␣", "shortcuts.macro")
             shortcut("S", "shortcuts.skip")
             shortcut("Esc", "shortcuts.esc")
             Spacer()
         }
         .padding(24)
-        .frame(width: 420, height: 340)
+            .frame(width: 420, height: 408)
     }
 
     private func shortcut(_ keys: String, _ label: LocalizedStringKey) -> some View {

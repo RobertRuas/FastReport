@@ -5,6 +5,8 @@ struct ReviewGridView: View {
     @Environment(ProjectSession.self) private var session
     @Environment(AppLanguageStore.self) private var languageStore
     @Environment(ThumbnailSizeStore.self) private var thumbnailSize
+    @State private var isConfirmingEmptyTrash = false
+    @State private var emptyTrashCount = 0
 
     var body: some View {
         GeometryReader { geo in
@@ -33,6 +35,18 @@ struct ReviewGridView: View {
         .dropDestination(for: URL.self) { urls, _ in
             Task { await session.importURLs(urls, locale: languageStore.locale) }
             return true
+        }
+        .confirmationDialog(
+            Text("review.trash.empty.title"),
+            isPresented: $isConfirmingEmptyTrash,
+            titleVisibility: .visible
+        ) {
+            Button("review.trash.empty.confirm", role: .destructive) {
+                session.emptyTrash(locale: languageStore.locale)
+            }
+            Button("common.cancel", role: .cancel) {}
+        } message: {
+            Text("review.trash.empty.body \(emptyTrashCount)")
         }
     }
 
@@ -83,6 +97,12 @@ struct ReviewGridView: View {
                 onTap: { photo in
                     session.startTriage(slot: slot, startingAt: photo)
                 },
+                onRotate: { photo in
+                    session.rotate(photo, locale: languageStore.locale)
+                },
+                onTrash: slot.isTrash ? nil : { photo in
+                    session.trash(photo, locale: languageStore.locale)
+                },
                 onCommitMove: { from, to in
                     session.reorder(in: slot, from: from, to: to, locale: languageStore.locale)
                 }
@@ -92,7 +112,7 @@ struct ReviewGridView: View {
 
     private func rowHeader(slot: Slot, count: Int) -> some View {
         HStack(spacing: 8) {
-            Text(slotTitle(slot))
+            Text(ReviewDisplaySlots.title(slot, locale: languageStore.locale))
                 .font(.headline)
             if let expected = slot.expectedCount {
                 Text("\(count)/\(expected)")
@@ -103,22 +123,25 @@ struct ReviewGridView: View {
                     .font(.callout.monospacedDigit())
                     .foregroundStyle(.secondary)
             }
+            if slot.isTrash {
+                Spacer(minLength: 8)
+                IconActionButton(
+                    systemImage: "trash",
+                    help: "review.trash.empty",
+                    hint: "review.trash.empty.hint",
+                    hintPlacement: .above,
+                    title: "review.trash.empty",
+                    tint: .red,
+                    isDisabled: count == 0,
+                    compact: true
+                ) {
+                    emptyTrashCount = count
+                    isConfirmingEmptyTrash = true
+                }
+            }
         }
     }
 
-    private func slotTitle(_ slot: Slot) -> String {
-        let locale = languageStore.locale
-        if slot.isInbox {
-            return String(localized: "workspace.inbox.label", locale: locale)
-        }
-        if slot.isGeneral {
-            return String(localized: "workspace.slot.general", locale: locale)
-        }
-        if slot.isTrash {
-            return String(localized: "workspace.slot.trash", locale: locale)
-        }
-        return slot.folder
-    }
 }
 
 private struct ReviewWidthKey: PreferenceKey {

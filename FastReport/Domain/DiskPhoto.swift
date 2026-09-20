@@ -43,6 +43,7 @@ enum OrganizerError: Error, Equatable {
     case missingTrash
     case destinationExists(String)
     case moveFailed(String)
+    case emptyFailed(String)
     case nothingToUndo
     case invalidIndex
 
@@ -53,6 +54,7 @@ enum OrganizerError: Error, Equatable {
         case .missingTrash: "organizer.trash"
         case .destinationExists: "organizer.exists"
         case .moveFailed: "organizer.move"
+        case .emptyFailed: "organizer.empty"
         case .nothingToUndo: "organizer.undo.empty"
         case .invalidIndex: "organizer.index"
         }
@@ -68,6 +70,8 @@ enum OrganizerError: Error, Equatable {
             String(localized: "error.organizer.exists", locale: locale)
         case .moveFailed:
             String(localized: "error.organizer.move", locale: locale)
+        case .emptyFailed:
+            String(localized: "error.organizer.empty", locale: locale)
         case .nothingToUndo:
             String(localized: "error.organizer.undo.empty", locale: locale)
         case .invalidIndex:

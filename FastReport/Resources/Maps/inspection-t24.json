@@ -46,8 +46,8 @@
       "hotkeys": [
         "1"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -57,8 +57,8 @@
       "hotkeys": [
         "2"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -68,8 +68,8 @@
       "hotkeys": [
         "3"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -79,8 +79,8 @@
       "hotkeys": [
         "4"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -90,8 +90,8 @@
       "hotkeys": [
         "5"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -101,8 +101,8 @@
       "hotkeys": [
         "6"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -112,8 +112,8 @@
       "hotkeys": [
         "7"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -123,8 +123,8 @@
       "hotkeys": [
         "8"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -134,8 +134,8 @@
       "hotkeys": [
         "9"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -145,8 +145,8 @@
       "hotkeys": [
         "10"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -156,8 +156,8 @@
       "hotkeys": [
         "11"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -167,8 +167,8 @@
       "hotkeys": [
         "12"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -178,8 +178,8 @@
       "hotkeys": [
         "13"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -189,8 +189,8 @@
       "hotkeys": [
         "14"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -200,8 +200,8 @@
       "hotkeys": [
         "15"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -211,8 +211,8 @@
       "hotkeys": [
         "16"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -222,8 +222,8 @@
       "hotkeys": [
         "17"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -233,8 +233,8 @@
       "hotkeys": [
         "18"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -244,8 +244,8 @@
       "hotkeys": [
         "19"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -255,8 +255,8 @@
       "hotkeys": [
         "20"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -266,8 +266,8 @@
       "hotkeys": [
         "21"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -277,8 +277,8 @@
       "hotkeys": [
         "22"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -288,8 +288,8 @@
       "hotkeys": [
         "23"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     },
@@ -299,8 +299,8 @@
       "hotkeys": [
         "24"
       ],
-      "expectedCount": 7,
-      "unlimited": false,
+      "expectedCount": null,
+      "unlimited": true,
       "isTrash": false,
       "isInbox": false
     }

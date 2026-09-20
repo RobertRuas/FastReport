@@ -5,6 +5,7 @@ struct HomeView: View {
     @Environment(MapLibrary.self) private var mapLibrary
     @Environment(RecentProjectsStore.self) private var recents
     @Environment(ImageSettingsStore.self) private var imageSettings
+    @Environment(KeyboardMacroCenter.self) private var macros
     @State private var isWizardPresented = false
     @State private var revealFailure: AppFailure?
     @State private var session: ProjectSession?
@@ -64,8 +65,10 @@ struct HomeView: View {
             Button("home.recents.remove.files", role: .destructive) {
                 if let project = projectPendingRemoval {
                     recents.deleteProjectDirectory(project, locale: languageStore.locale)
-                    if let failure = recents.lastFailure {
-                        revealFailure = failure
+                    if recents.lastFailure == nil {
+                        macros.removeMacros(forProjectPath: project.path)
+                    } else {
+                        revealFailure = recents.lastFailure
                     }
                 }
                 projectPendingRemoval = nil
@@ -314,6 +317,7 @@ struct HomeView: View {
             var opened = try ProjectOpener.open(url: url, maps: mapLibrary.maps)
             opened.bookmarkData = bookmark ?? (try? SecurityScopedBookmarkStore().save(projectURL: url))
             recents.remember(opened)
+            macros.attach(projectPath: opened.url.path, displayName: opened.metadata.displayName)
             session = ProjectSession(project: opened, settings: imageSettings.settings)
         } catch {
             revealFailure = AppFailure(error, locale: languageStore.locale)
@@ -321,6 +325,7 @@ struct HomeView: View {
     }
 
     private func closeProject() {
+        macros.detach()
         session?.close()
         session = nil
     }

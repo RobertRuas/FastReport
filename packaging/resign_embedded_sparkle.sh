@@ -60,6 +60,21 @@ done < <(find "$SPARKLE/Versions" -name "Updater.app" -print0)
 
 sign_item "$SPARKLE"
 
+# Xcode Debug can emit unsigned helpers next to the executable (*.debug.dylib,
+# __preview.dylib). Sign those first — codesign treats them as nested code of
+# the main binary.
+MACOS_DIR="$APP/Contents/MacOS"
+MAIN_BIN="$MACOS_DIR/$(basename "$APP" .app)"
+if [[ -d "$MACOS_DIR" ]]; then
+  while IFS= read -r -d '' nested; do
+    [[ "$nested" == "$MAIN_BIN" ]] && continue
+    sign_item "$nested"
+  done < <(find "$MACOS_DIR" -type f -print0)
+  if [[ -f "$MAIN_BIN" ]]; then
+    sign_item "$MAIN_BIN"
+  fi
+fi
+
 APP_ENTITLEMENTS="${3:-${CODE_SIGN_ENTITLEMENTS:-}}"
 if [[ -n "$APP_ENTITLEMENTS" && ! -f "$APP_ENTITLEMENTS" && -n "${SRCROOT:-}" ]]; then
   APP_ENTITLEMENTS="${SRCROOT}/${APP_ENTITLEMENTS}"

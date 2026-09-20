@@ -5,6 +5,8 @@ struct TriageView: View {
     @Environment(ProjectSession.self) private var session
     @Environment(AppLanguageStore.self) private var languageStore
     @FocusState private var focused: Bool
+    @State private var isCropping = false
+    @State private var cropNormalized = PhotoCropGeometry.initial
 
     var body: some View {
         VStack(spacing: 0) {
@@ -16,18 +18,28 @@ struct TriageView: View {
         .focusable()
         .focused($focused)
         .onAppear { focused = true }
+        .onChange(of: session.currentTriagePhoto?.id) { _, _ in
+            cancelCrop()
+        }
         .onKeyPress(action: handleKey)
     }
 
     private var toolbar: some View {
         HStack(spacing: 14) {
             Button {
-                session.exitTriage()
+                if isCropping {
+                    cancelCrop()
+                } else {
+                    session.exitTriage()
+                }
             } label: {
                 Image(systemName: "xmark")
                     .frame(width: 28, height: 28)
             }
-            .hoverHint("triage.close", hint: "triage.close.hint")
+            .hoverHint(
+                isCropping ? "triage.crop.cancel" : "triage.close",
+                hint: isCropping ? "triage.crop.cancel.hint" : "triage.close.hint"
+            )
 
             Text(session.currentSlotLabel)
                 .foregroundStyle(.white)
@@ -44,33 +56,56 @@ struct TriageView: View {
 
             Spacer()
 
-            Button {
-                session.rotateCurrent(locale: languageStore.locale)
-            } label: {
-                Image(systemName: "rotate.right")
-            }
-            .hoverHint("triage.rotate", hint: "triage.rotate.hint")
+            if isCropping {
+                Button {
+                    applyCrop()
+                } label: {
+                    Image(systemName: "checkmark")
+                }
+                .hoverHint("triage.crop.apply", hint: "triage.crop.apply.hint")
+            } else {
+                Button {
+                    session.rotateCurrent(locale: languageStore.locale)
+                } label: {
+                    Image(systemName: "rotate.right")
+                }
+                .hoverHint("triage.rotate", hint: "triage.rotate.hint")
 
-            Button {
-                session.trashCurrent(locale: languageStore.locale)
-            } label: {
-                Image(systemName: "trash")
-            }
-            .hoverHint("triage.trash", hint: "triage.trash.hint")
+                Button {
+                    session.flipCurrent(locale: languageStore.locale)
+                } label: {
+                    Image(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right")
+                }
+                .hoverHint("triage.flip", hint: "triage.flip.hint")
 
-            Button {
-                session.undoLast(locale: languageStore.locale)
-            } label: {
-                Image(systemName: "arrow.uturn.backward")
-            }
-            .hoverHint("triage.undo", hint: "triage.undo.hint")
+                Button {
+                    beginCrop()
+                } label: {
+                    Image(systemName: "crop")
+                }
+                .hoverHint("triage.crop", hint: "triage.crop.hint")
 
-            Button {
-                session.revealCurrent()
-            } label: {
-                Image(systemName: "folder")
+                Button {
+                    session.trashCurrent(locale: languageStore.locale)
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .hoverHint("triage.trash", hint: "triage.trash.hint")
+
+                Button {
+                    session.undoLast(locale: languageStore.locale)
+                } label: {
+                    Image(systemName: "arrow.uturn.backward")
+                }
+                .hoverHint("triage.undo", hint: "triage.undo.hint")
+
+                Button {
+                    session.revealCurrent()
+                } label: {
+                    Image(systemName: "folder")
+                }
+                .hoverHint("home.recents.reveal", hint: "home.recents.reveal.hint")
             }
-            .hoverHint("home.recents.reveal", hint: "home.recents.reveal.hint")
         }
         .buttonStyle(.plain)
         .foregroundStyle(.white)
@@ -80,16 +115,24 @@ struct TriageView: View {
     }
 
     private var photoStage: some View {
-        ZStack {
-            if let photo = session.currentTriagePhoto, let image = loadImage(photo.url) {
-                Image(nsImage: image)
-                    .resizable()
-                    .scaledToFit()
-                    .padding(12)
-                    .id("\(photo.id)-\(session.imageRevision)")
-            } else {
-                Text("triage.empty")
-                    .foregroundStyle(.white.opacity(0.7))
+        GeometryReader { geo in
+            ZStack {
+                if let photo = session.currentTriagePhoto, let image = loadImage(photo.url) {
+                    let padded = CGRect(x: 12, y: 12, width: max(geo.size.width - 24, 1), height: max(geo.size.height - 24, 1))
+                    let fitted = PhotoCropGeometry.fittedImageRect(imageSize: image.size, in: padded)
+                    Image(nsImage: image)
+                        .resizable()
+                        .interpolation(.high)
+                        .frame(width: fitted.width, height: fitted.height)
+                        .position(x: fitted.midX, y: fitted.midY)
+                        .id("\(photo.id)-\(session.imageRevision)")
+                    if isCropping {
+                        PhotoCropOverlay(imageFrame: fitted, crop: $cropNormalized)
+                    }
+                } else {
+                    Text("triage.empty")
+                        .foregroundStyle(.white.opacity(0.7))
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -101,7 +144,34 @@ struct TriageView: View {
         return NSImage(data: data)
     }
 
+    private func beginCrop() {
+        cropNormalized = PhotoCropGeometry.initial
+        isCropping = true
+        session.clearBuffer()
+    }
+
+    private func cancelCrop() {
+        isCropping = false
+        cropNormalized = PhotoCropGeometry.initial
+    }
+
+    private func applyCrop() {
+        session.cropCurrent(normalized: cropNormalized, locale: languageStore.locale)
+        cancelCrop()
+    }
+
     private func handleKey(_ press: KeyPress) -> KeyPress.Result {
+        if isCropping {
+            if press.key == .escape {
+                cancelCrop()
+                return .handled
+            }
+            if press.key == .return {
+                applyCrop()
+                return .handled
+            }
+            return .handled
+        }
         if press.key == .escape {
             if session.buffer.preview.isEmpty {
                 session.exitTriage()
@@ -132,6 +202,14 @@ struct TriageView: View {
         }
         if press.characters.lowercased() == "r", !press.modifiers.contains(.command) {
             session.rotateCurrent(locale: languageStore.locale)
+            return .handled
+        }
+        if press.characters.lowercased() == "f", !press.modifiers.contains(.command) {
+            session.flipCurrent(locale: languageStore.locale)
+            return .handled
+        }
+        if press.characters.lowercased() == "c", !press.modifiers.contains(.command) {
+            beginCrop()
             return .handled
         }
         if press.characters.lowercased() == "s" {

@@ -2,6 +2,7 @@ import Foundation
 
 struct FileOrganizer {
     var fileManager: FileManager = .default
+    var moveToFinderTrash: (URL) throws -> Void = { try FinderTrash.move($0) }
 
     func move(
         _ photo: DiskPhoto,
@@ -105,6 +106,17 @@ struct FileOrganizer {
             try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
         } catch {
             throw OrganizerError.moveFailed(error.localizedDescription)
+        }
+    }
+
+    func emptyTrash(_ photos: [DiskPhoto]) throws {
+        for photo in photos {
+            guard fileManager.fileExists(atPath: photo.url.path) else { continue }
+            do {
+                try moveToFinderTrash(photo.url)
+            } catch {
+                throw OrganizerError.emptyFailed(error.localizedDescription)
+            }
         }
     }
 

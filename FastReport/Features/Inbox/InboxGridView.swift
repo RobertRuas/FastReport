@@ -16,7 +16,16 @@ struct InboxGridView: View {
                 ScrollView {
                     LazyVGrid(columns: columns, spacing: 8) {
                         ForEach(session.inbox) { photo in
-                            ThumbnailView(url: photo.url, revision: session.imageRevision)
+                            ThumbnailView(
+                                url: photo.url,
+                                revision: session.imageRevision,
+                                onRotate: {
+                                    session.rotate(photo, locale: languageStore.locale)
+                                },
+                                onTrash: {
+                                    session.trash(photo, locale: languageStore.locale)
+                                }
+                            )
                                 .onTapGesture {
                                     session.startTriage(startingAt: photo)
                                 }

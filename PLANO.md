@@ -25,7 +25,7 @@ Idioma deste documento: português. App: **português (padrão)** e **inglês**.
 
 **Requisitos mínimos:** macOS 14+, Apple Silicon e Intel (universal). Xcode atual.
 
-**Distribuição:** GitHub Releases + Sparkle (assinatura Developer ID + notarização). App Store fica para uma fase futura, se fizer sentido.
+**Distribuição:** GitHub Releases + Sparkle (assinatura Developer ID + notarização). App Store fica para uma fase futura, se fizer sentido. Isso terá que ser totalmente gratuito sem nenhum custo.
 
 **Sandbox:** ativado. Pastas só via seletor nativo + bookmark, para reabrir projetos sem pedir de novo.
 
@@ -96,6 +96,8 @@ Números 25+ ou vazios: feedback curto, não move.
 
 Cada mapa novo = um JSON em `Maps/` + entrada no catálogo. Exemplos possíveis mais tarde:
 
+Deve ter uma instrução tecnica de como deve ser criado novos mapas.
+
 - Inspeção com outro número de T’s e outra contagem.
 - Mapa só com `Antes` / `Depois` / `Detalhe` / `General`.
 - Mapa por zona da obra.
@@ -125,10 +127,11 @@ Não perguntar coisas a mais. Avançar / Voltar claros.
 ### 4.3 Importação
 
 - Ecrã de progresso em tempo real (miniaturas a aparecer, contador).
-- Cada foto: **convertida para JPEG**, lado maior **1024 px**, qualidade alta (~0.85), orientação EXIF aplicada.
+- Cada foto: **convertida para JPEG**, lado maior **1024 px**, qualidade alta (~0.90), orientação EXIF aplicada.
 - Resultado **movido** para `Inbox/` (não fica cópia na app).
 - Originais: o gesto “arrastar para a app” trata-se como **entregar ao projeto**. Conversão substitui o ficheiro **dentro do projeto**. Se o utilizador arrastar de uma pasta de câmara, **copiar → converter na Inbox** (não destruir o rolo original). Se já estiver a importar de uma pasta temporária, pode mover. Regra: **nunca apagar originais fora do projeto**.
 - No fim: estatística curta — total, já JPEG, convertidas, falhas (se houver). Sem EXIF, GPS, histogramas.
+- Deve ser possivel adiconar mais fotos depois (durante o processo)
 
 ### 4.4 Inbox (antes da triagem)
 
