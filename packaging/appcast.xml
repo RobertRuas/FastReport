@@ -3,16 +3,16 @@
     <channel>
         <title>FastReport</title>
         <item>
-            <title>0.1.0</title>
-            <pubDate>Wed, 16 Sep 2026 21:44:08 +0200</pubDate>
-            <link>https://github.com/RobertRuas/FastReport/releases/v0.1.0</link>
-            <sparkle:version>1</sparkle:version>
-            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <title>1.0.0</title>
+            <pubDate>Sun, 20 Sep 2026 18:28:05 +0000</pubDate>
+            <link>https://github.com/RobertRuas/FastReport/releases/v1.0.0</link>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <description><![CDATA[<h2>FastReport 0.1.0</h2>
-<p>Atualização v0.1.0 publicada em 2026-09-16 19:44 UTC.</p>
+            <description><![CDATA[<h2>FastReport 1.0.0</h2>
+<p>Atualização v1.0.0 publicada em 2026-09-20 18:28 UTC.</p>
 ]]></description>
-            <enclosure url="https://github.com/RobertRuas/FastReport/releases/download/v0.1.0/FastReport-0.1.0.zip" length="1974729" type="application/octet-stream" sparkle:edSignature="LOXMTUlbARxHTr4bNkTCAwyAdWi+UKHWCOyR9FPgn1MNBAo+Fmka675DW0Qtbpy3C/WwvGDlnBgrfEu9Yj/EDA=="/>
+            <enclosure url="https://github.com/RobertRuas/FastReport/releases/download/v1.0.0/FastReport-1.0.0.zip" length="3850164" type="application/octet-stream" sparkle:edSignature="ZdQMT6OECDEMIU1uB+GgZnJ+XPwirdQT2XGc+AF417Qg3r5fbiMZRm5czbxRV1U/K/ASurIh/bY4WlDfToFGCA=="/>
         </item>
     </channel>
 </rss>
