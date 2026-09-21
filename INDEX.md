@@ -74,9 +74,6 @@ Persistência: `fastreport-delivery.json` (inode + caminho relativo).
 |---|---|
 | Quadro + arrasto nativo | `FastReport/Features/Delivery/DeliveryBoardView.swift`, `ExternalFileDragOverlay.swift` |
 | Marcações | `FastReport/Domain/DeliveryLedger.swift` |
-| Macro (orbe, painel, cliques) | `MacroPadView.swift`, `MacroPadWindow.swift`, `DeliveryFloatingOrb.swift`, `MacroClickMarkers.swift` em `FastReport/Features/Delivery/` |
-| Modelo / biblioteca | `FastReport/Domain/KeyboardMacro.swift`, `KeyLayout.swift`, `FastReport/Services/KeyboardMacroCenter.swift` (`Application Support/FastReport/macros.json`) |
-| Ligar/desligar no projeto | `FastReport/Features/Home/HomeView.swift` |
 
 ---
 
@@ -102,7 +99,7 @@ Feed Sparkle: `releases/latest/download/appcast.xml` (`FastReport/Info.plist`). 
 | Recurso | Ficheiros |
 |---|---|
 | Fluxo | `FastReportTests/WorkflowTests.swift` |
-| Domínio + definições + entrega + macros | `FastReportTests/DomainAndSettingsTests.swift` |
+| Domínio + definições + entrega | `FastReportTests/DomainAndSettingsTests.swift` |
 | Mapas / catálogo / criador | `FastReportTests/OrganizationMapTests.swift`, `MapCatalogTests.swift`, `ProjectCreatorTests.swift` |
 | Fixtures | `FastReportTests/TestFixtures.swift`, `TestImageFactory.swift`, `FakeBookmarkStore.swift` |
 
@@ -120,4 +117,5 @@ FastReportTests/
 ## Onde não está
 
 - Sem `Features/Import/`, sem editor de mapas na UI, sem PDF/Word (Entrega só arrasta JPEGs).
+- Sem macros, gravação de teclado ou rato, nem reprodução automática.
 - Protótipo Flutter (`~/PhotoOrganizer`) não está neste repo.

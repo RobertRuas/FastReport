@@ -45,11 +45,6 @@ struct ProjectWorkspaceView: View {
                     .padding(.bottom, 40)
             }
         }
-        .overlay(alignment: .bottomTrailing) {
-            if session.mode == .delivery {
-                MacroPadSpace()
-            }
-        }
         .onDisappear { session.close() }
     }
 
@@ -180,13 +175,12 @@ struct ShortcutsSheet: View {
                 shortcut("F", "shortcuts.flip")
                 shortcut("C", "shortcuts.crop")
                 shortcut("⌘Z", "shortcuts.undo")
-                shortcut("⌘␣", "shortcuts.macro")
                 shortcut("S", "shortcuts.skip")
                 shortcut("Esc", "shortcuts.esc")
                 Spacer()
             }
             .padding(24)
-            .frame(width: 420, height: 408)
+            .frame(width: 420, height: 384)
             .navigationTitle(Text("shortcuts.title"))
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

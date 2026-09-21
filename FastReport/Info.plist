@@ -16,7 +16,5 @@
 	<integer>14400</integer>
 	<key>FRUpdatesURL</key>
 	<string>https://github.com/RobertRuas/FastReport/releases/latest/download/appcast.xml</string>
-	<key>NSAccessibilityUsageDescription</key>
-	<string>O FastReport usa Acessibilidade para gravar e reproduzir macros de teclado e rato no relatório.</string>
 </dict>
 </plist>

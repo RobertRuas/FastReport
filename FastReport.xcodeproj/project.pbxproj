@@ -15,7 +15,6 @@
 		114842BA1D83EEA42E369788 /* BookmarkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A413F7E0262330DBE2146C /* BookmarkStore.swift */; };
 		1595BDB74D33F7B8CA8E6867 /* ProjectSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F291926AEEC38AF6D77DD39 /* ProjectSession.swift */; };
 		1F899E1EC52F429CF8F52603 /* PhotoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9BA41A48C7520DA7055C4A /* PhotoItem.swift */; };
-		20E155E2F0EA20B52D17D054 /* KeyboardMacroCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52D341ED7EFD640DB9ABA22 /* KeyboardMacroCenter.swift */; };
 		2185CDB813F3ECBADD47275F /* ProjectCreatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05203B5987FA320A4112CD03 /* ProjectCreatorTests.swift */; };
 		23095925C2419D9271C1615C /* AppStatusBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF31EF41C8BBD5706D1BE6B0 /* AppStatusBar.swift */; };
 		2478DD70C600EEAB78D37612 /* TriageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732ADDAF0E32E07386F4D916 /* TriageView.swift */; };
@@ -24,7 +23,6 @@
 		2B9B0FF4EE5D26A658397031 /* PhotoCropOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FBE83DC722005AE2EF6137E /* PhotoCropOverlay.swift */; };
 		2D3CB05E82BD98E1635CF9F9 /* AppLanguageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59A05B120D646C37506FB12 /* AppLanguageStore.swift */; };
 		391E03603D87B1F01E369B9D /* MapCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8317BFF5B91A9037566844DC /* MapCatalog.swift */; };
-		3A40C7984B653AD6648887C9 /* DeliveryFloatingOrb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CA0AE1024AEDC4DD7F72694 /* DeliveryFloatingOrb.swift */; };
 		3DFF59DBEF4FFFED58F47C5E /* ProjectWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE712AD9AACDE67731652B9E /* ProjectWorkspaceView.swift */; };
 		3EC11FB890AE5B07342BE175 /* InboxGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7DEAB4B877B5797FC5FB0EC /* InboxGridView.swift */; };
 		4291C7FD2AF18C6D08EFDDD4 /* DiskPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6659C86A5633F4E1AB61BF69 /* DiskPhoto.swift */; };
@@ -36,15 +34,12 @@
 		551E3653ABEBF86EDE4A81A2 /* DeliveryLedger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A67C1625C76830BEF85BE0 /* DeliveryLedger.swift */; };
 		58651379D646E4380099A4E4 /* ProjectFolderName.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA27B572088E3B203DD32C3 /* ProjectFolderName.swift */; };
 		59B4380BA60C21AFD7D15C0C /* MapLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49FAD1547C5CB51E1D629A06 /* MapLibrary.swift */; };
-		5C98BCF9FA134EF21C90A41E /* MacroPadWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EC42D19D480D36153DA19F /* MacroPadWindow.swift */; };
 		5F5E238CB0F206558897FB21 /* AppUpdateCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E905EDF758AA171E28074EE3 /* AppUpdateCenter.swift */; };
 		61722FF6B51F176749D7B7F2 /* FolderWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398B8BBEC6BCEF8ECDB1A4E /* FolderWatcher.swift */; };
 		61D081FD90DFAA09ABE12E76 /* MapValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB759403F492D8C1631C5FC /* MapValidator.swift */; };
 		667D7CB9F9407BECCC1C4467 /* ClassificationBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C337349D404F86BB6971CFD7 /* ClassificationBuffer.swift */; };
 		6AD7EF087FB24D280E3AAA2D /* ProjectWizardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5770452817AE87B38598B37 /* ProjectWizardView.swift */; };
-		6C37A3165B21C125494EB393 /* MacroClickMarkers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5C383FFEDDB86429F694FF /* MacroClickMarkers.swift */; };
 		707FCEAFB56C7B2FAB453B51 /* ReviewDisplaySlots.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2B02CF78E91D7AE54770471 /* ReviewDisplaySlots.swift */; };
-		7280FBB8C9EC29246BF7FED3 /* MacroPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18243AD5D5521617A9ED6317 /* MacroPadView.swift */; };
 		745EE0576F0E7200B5234C85 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = EBDEC1C44C58975C6AC3D17D /* Localizable.xcstrings */; };
 		78A49C062F1D4C4054BA9051 /* FileOrganizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4B91ECC504094AAFD4C00C /* FileOrganizer.swift */; };
 		7945EB0CC52CF294644BB3BA /* TestImageFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D63C205FD4D58D4AA24ED45 /* TestImageFactory.swift */; };
@@ -53,12 +48,10 @@
 		86553340E551FB4EDFAF8F31 /* ProjectScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E1537ADB20292B82F2D70F8 /* ProjectScanner.swift */; };
 		898C4D062D5C87BA457F283C /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D715947F1BC5FADE035D970 /* HomeView.swift */; };
 		96D6B323568E037AA62DFE01 /* AppInstallLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B744E1664FAACEECB9C0C9B8 /* AppInstallLocation.swift */; };
-		96F044E97AEFECD0CFF4A83D /* KeyboardMacro.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19EE3FFE539A757B7913165 /* KeyboardMacro.swift */; };
 		9ACB59DD1753383675BAFF8C /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B59FA945B3CC4CA6797F1CB /* UpdateChecker.swift */; };
 		A3194195F2C498289C8DDACA /* FastReportApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BFAB2C3DC266E09017BA741 /* FastReportApp.swift */; };
 		A9F1402BC278861B1F8AC5DD /* ThumbnailSizeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BC34B8A0CA9D7C269F5D6D /* ThumbnailSizeStore.swift */; };
 		B0ED8E7A258D560A7CF665FE /* DomainAndSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEE073D516FBACC3C9CAE2B /* DomainAndSettingsTests.swift */; };
-		B306216630522005CA06A992 /* KeyLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F440C4E9F4C73116CA2F797 /* KeyLayout.swift */; };
 		B366FC9D9AF31C062A803EAC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 999AA0445CB92567EF96C965 /* Assets.xcassets */; };
 		B3B42E0FF10C32EB96210BD4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = BDA97FF565CD38724B7EF11D /* Sparkle */; };
 		B64F42219633A11B4867F911 /* FakeBookmarkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D85EFEBE7AD215AD3A6AABA /* FakeBookmarkStore.swift */; };
@@ -104,23 +97,18 @@
 		0BAF453165333AE4342822E6 /* FastReportTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FastReportTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1277F4E33E5C3D7FCD6B0EB4 /* LiveReorderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveReorderLayout.swift; sourceTree = "<group>"; };
 		12E62175862D5A57AB959E7D /* DeliveryBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryBoardView.swift; sourceTree = "<group>"; };
-		18243AD5D5521617A9ED6317 /* MacroPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroPadView.swift; sourceTree = "<group>"; };
 		192E582850A483623410A097 /* RecentProjectsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentProjectsStore.swift; sourceTree = "<group>"; };
 		1BFAB2C3DC266E09017BA741 /* FastReportApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FastReportApp.swift; sourceTree = "<group>"; };
-		1CA0AE1024AEDC4DD7F72694 /* DeliveryFloatingOrb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryFloatingOrb.swift; sourceTree = "<group>"; };
 		290BB42772E59A11B789A885 /* ExternalFileDragOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalFileDragOverlay.swift; sourceTree = "<group>"; };
-		2F440C4E9F4C73116CA2F797 /* KeyLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyLayout.swift; sourceTree = "<group>"; };
 		3DEE073D516FBACC3C9CAE2B /* DomainAndSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DomainAndSettingsTests.swift; sourceTree = "<group>"; };
 		3FBE83DC722005AE2EF6137E /* PhotoCropOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCropOverlay.swift; sourceTree = "<group>"; };
 		449CCED022196C4615692B8E /* ProjectMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMetadata.swift; sourceTree = "<group>"; };
 		49FAD1547C5CB51E1D629A06 /* MapLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLibrary.swift; sourceTree = "<group>"; };
 		4CE40773B20064617B8DB9E6 /* ReviewGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewGridView.swift; sourceTree = "<group>"; };
 		4D47E5A35BC7F41413701E82 /* HoverHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverHint.swift; sourceTree = "<group>"; };
-		4D5C383FFEDDB86429F694FF /* MacroClickMarkers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroClickMarkers.swift; sourceTree = "<group>"; };
 		51BAB1DF64ABFF841212B740 /* ProjectCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCreator.swift; sourceTree = "<group>"; };
 		56F54D144C43A2666002CA9D /* WorkflowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkflowTests.swift; sourceTree = "<group>"; };
 		59E8E1E24D3CCC773D89E217 /* ProjectSlug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectSlug.swift; sourceTree = "<group>"; };
-		59EC42D19D480D36153DA19F /* MacroPadWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacroPadWindow.swift; sourceTree = "<group>"; };
 		5D63C205FD4D58D4AA24ED45 /* TestImageFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestImageFactory.swift; sourceTree = "<group>"; };
 		5D715947F1BC5FADE035D970 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		5EBF8310139978363983708B /* OrganizationMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrganizationMap.swift; sourceTree = "<group>"; };
@@ -160,14 +148,12 @@
 		C11219605A50E08575B2DD76 /* inspection-t24.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "inspection-t24.json"; sourceTree = "<group>"; };
 		C337349D404F86BB6971CFD7 /* ClassificationBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassificationBuffer.swift; sourceTree = "<group>"; };
 		C41B045A6392A8960B5673A1 /* MapCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapCatalogTests.swift; sourceTree = "<group>"; };
-		C52D341ED7EFD640DB9ABA22 /* KeyboardMacroCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardMacroCenter.swift; sourceTree = "<group>"; };
 		CBEE350683DB525E18136479 /* ProjectOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectOpener.swift; sourceTree = "<group>"; };
 		CD7678F25620322719D68B08 /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		D398B8BBEC6BCEF8ECDB1A4E /* FolderWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderWatcher.swift; sourceTree = "<group>"; };
 		DC4B91ECC504094AAFD4C00C /* FileOrganizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileOrganizer.swift; sourceTree = "<group>"; };
 		DC855423FA6E4B3E6AB4B470 /* TestFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFixtures.swift; sourceTree = "<group>"; };
 		E0A413F7E0262330DBE2146C /* BookmarkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookmarkStore.swift; sourceTree = "<group>"; };
-		E19EE3FFE539A757B7913165 /* KeyboardMacro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardMacro.swift; sourceTree = "<group>"; };
 		E572EDBA6269143F71E0671E /* FastReportDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FastReportDebug.entitlements; sourceTree = "<group>"; };
 		E7DEAB4B877B5797FC5FB0EC /* InboxGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxGridView.swift; sourceTree = "<group>"; };
 		E905EDF758AA171E28074EE3 /* AppUpdateCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateCenter.swift; sourceTree = "<group>"; };
@@ -200,11 +186,7 @@
 			isa = PBXGroup;
 			children = (
 				12E62175862D5A57AB959E7D /* DeliveryBoardView.swift */,
-				1CA0AE1024AEDC4DD7F72694 /* DeliveryFloatingOrb.swift */,
 				290BB42772E59A11B789A885 /* ExternalFileDragOverlay.swift */,
-				4D5C383FFEDDB86429F694FF /* MacroClickMarkers.swift */,
-				18243AD5D5521617A9ED6317 /* MacroPadView.swift */,
-				59EC42D19D480D36153DA19F /* MacroPadWindow.swift */,
 			);
 			path = Delivery;
 			sourceTree = "<group>";
@@ -336,7 +318,6 @@
 				D398B8BBEC6BCEF8ECDB1A4E /* FolderWatcher.swift */,
 				EA22A2397A9CEDE803ED5CA1 /* ImagePipeline.swift */,
 				B1E9E2606F38EB419C250617 /* ImageSettingsStore.swift */,
-				C52D341ED7EFD640DB9ABA22 /* KeyboardMacroCenter.swift */,
 				8317BFF5B91A9037566844DC /* MapCatalog.swift */,
 				49FAD1547C5CB51E1D629A06 /* MapLibrary.swift */,
 				009A28FBF20D28E8493174FF /* PhotoImporter.swift */,
@@ -394,8 +375,6 @@
 				84A67C1625C76830BEF85BE0 /* DeliveryLedger.swift */,
 				6659C86A5633F4E1AB61BF69 /* DiskPhoto.swift */,
 				B7B6FEF7B61D723F2594A813 /* FileNameFormatter.swift */,
-				E19EE3FFE539A757B7913165 /* KeyboardMacro.swift */,
-				2F440C4E9F4C73116CA2F797 /* KeyLayout.swift */,
 				1277F4E33E5C3D7FCD6B0EB4 /* LiveReorderLayout.swift */,
 				97C05D7BC8A197EF6CE2AD10 /* LocalizedCopy.swift */,
 				ECB759403F492D8C1631C5FC /* MapValidator.swift */,
@@ -563,7 +542,6 @@
 				114842BA1D83EEA42E369788 /* BookmarkStore.swift in Sources */,
 				667D7CB9F9407BECCC1C4467 /* ClassificationBuffer.swift in Sources */,
 				BD21C86A0E3C61063E208E4F /* DeliveryBoardView.swift in Sources */,
-				3A40C7984B653AD6648887C9 /* DeliveryFloatingOrb.swift in Sources */,
 				551E3653ABEBF86EDE4A81A2 /* DeliveryLedger.swift in Sources */,
 				4291C7FD2AF18C6D08EFDDD4 /* DiskPhoto.swift in Sources */,
 				C83AA283E79A2E419D7A614F /* ExternalFileDragOverlay.swift in Sources */,
@@ -578,15 +556,9 @@
 				D51BD453D4C1DE73D45EDC8A /* ImagePipeline.swift in Sources */,
 				BD852DE215C352650AA8E01B /* ImageSettingsStore.swift in Sources */,
 				3EC11FB890AE5B07342BE175 /* InboxGridView.swift in Sources */,
-				B306216630522005CA06A992 /* KeyLayout.swift in Sources */,
-				96F044E97AEFECD0CFF4A83D /* KeyboardMacro.swift in Sources */,
-				20E155E2F0EA20B52D17D054 /* KeyboardMacroCenter.swift in Sources */,
 				50F05904EDC6E03FA3F24FF8 /* LiveReorderLayout.swift in Sources */,
 				5141CBC81C3053F094306EB4 /* LiveReorderStrip.swift in Sources */,
 				F2713C5004148286385DCD50 /* LocalizedCopy.swift in Sources */,
-				6C37A3165B21C125494EB393 /* MacroClickMarkers.swift in Sources */,
-				7280FBB8C9EC29246BF7FED3 /* MacroPadView.swift in Sources */,
-				5C98BCF9FA134EF21C90A41E /* MacroPadWindow.swift in Sources */,
 				391E03603D87B1F01E369B9D /* MapCatalog.swift in Sources */,
 				59B4380BA60C21AFD7D15C0C /* MapLibrary.swift in Sources */,
 				61D081FD90DFAA09ABE12E76 /* MapValidator.swift in Sources */,
@@ -732,7 +704,6 @@
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_LSMinimumSystemVersion = 14.0;
-				INFOPLIST_KEY_NSAccessibilityUsageDescription = "O FastReport usa Acessibilidade para gravar e reproduzir macros de teclado e rato no relatório.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 FastReport";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -843,7 +814,6 @@
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.photography";
 				INFOPLIST_KEY_LSMinimumSystemVersion = 14.0;
-				INFOPLIST_KEY_NSAccessibilityUsageDescription = "O FastReport usa Acessibilidade para gravar e reproduzir macros de teclado e rato no relatório.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 FastReport";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

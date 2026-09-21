@@ -7,7 +7,6 @@ struct FastReportApp: App {
     @State private var recents = RecentProjectsStore()
     @State private var imageSettings = ImageSettingsStore()
     @State private var thumbnailSize = ThumbnailSizeStore()
-    @State private var macros = KeyboardMacroCenter()
     @State private var updates = AppUpdateCenter()
 
     var body: some Scene {
@@ -20,7 +19,6 @@ struct FastReportApp: App {
             .environment(recents)
             .environment(imageSettings)
             .environment(thumbnailSize)
-            .environment(macros)
             .environment(updates)
             .environment(\.locale, languageStore.locale)
             .frame(minWidth: 720, minHeight: 500)
@@ -42,7 +40,6 @@ struct FastReportApp: App {
             SettingsView()
                 .environment(languageStore)
                 .environment(imageSettings)
-                .environment(macros)
                 .environment(updates)
                 .environment(\.locale, languageStore.locale)
         }
